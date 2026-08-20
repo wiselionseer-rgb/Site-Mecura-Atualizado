@@ -144,10 +144,11 @@ function HeroAndMission() {
     offset: ["start start", "end start"]
   });
 
+  const videoRef = useRef<HTMLVideoElement>(null);
+
   useEffect(() => {
-    const video = document.querySelector('video');
-    if (video) {
-      video.play().catch(error => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(error => {
         console.warn("Autoplay attempt failed, browser might be blocking:", error);
       });
     }
@@ -159,19 +160,25 @@ function HeroAndMission() {
 
   return (
     <div ref={ref} className="relative w-full">
-       <motion.div style={{ y }} className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+       <motion.div 
+         style={{ y }} 
+         className="absolute inset-0 z-0 overflow-hidden pointer-events-none bg-neutral-900"
+       >
          {/* Subtler contrast, elegant dark overlay for legibility across both sections */}
          <div className="absolute inset-0 bg-black/40 z-10" />
          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background z-10" />
-          <video 
-            src="/Cannabis_oil_bottle_on_moss_202608201452.mp4"
-            autoPlay 
-            loop 
-            muted 
-            playsInline
-            preload="auto"
-            className="w-full h-full object-cover" 
-          />
+         
+         <video 
+           ref={videoRef}
+           autoPlay 
+           loop 
+           muted 
+           playsInline
+           preload="auto"
+           className="w-full h-full object-cover relative z-0" 
+         >
+           <source src="Cannabis_oil_bottle_on_moss_202608201452.mp4" type="video/mp4" />
+         </video>
        </motion.div>
 
        <div className="relative z-10">
