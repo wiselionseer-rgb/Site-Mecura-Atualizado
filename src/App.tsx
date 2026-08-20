@@ -69,20 +69,60 @@ function NavBar() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full z-40 p-6 md:p-10 flex justify-between items-center mix-blend-difference text-white pointer-events-none">
-        <div className="font-display text-2xl tracking-[0.2em] uppercase pointer-events-auto">
-          Mecura
-        </div>
-        <button 
-          onClick={() => setIsOpen(true)} 
-          className="flex items-center gap-4 group pointer-events-auto"
-        >
-          <span className="uppercase tracking-widest text-xs font-sans group-hover:opacity-70 transition-opacity hidden md:block">Menu</span>
-          <div className="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center group-hover:scale-110 group-hover:bg-white group-hover:text-black transition-all duration-300">
-            <Menu className="w-4 h-4" />
+      {/* Floating Pill Navbar */}
+      <motion.header 
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+        className="fixed top-4 md:top-6 left-0 w-full z-40 px-4 md:px-8 flex justify-center pointer-events-none"
+      >
+        <div className="w-full max-w-[1400px] flex justify-between items-center bg-surface/80 backdrop-blur-2xl border border-white/10 rounded-full px-5 py-3 md:py-3.5 shadow-2xl shadow-black/80 pointer-events-auto relative">
+          
+          {/* Logo (Left on Mobile, Absolute Center on Desktop) */}
+          <div className="font-display text-2xl md:text-3xl tracking-[0.15em] uppercase text-white cursor-pointer hover:text-accent transition-colors md:absolute md:left-1/2 md:-translate-x-1/2 z-10">
+            Mecura
           </div>
-        </button>
-      </header>
+
+          {/* Desktop Left Nav */}
+          <nav className="hidden md:flex items-center gap-8 text-xs font-sans uppercase tracking-[0.15em] text-text-secondary w-full justify-start pl-2">
+            <a 
+              href="https://mecura.sementesagrada.com/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="px-6 py-2.5 rounded-full bg-accent text-accent-text font-bold hover:bg-white hover:shadow-[0_0_20px_rgba(204,255,0,0.4)] transition-all duration-300"
+            >
+              Agendar Consulta
+            </a>
+            <a href="#processo" className="hover:text-white transition-colors">O Processo</a>
+            <a href="#servicos" className="hover:text-white transition-colors">Serviços</a>
+          </nav>
+
+          {/* Desktop Right Nav */}
+          <nav className="hidden md:flex items-center gap-8 text-xs font-sans uppercase tracking-[0.15em] text-text-secondary w-full justify-end pr-2">
+            <a href="#ciencia" className="hover:text-white transition-colors">A Ciência</a>
+            <a href="#equipe" className="hover:text-white transition-colors">A Equipe</a>
+            <button 
+              onClick={() => setIsOpen(true)}
+              className="flex items-center gap-3 hover:text-white transition-colors group"
+            >
+              Menu
+              <div className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center bg-surface-elevated group-hover:border-accent group-hover:text-accent transition-colors">
+                <Menu className="w-4 h-4" />
+              </div>
+            </button>
+          </nav>
+
+          {/* Mobile Right Action */}
+          <div className="md:hidden flex items-center justify-end">
+            <button 
+              onClick={() => setIsOpen(true)}
+              className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center bg-surface-elevated text-white active:scale-95 transition-all"
+            >
+              <Menu className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </motion.header>
 
       {/* Fullscreen Overlay Menu */}
       <AnimatePresence>
@@ -105,10 +145,19 @@ function NavBar() {
             </button>
 
             <nav className="flex flex-col gap-6 md:gap-10 text-5xl md:text-7xl font-display">
-              {['Início', 'Visão', 'Atuação', 'Equipe', 'Contato'].map((item, i) => (
-                <div key={item} className="overflow-hidden">
+              {[
+                { name: 'Início', href: '#' },
+                { name: 'O Processo', href: '#processo' },
+                { name: 'Serviços', href: '#servicos' },
+                { name: 'A Ciência', href: '#ciencia' },
+                { name: 'Equipe', href: '#equipe' },
+                { name: 'Contato', href: 'https://wa.me/5566996280883', target: '_blank' }
+              ].map((item, i) => (
+                <div key={item.name} className="overflow-hidden">
                   <motion.a 
-                    href="#"
+                    href={item.href}
+                    target={item.target || '_self'}
+                    rel={item.target ? "noopener noreferrer" : undefined}
                     initial={{ opacity: 0, y: "100%" }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: "100%" }}
@@ -116,7 +165,7 @@ function NavBar() {
                     className="hover:text-accent transition-colors w-fit block"
                     onClick={() => setIsOpen(false)}
                   >
-                    {item}
+                    {item.name}
                   </motion.a>
                 </div>
               ))}
@@ -224,9 +273,24 @@ function HeroAndMission() {
              </h1>
              <div className="w-full flex justify-end md:-mt-12">
                <div className="max-w-md pb-4 md:pb-8 pr-4 md:pr-12">
-                 <RevealText delay={0.4} className="text-text-secondary text-base md:text-lg">
+                 <RevealText delay={0.4} className="text-text-secondary text-base md:text-lg mb-8">
                    Facilitando o acesso seguro, legal e humanizado ao tratamento com Cannabis Medicinal no Brasil.
                  </RevealText>
+                 <motion.div
+                   initial={{ opacity: 0, y: 20 }}
+                   animate={{ opacity: 1, y: 0 }}
+                   transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                 >
+                   <a 
+                     href="https://mecura.sementesagrada.com/" 
+                     target="_blank" 
+                     rel="noopener noreferrer"
+                     className="inline-flex items-center gap-4 px-8 py-4 rounded-full bg-accent text-accent-text font-display uppercase tracking-widest text-sm hover:scale-105 transition-transform duration-300 hover:shadow-[0_0_30px_rgba(204,255,0,0.3)]"
+                   >
+                     Agendar Consulta
+                     <ArrowRight className="w-4 h-4" />
+                   </a>
+                 </motion.div>
                </div>
              </div>
            </div>
@@ -434,7 +498,7 @@ function TherapeuticProperties() {
       </div>
       
       {/* Marquee Effect */}
-      <div className="relative w-full flex overflow-hidden mt-12 bg-surface py-8 md:py-12 border-y border-border/50">
+      <div className="relative w-full flex overflow-hidden mt-12 py-8 md:py-12">
         <div className="flex w-max" style={{ animation: 'scroll-left 50s linear infinite' }}>
           <div className="flex items-center gap-8 md:gap-16 px-4 md:px-8">
             {therapeuticBenefits.map((benefit, i) => (
@@ -715,9 +779,9 @@ function AppSection() {
                     </div>
                   ))}
                 </div>
-                <button className="w-full py-4 bg-[#111] border border-white/5 text-text-primary font-bold uppercase tracking-[0.2em] rounded-full text-[10px] mt-auto hover:bg-[#1a1a1a] transition-colors">
-                  Finalizar Análise
-                </button>
+                <a href="https://mecura.sementesagrada.com/" target="_blank" rel="noopener noreferrer" className="block text-center w-full py-4 bg-[#111] border border-white/5 text-text-primary font-bold uppercase tracking-[0.2em] rounded-full text-[10px] mt-auto hover:bg-[#1a1a1a] transition-colors">
+                  Iniciar Tratamento
+                </a>
               </div>
             </motion.div>
             {/* CENTER PHONE (Dashboard) */}
@@ -746,9 +810,9 @@ function AppSection() {
                 </div>
                 <h3 className="text-3xl font-display uppercase tracking-wide mb-3 text-white">Mecura</h3>
                 <p className="text-text-secondary text-sm mb-10 px-4">Da consulta à entrega, simples e seguro.</p>
-                <button className="w-full py-4 bg-accent text-black font-display tracking-widest uppercase rounded-full text-sm mb-10 hover:scale-105 transition-transform duration-300">
-                  Obter App
-                </button>
+                <a href="https://mecura.sementesagrada.com/" target="_blank" rel="noopener noreferrer" className="block w-full py-4 bg-accent text-black font-display tracking-widest uppercase rounded-full text-sm mb-10 hover:scale-105 transition-transform duration-300 text-center">
+                  Agendar Consulta
+                </a>
                 <div className="flex items-center justify-center gap-4 border-y border-white/5 py-5 w-full mb-10">
                   <div className="text-center">
                     <div className="text-3xl font-display text-white mb-2">4,9</div>
@@ -844,15 +908,36 @@ function Footer() {
            <span>A</span>
          </h2>
          <div className="w-full flex flex-col md:flex-row justify-between items-center mt-16 md:mt-24 pt-8 border-t border-border gap-6 text-xs text-text-muted uppercase tracking-[0.15em] font-sans">
-           <p>© {new Date().getFullYear()} Instituto Mecura.</p>
+           <div className="flex flex-col md:flex-row items-center gap-2 md:gap-8 text-center md:text-left">
+             <p>© {new Date().getFullYear()} Instituto Mecura.</p>
+             <a href="https://wa.me/5566996280883" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors flex items-center gap-2">
+               <MessageCircle className="w-4 h-4" /> (66) 99628-0883
+             </a>
+           </div>
            <div className="flex gap-8 md:gap-12">
              <a href="#" className="hover:text-text-primary transition-colors">Instagram</a>
-             <a href="#" className="hover:text-text-primary transition-colors">LinkedIn</a>
-             <a href="#" className="hover:text-text-primary transition-colors">Contato</a>
+             <a href="https://mecura.sementesagrada.com/" target="_blank" rel="noopener noreferrer" className="hover:text-text-primary transition-colors">Agendar Consulta</a>
            </div>
          </div>
        </div>
     </footer>
+  );
+}
+
+function FloatingWhatsApp() {
+  return (
+    <a 
+      href="https://wa.me/5566996280883" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="fixed bottom-6 right-6 md:bottom-10 md:right-10 w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(37,211,102,0.3)] hover:scale-110 hover:shadow-[0_0_30px_rgba(37,211,102,0.5)] transition-all duration-300 z-50 group"
+      aria-label="Fale conosco pelo WhatsApp"
+    >
+      <MessageCircle className="w-7 h-7" />
+      <span className="absolute right-full mr-4 bg-surface-elevated text-white text-xs font-sans px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-border">
+        Fale com Especialista
+      </span>
+    </a>
   );
 }
 
@@ -874,6 +959,7 @@ export default function App() {
       </main>
 
       <Footer />
+      <FloatingWhatsApp />
     </div>
   );
 }
