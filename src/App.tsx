@@ -89,9 +89,9 @@ function NavBar() {
               href="https://mecura.sementesagrada.com/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="px-6 py-2.5 rounded-full bg-accent text-accent-text font-bold hover:bg-white hover:shadow-[0_0_20px_rgba(204,255,0,0.4)] transition-all duration-300"
+              className="px-4 py-2.5 rounded-full bg-accent text-accent-text font-bold hover:bg-white hover:shadow-[0_0_20px_rgba(204,255,0,0.4)] transition-all duration-300 text-[9px] xl:text-[10px] leading-tight text-center max-w-[280px]"
             >
-              Agendar Consulta
+              Consulte agora mesmo sua receita e laudo médico em 3 a 5 minutos
             </a>
             <a href="#processo" className="hover:text-white transition-colors">O Processo</a>
             <a href="#servicos" className="hover:text-white transition-colors">Serviços</a>
@@ -285,10 +285,10 @@ function HeroAndMission() {
                      href="https://mecura.sementesagrada.com/" 
                      target="_blank" 
                      rel="noopener noreferrer"
-                     className="inline-flex items-center gap-4 px-8 py-4 rounded-full bg-accent text-accent-text font-display uppercase tracking-widest text-sm hover:scale-105 transition-transform duration-300 hover:shadow-[0_0_30px_rgba(204,255,0,0.3)]"
+                     className="inline-flex items-center gap-3 px-6 py-4 rounded-full bg-accent text-accent-text font-display uppercase tracking-widest text-[10px] md:text-xs hover:scale-105 transition-transform duration-300 hover:shadow-[0_0_30px_rgba(204,255,0,0.3)] text-left max-w-lg"
                    >
-                     Agendar Consulta
-                     <ArrowRight className="w-4 h-4" />
+                     <span>Consulte agora mesmo sua receita e laudo médico em 3 a 5 minutos</span>
+                     <ArrowRight className="w-4 h-4 shrink-0" />
                    </a>
                  </motion.div>
                </div>
@@ -810,8 +810,8 @@ function AppSection() {
                 </div>
                 <h3 className="text-3xl font-display uppercase tracking-wide mb-3 text-white">Mecura</h3>
                 <p className="text-text-secondary text-sm mb-10 px-4">Da consulta à entrega, simples e seguro.</p>
-                <a href="https://mecura.sementesagrada.com/" target="_blank" rel="noopener noreferrer" className="block w-full py-4 bg-accent text-black font-display tracking-widest uppercase rounded-full text-sm mb-10 hover:scale-105 transition-transform duration-300 text-center">
-                  Agendar Consulta
+                <a href="https://mecura.sementesagrada.com/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full py-4 px-4 bg-accent text-black font-display tracking-wide uppercase rounded-full text-[9px] leading-snug mb-10 hover:scale-105 transition-transform duration-300 text-center">
+                  Consulte agora mesmo sua receita<br/>e laudo médico em 3 a 5 minutos
                 </a>
                 <div className="flex items-center justify-center gap-4 border-y border-white/5 py-5 w-full mb-10">
                   <div className="text-center">
@@ -1040,10 +1040,10 @@ function InfoModal({ contentKey, onClose }: { contentKey: ModalContentKey | null
                  href="https://mecura.sementesagrada.com/" 
                  target="_blank" 
                  rel="noopener noreferrer"
-                 className="flex items-center justify-center gap-3 w-full py-4 bg-accent text-black font-bold uppercase tracking-widest text-xs rounded-full hover:scale-[1.02] transition-transform duration-300"
+                 className="flex items-center justify-center gap-3 w-full py-4 px-4 bg-accent text-black font-bold uppercase tracking-widest text-[10px] leading-snug rounded-full hover:scale-[1.02] transition-transform duration-300 text-center"
                >
-                 Agendar Consulta
-                 <ArrowUpRight className="w-4 h-4" />
+                 <span>Consulte agora mesmo sua receita<br/>e laudo médico em 3 a 5 minutos</span>
+                 <ArrowUpRight className="w-4 h-4 shrink-0" />
                </a>
             </div>
           </motion.div>
@@ -1072,7 +1072,7 @@ function Footer() {
            
            <div className="flex flex-col gap-5">
              <h4 className="text-white font-sans uppercase tracking-[0.15em] text-xs font-bold mb-2">Serviços</h4>
-             <a href="https://mecura.sementesagrada.com/" target="_blank" rel="noopener noreferrer" className="text-accent hover:text-white transition-colors text-sm font-semibold w-fit">Agendar Consulta</a>
+             <a href="https://mecura.sementesagrada.com/" target="_blank" rel="noopener noreferrer" className="text-accent hover:text-white transition-colors text-sm font-semibold w-fit">Consulte agora mesmo sua receita e laudo médico em 3 a 5 minutos</a>
              <button onClick={() => setActiveModal("tratamentos")} className="text-text-muted hover:text-white transition-colors text-sm text-left w-fit">Tratamentos</button>
              <button onClick={() => setActiveModal("duvidas")} className="text-text-muted hover:text-white transition-colors text-sm text-left w-fit">Dúvidas Frequentes</button>
            </div>
