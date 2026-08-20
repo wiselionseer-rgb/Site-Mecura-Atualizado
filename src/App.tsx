@@ -299,7 +299,7 @@ function InfoCarousel() {
                    <img 
                      src={item.img} 
                      alt={item.title} 
-                     className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-[0.16,1,0.3,1]" 
+                     className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700 ease-[0.16,1,0.3,1]" 
                    />
                  </div>
                  <div className="flex justify-between items-start border-t border-border pt-6 group-hover:border-accent transition-colors duration-500">
@@ -322,7 +322,7 @@ function InfoCarousel() {
                    <img 
                      src={item.img} 
                      alt={item.title} 
-                     className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-[0.16,1,0.3,1]" 
+                     className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700 ease-[0.16,1,0.3,1]" 
                    />
                  </div>
                  <div className="flex justify-between items-start border-t border-border pt-6 group-hover:border-accent transition-colors duration-500">
@@ -396,6 +396,118 @@ function Services() {
                 </RevealText>
               </div>
             </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const therapeuticBenefits = [
+  "Neuroprotetor", "Antioxidante", "Anticonvulsionante", "Antidepressivo",
+  "Antipsicótico", "Anti-inflamatório", "Ansiolítico", "Analgésico",
+  "Oncoterápico", "Relaxante muscular", "Indutor de Sono"
+];
+
+function TherapeuticProperties() {
+  return (
+    <section className="py-24 md:py-32 bg-background border-b border-border overflow-hidden">
+      <div className="max-w-[1600px] mx-auto px-6 md:px-12 mb-16">
+        <span className="text-accent text-xs uppercase tracking-widest block mb-6">
+          [ A Ciência ]
+        </span>
+        <RevealText>
+          <h2 className="text-4xl md:text-6xl font-display tracking-tight">Propriedades<br/>Terapêuticas.</h2>
+        </RevealText>
+      </div>
+      
+      {/* Marquee Effect */}
+      <div className="relative w-full flex overflow-hidden mt-12 bg-surface py-8 md:py-12 border-y border-border/50">
+        <div className="flex w-max" style={{ animation: 'scroll-left 50s linear infinite' }}>
+          <div className="flex items-center gap-8 md:gap-16 px-4 md:px-8">
+            {therapeuticBenefits.map((benefit, i) => (
+              <div key={i} className="flex items-center gap-8 md:gap-16">
+                <span className="text-4xl md:text-6xl font-display text-white drop-shadow-[0_0_12px_rgba(204,255,0,0.4)] hover:drop-shadow-[0_0_20px_rgba(204,255,0,0.8)] transition-all duration-500 whitespace-nowrap cursor-default">
+                  {benefit}
+                </span>
+                <Leaf className="w-8 h-8 text-accent opacity-50" />
+              </div>
+            ))}
+          </div>
+          {/* Clone for seamless loop */}
+          <div className="flex items-center gap-8 md:gap-16 px-4 md:px-8">
+            {therapeuticBenefits.map((benefit, i) => (
+              <div key={`clone-${i}`} className="flex items-center gap-8 md:gap-16">
+                <span className="text-4xl md:text-6xl font-display text-white drop-shadow-[0_0_12px_rgba(204,255,0,0.4)] hover:drop-shadow-[0_0_20px_rgba(204,255,0,0.8)] transition-all duration-500 whitespace-nowrap cursor-default">
+                  {benefit}
+                </span>
+                <Leaf className="w-8 h-8 text-accent opacity-50" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const journeySteps = [
+  {
+    num: "01",
+    title: "Consulta Especializada",
+    desc: "Avaliação médica detalhada para entender seu histórico e definir o melhor tratamento canabinoide para o seu caso."
+  },
+  {
+    num: "02",
+    title: "Autorização Anvisa",
+    desc: "Nossa equipe cuida de toda a burocracia para emissão da receita e autorização de importação ou compra legal."
+  },
+  {
+    num: "03",
+    title: "Aquisição Segura",
+    desc: "Acesso a produtos certificados internacionalmente com nossa rede de parceiros, garantindo pureza e eficácia."
+  },
+  {
+    num: "04",
+    title: "Acompanhamento",
+    desc: "Monitoramento contínuo da dosagem e da sua evolução clínica para garantir os melhores resultados ao longo do tempo."
+  }
+];
+
+function PatientJourney() {
+  return (
+    <section className="py-24 md:py-40 px-6 md:px-12 bg-surface">
+      <div className="max-w-[1600px] mx-auto">
+        <div className="mb-20 md:mb-32">
+          <span className="text-accent text-xs uppercase tracking-widest block mb-6">
+            [ O Processo ]
+          </span>
+          <RevealText>
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-display tracking-tight">A Jornada Mecura.</h2>
+          </RevealText>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 relative">
+          {/* Connecting Line (Desktop) */}
+          <div className="hidden lg:block absolute top-12 left-0 w-full h-[1px] bg-border z-0" />
+          
+          {journeySteps.map((step, i) => (
+            <motion.div 
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-10%" }}
+              transition={{ duration: 0.8, delay: i * 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="relative z-10 flex flex-col items-start group"
+            >
+              <div className="w-24 h-24 rounded-full bg-background border border-border flex items-center justify-center mb-8 group-hover:border-accent group-hover:scale-105 transition-all duration-500 shadow-xl">
+                <span className="font-display text-2xl text-accent">{step.num}</span>
+              </div>
+              <h3 className="text-2xl font-display tracking-wide mb-4 group-hover:text-accent transition-colors">{step.title}</h3>
+              <p className="text-text-secondary leading-relaxed font-sans text-sm md:text-base">
+                {step.desc}
+              </p>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -690,7 +802,7 @@ function Team() {
                  <img 
                    src={member.img} 
                    alt={member.name} 
-                   className="w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-[0.16,1,0.3,1]" 
+                   className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700 ease-[0.16,1,0.3,1]" 
                  />
                </div>
                <h4 className="text-2xl md:text-3xl font-display mb-2 group-hover:text-accent transition-colors">
@@ -740,8 +852,10 @@ export default function App() {
       
       <main>
         <HeroAndMission />
+        <TherapeuticProperties />
         <InfoCarousel />
         <Services />
+        <PatientJourney />
         <Partners />
         <AppSection />
         <Team />
