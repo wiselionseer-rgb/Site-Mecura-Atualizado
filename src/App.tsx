@@ -903,9 +903,9 @@ const modalData: Record<ModalContentKey, { title: string; content: React.ReactNo
     title: "Sobre Nós",
     content: (
       <div className="space-y-6">
-        <p>O <strong>Instituto Mecura</strong> nasceu com o propósito de democratizar o acesso seguro, legal e humanizado ao tratamento com Cannabis Medicinal no Brasil.</p>
-        <p>Compreendemos que a jornada em busca de qualidade de vida e alívio de sintomas complexos pode ser desafiadora. Por isso, aliamos a excelência médica à agilidade regulatória, cuidando de todo o processo burocrático (como autorizações da Anvisa) para que o paciente se preocupe apenas com seu bem-estar.</p>
-        <p>Acreditamos em uma medicina integrativa, onde a ciência milenar das plantas encontra o rigor clínico contemporâneo, sempre embasada em estudos robustos e no cuidado empático.</p>
+        <p>O <strong>Instituto Mecura</strong> é uma plataforma de saúde que nasceu com o propósito de democratizar o acesso seguro, legal e humanizado ao tratamento com Cannabis Medicinal no Brasil.</p>
+        <p>Nós somos um <strong>aplicativo facilitador</strong>: conectamos pacientes a médicos especialistas através de consultas e prestamos toda a assessoria regulatória para a <strong>importação legalizada de medicamentos</strong>, com autorização direta da Anvisa, para que o paciente se preocupe apenas com seu bem-estar.</p>
+        <p>Acreditamos em uma medicina integrativa, onde a ciência milenar das plantas encontra o rigor clínico contemporâneo, operando 100% dentro das diretrizes jurídicas brasileiras.</p>
       </div>
     )
   },
@@ -951,9 +951,9 @@ const modalData: Record<ModalContentKey, { title: string; content: React.ReactNo
     title: "Dúvidas Frequentes",
     content: (
       <div className="space-y-6">
-        <p><strong>1. O tratamento é legalizado no Brasil?</strong><br/>Sim. A Anvisa regulamenta a prescrição e importação de Cannabis Medicinal (RDC 660 e RDC 327). Nossa equipe auxilia em todo o trâmite de autorização.</p>
-        <p><strong>2. Quais os efeitos colaterais?</strong><br/>Os efeitos são geralmente leves e temporários, podendo incluir sonolência, boca seca ou alterações de apetite. O acompanhamento médico visa minimizar qualquer desconforto através do ajuste fino da dose.</p>
-        <p><strong>3. Quanto tempo leva a autorização da Anvisa?</strong><br/>Atualmente, o processo pela Anvisa costuma ser aprovado em poucos dias úteis após a submissão dos documentos médicos, que nossa equipe realiza por você.</p>
+        <p><strong>1. O tratamento através do app é legalizado no Brasil?</strong><br/>Sim, 100% legalizado. Toda a nossa atuação é amparada pela <strong>Resolução (RDC) nº 660/2022 da ANVISA</strong>, que autoriza e define as regras para a importação de produtos derivados de Cannabis para uso próprio medicinal, mediante prescrição médica.</p>
+        <p><strong>2. Qual o papel do aplicativo Mecura?</strong><br/>Somos um facilitador em saúde. O aplicativo viabiliza a sua consulta médica com especialistas e, após a prescrição, nossa equipe realiza todo o trâmite jurídico e burocrático junto à Anvisa para a importação legal do seu medicamento.</p>
+        <p><strong>3. Quanto tempo leva a autorização da Anvisa?</strong><br/>Atualmente, o processo de autorização costuma ser aprovado em poucos dias úteis após a submissão dos documentos médicos, etapa que nossa equipe realiza integralmente por você.</p>
       </div>
     )
   },
@@ -971,8 +971,9 @@ const modalData: Record<ModalContentKey, { title: string; content: React.ReactNo
     title: "Termos de Uso",
     content: (
       <div className="space-y-6">
-        <p>Ao utilizar o site e os serviços do Instituto Mecura, você concorda com nossos Termos de Uso.</p>
-        <p>O conteúdo aqui disponibilizado tem caráter estritamente informativo e não substitui a consulta médica. A prescrição de derivados da Cannabis depende de avaliação clínica individual e assinatura do Termo de Consentimento Livre e Esclarecido (TCLE) pelo paciente.</p>
+        <p>Ao utilizar o aplicativo e os serviços do Instituto Mecura, você concorda com nossos Termos de Uso e reconhece nosso modelo de atuação jurídica.</p>
+        <p><strong>Natureza do Serviço:</strong> O Instituto Mecura atua como uma plataforma de tecnologia que facilita o acesso à saúde. Nosso app intermedeia consultas médicas e presta suporte administrativo para a importação legal de medicamentos derivados de Cannabis, estritamente amparados pela <strong>RDC nº 660/2022 da ANVISA</strong>.</p>
+        <p>O conteúdo aqui disponibilizado tem caráter informativo. A prescrição depende de avaliação clínica e todo medicamento é importado com autorização nominal da Anvisa, exclusivamente para uso próprio e tratamento de saúde do paciente.</p>
       </div>
     )
   },
