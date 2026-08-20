@@ -143,6 +143,15 @@ function HeroAndMission() {
     target: ref,
     offset: ["start start", "end start"]
   });
+
+  useEffect(() => {
+    const video = document.querySelector('video');
+    if (video) {
+      video.play().catch(error => {
+        console.warn("Autoplay attempt failed, browser might be blocking:", error);
+      });
+    }
+  }, []);
   
   // Parallax for the combined tall section
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
@@ -155,14 +164,13 @@ function HeroAndMission() {
          <div className="absolute inset-0 bg-black/40 z-10" />
          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background z-10" />
           <video 
-            src="hero-bg.mp4"
-            poster="22_Hyperrealistic_photography_8K_2_20260321_141901.png"
+            src="/Cannabis_oil_bottle_on_moss_202608201452.mp4"
             autoPlay 
             loop 
             muted 
             playsInline
             preload="auto"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover" 
           />
        </motion.div>
 
