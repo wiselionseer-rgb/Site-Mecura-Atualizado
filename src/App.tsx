@@ -148,6 +148,8 @@ function HeroAndMission() {
 
   useEffect(() => {
     if (videoRef.current) {
+      videoRef.current.muted = true;
+      videoRef.current.defaultMuted = true;
       videoRef.current.play().catch(error => {
         console.warn("Autoplay attempt failed, browser might be blocking:", error);
       });
@@ -177,7 +179,7 @@ function HeroAndMission() {
            preload="auto"
            className="w-full h-full object-cover relative z-0" 
          >
-           <source src="Cannabis_oil_bottle_on_moss_202608201452.mp4" type="video/mp4" />
+           <source src={`${import.meta.env.BASE_URL}Cannabis_oil_bottle_on_moss_202608201452.mp4`} type="video/mp4" />
          </video>
        </motion.div>
 
@@ -653,8 +655,8 @@ function AppSection() {
 
 const team = [
   { name: "Dr. Guilherme", role: "Diretor Médico", img: "/dr-guilherme.png" },
-  { name: "Lucas & Alessandra", role: "Fundadores", img: "/lucas-alessandra-new.png" },
-  { name: "Wilian", role: "Conselheiro Jurídico", img: "/wilian.jpg" }
+  { name: "Lucas & Alessandra", role: "Diretores de Marketing", img: "/lucas-alessandra-new.png" },
+  { name: "Wilian", role: "Diretor Agronômico", img: "/wilian.jpg" }
 ];
 
 function Team() {
