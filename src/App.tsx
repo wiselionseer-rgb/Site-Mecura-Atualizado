@@ -155,8 +155,8 @@ function HeroAndMission() {
          <div className="absolute inset-0 bg-black/40 z-10" />
          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background z-10" />
           <video 
-            src="/hero-bg.mp4"
-            poster="/22_Hyperrealistic_photography_8K_2_20260321_141901.png"
+            src="hero-bg.mp4"
+            poster="22_Hyperrealistic_photography_8K_2_20260321_141901.png"
             autoPlay 
             loop 
             muted 
