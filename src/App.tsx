@@ -147,13 +147,25 @@ function HeroAndMission() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.muted = true;
-      videoRef.current.defaultMuted = true;
-      videoRef.current.play().catch(error => {
-        console.warn("Autoplay attempt failed, browser might be blocking:", error);
-      });
-    }
+    const playVideo = () => {
+      if (videoRef.current && videoRef.current.paused) {
+        videoRef.current.play().catch(() => {});
+      }
+    };
+    
+    // Attempt play immediately
+    playVideo();
+    
+    // Add touch/click listeners to force play if blocked (e.g. iOS low power mode)
+    window.addEventListener('touchstart', playVideo, { once: true });
+    window.addEventListener('click', playVideo, { once: true });
+    window.addEventListener('scroll', playVideo, { once: true });
+
+    return () => {
+      window.removeEventListener('touchstart', playVideo);
+      window.removeEventListener('click', playVideo);
+      window.removeEventListener('scroll', playVideo);
+    };
   }, []);
   
   // Parallax for the combined tall section
