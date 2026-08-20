@@ -154,16 +154,16 @@ function HeroAndMission() {
          {/* Subtler contrast, elegant dark overlay for legibility across both sections */}
          <div className="absolute inset-0 bg-black/40 z-10" />
          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background z-10" />
-         <video 
-           autoPlay 
-           loop 
-           muted 
-           playsInline
-           preload="auto"
-           className="w-full h-full object-cover" 
-         >
-           <source src="/hero-bg.mp4" type="video/mp4" />
-         </video>
+          <video 
+            src="/hero-bg.mp4"
+            poster="/22_Hyperrealistic_photography_8K_2_20260321_141901.png"
+            autoPlay 
+            loop 
+            muted 
+            playsInline
+            preload="auto"
+            className="w-full h-full object-cover"
+          />
        </motion.div>
 
        <div className="relative z-10">
