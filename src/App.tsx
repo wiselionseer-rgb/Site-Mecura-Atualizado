@@ -253,22 +253,25 @@ function TopBar({
             >
               <span aria-hidden="true" className="mecura-news-led-orbit" />
               <span
-                className={`relative z-10 inline-flex items-center gap-1.5 px-3 sm:px-3.5 xl:px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-semibold transition-all whitespace-nowrap ${
+                className={`relative z-10 overflow-hidden inline-flex items-center gap-1.5 px-3 sm:px-3.5 xl:px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-semibold transition-all whitespace-nowrap ${
                   newsPortalOpen
                     ? "bg-accent text-accent-ink"
                     : "bg-[#08130b]/95 text-accent group-hover:bg-[#0e2214] shadow-[inset_0_1px_0_rgba(196,255,26,0.28)]"
                 }`}
               >
-                <Newspaper className="w-3.5 h-3.5 shrink-0 drop-shadow-[0_0_6px_rgba(196,255,26,0.65)]" />
-                <span className="hidden md:inline tracking-[0.01em]">
+                {!newsPortalOpen && (
+                  <span aria-hidden="true" className="mecura-news-led-sheen" />
+                )}
+                <Newspaper className="relative z-10 w-3.5 h-3.5 shrink-0 drop-shadow-[0_0_6px_rgba(196,255,26,0.65)]" />
+                <span className="relative z-10 hidden md:inline tracking-[0.01em]">
                   Notícias no Mundo Canábico
                 </span>
-                <span className="md:hidden tracking-[0.01em]">
+                <span className="relative z-10 md:hidden tracking-[0.01em]">
                   Mundo Canábico
                 </span>
                 {todayCount > 0 && (
                   <span
-                    className={`hidden 2xl:inline font-mono text-[10.5px] tabular-nums ${
+                    className={`relative z-10 hidden 2xl:inline font-mono text-[10.5px] tabular-nums ${
                       newsPortalOpen
                         ? "text-accent-ink/85"
                         : "text-text-primary/80 group-hover:text-accent"
@@ -278,7 +281,7 @@ function TopBar({
                   </span>
                 )}
                 <ChevronDown
-                  className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${
+                  className={`relative z-10 w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${
                     newsPortalOpen ? "rotate-180" : ""
                   }`}
                 />
@@ -414,57 +417,117 @@ function TopBar({
   );
 }
 
-/* --- Safe Ambient Video Backdrop (Zero Native iOS Play Button) --- */
+/* --- Safe Ambient Video Backdrop (Plays on Mobile & Desktop · Zero Native iOS Play Button) --- */
 
 function AmbientVideoLayer({
   videoSrc,
   fallbackImage,
   fallbackAlt,
+  eager = true,
   className = "",
 }: {
   videoSrc: string;
   fallbackImage?: string;
   fallbackAlt?: string;
+  eager?: boolean;
   className?: string;
 }) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [allowVideo, setAllowVideo] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [shouldLoad, setShouldLoad] = useState(eager);
+  const inViewRef = useRef(eager);
 
   useEffect(() => {
-    // On mobile/touch devices (iOS Safari Low Power Mode, WhatsApp/Instagram WebViews),
-    // skip mounting <video> entirely so a native gray Play button can NEVER appear over the hero.
-    const isTouchOrMobile =
-      window.matchMedia("(pointer: coarse)").matches ||
-      window.innerWidth < 1024 ||
-      /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-    if (!isTouchOrMobile) {
-      setAllowVideo(true);
+    const node = containerRef.current;
+    if (!node || typeof IntersectionObserver === "undefined") {
+      setShouldLoad(true);
+      inViewRef.current = true;
+      return;
     }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries[0]?.isIntersecting ?? false;
+        inViewRef.current = visible;
+        if (visible) {
+          setShouldLoad(true);
+          const el = videoRef.current;
+          if (el && el.paused) {
+            el.muted = true;
+            el.play().catch(() => {});
+          }
+        } else {
+          const el = videoRef.current;
+          if (el && !el.paused) {
+            el.pause();
+          }
+        }
+      },
+      { rootMargin: "220px 0px" }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
-    if (!allowVideo) return;
+    if (!shouldLoad || hasError) return;
     const el = videoRef.current;
     if (!el) return;
 
     el.defaultMuted = true;
     el.muted = true;
+    el.playsInline = true;
     el.setAttribute("muted", "");
     el.setAttribute("playsinline", "");
     el.setAttribute("webkit-playsinline", "");
 
-    const attempt = el.play();
-    if (attempt && typeof attempt.catch === "function") {
-      attempt.catch(() => {
-        setAllowVideo(false);
-      });
-    }
-  }, [allowVideo, videoSrc]);
+    const tryPlay = () => {
+      if (!inViewRef.current) return;
+      el.muted = true;
+      const attempt = el.play();
+      if (attempt && typeof attempt.catch === "function") {
+        attempt.catch(() => {
+          // Silently wait for user interaction (e.g., iOS Low Power Mode) while keeping <video> opacity-0
+        });
+      }
+    };
+
+    tryPlay();
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        tryPlay();
+      }
+    };
+
+    // If iOS Low Power Mode blocks initial autoplay, unlock seamlessly on first tap/scroll
+    const onFirstGesture = () => {
+      if (el.paused) {
+        tryPlay();
+      }
+    };
+
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("touchstart", onFirstGesture, { passive: true });
+    window.addEventListener("pointerdown", onFirstGesture, { passive: true });
+    window.addEventListener("scroll", onFirstGesture, { passive: true });
+
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("touchstart", onFirstGesture);
+      window.removeEventListener("pointerdown", onFirstGesture);
+      window.removeEventListener("scroll", onFirstGesture);
+    };
+  }, [shouldLoad, hasError, videoSrc]);
 
   return (
-    <div className={`relative w-full h-full overflow-hidden ${className}`}>
+    <div
+      ref={containerRef}
+      className={`relative w-full h-full overflow-hidden ${className}`}
+    >
       {fallbackImage && (
         <img
           src={fallbackImage}
@@ -474,7 +537,7 @@ function AmbientVideoLayer({
         />
       )}
 
-      {allowVideo && (
+      {shouldLoad && !hasError && (
         <video
           ref={videoRef}
           autoPlay
@@ -484,9 +547,33 @@ function AmbientVideoLayer({
           controls={false}
           disablePictureInPicture
           disableRemotePlayback
-          preload="metadata"
+          preload={eager ? "auto" : "metadata"}
+          onLoadedData={(e) => {
+            const el = e.currentTarget;
+            if (inViewRef.current && el.paused) {
+              el.muted = true;
+              el.play().catch(() => {});
+            }
+          }}
+          onCanPlay={(e) => {
+            const el = e.currentTarget;
+            if (inViewRef.current && el.paused) {
+              el.muted = true;
+              el.play().catch(() => {});
+            }
+          }}
           onPlaying={() => setIsPlaying(true)}
-          onError={() => setAllowVideo(false)}
+          onTimeUpdate={(e) => {
+            if (!isPlaying && e.currentTarget.currentTime > 0.04) {
+              setIsPlaying(true);
+            }
+          }}
+          onPause={(e) => {
+            if (e.currentTarget.currentTime < 0.05) {
+              setIsPlaying(false);
+            }
+          }}
+          onError={() => setHasError(true)}
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 pointer-events-none ${
             isPlaying ? "opacity-100" : "opacity-0"
           }`}
@@ -1138,6 +1225,7 @@ function BrandOutroClosing({
       <div className="absolute inset-0 z-0 pointer-events-none opacity-45">
         <AmbientVideoLayer
           videoSrc={`${import.meta.env.BASE_URL}Logo_outro_animation_sequence_1080p_20260923174030.mp4`}
+          eager={false}
         />
         <div
           className="absolute inset-0"
