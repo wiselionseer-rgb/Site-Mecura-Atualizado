@@ -52,6 +52,7 @@ import {
   InteractivePopupModal,
   type InteractivePopupPayload,
 } from "./components/InteractivePopupModal";
+import { GlassEntryPortal } from "./components/GlassEntryPortal";
 
 /* --- Parallax Photographic Frame (Unboxed Editorial) --- */
 
@@ -1295,9 +1296,11 @@ function BrandOutroClosing({
 function Footer({
   onOpenModal,
   onOpenNewsPortal,
+  onOpenEntryPortal,
 }: {
   onOpenModal: (key: ModalContentKey) => void;
   onOpenNewsPortal: () => void;
+  onOpenEntryPortal: () => void;
 }) {
   const allSitePoints = [
     { label: "Início", href: "#inicio" },
@@ -1422,6 +1425,13 @@ function Footer({
             >
               Portal Mundo Cannabis (Notícias)
             </button>
+            <button
+              type="button"
+              onClick={onOpenEntryPortal}
+              className="text-sm text-text-secondary hover:text-accent transition-colors text-left w-fit cursor-pointer"
+            >
+              Portal de Entrada Glass
+            </button>
           </div>
 
           <div className="flex flex-col gap-3">
@@ -1532,6 +1542,7 @@ function FloatingWhatsApp() {
 /* --- App Root --- */
 
 export default function App() {
+  const [showEntryPortal, setShowEntryPortal] = useState(true);
   const [activeModal, setActiveModal] = useState<ModalContentKey | null>(null);
   const [activePopup, setActivePopup] = useState<InteractivePopupPayload | null>(null);
   const [newsPortalOpen, setNewsPortalOpen] = useState(false);
@@ -1548,6 +1559,33 @@ export default function App() {
   const [sharedSourcesMeta, setSharedSourcesMeta] = useState<MonitoredSourceMeta[]>([]);
   const [sharedTodayCount, setSharedTodayCount] = useState<number>(0);
   const [externalArticle, setExternalArticle] = useState<NewsArticle | null>(null);
+
+  useEffect(() => {
+    if (showEntryPortal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showEntryPortal]);
+
+  const handleEnterSiteFromPortal = () => {
+    setShowEntryPortal(false);
+  };
+
+  const handleEnterNewsFromPortal = () => {
+    setShowEntryPortal(false);
+    setNewsPortalOpen(true);
+  };
+
+  const handleEnterSectionFromPortal = (sectionId: string) => {
+    setShowEntryPortal(false);
+    window.setTimeout(() => {
+      scrollToSection(sectionId, -80);
+    }, 120);
+  };
 
   const handleSelectTopicAndJump = (
     topic: NewsTopicKey,
@@ -1670,6 +1708,7 @@ export default function App() {
         <Footer
           onOpenModal={setActiveModal}
           onOpenNewsPortal={() => setNewsPortalOpen(true)}
+          onOpenEntryPortal={() => setShowEntryPortal(true)}
         />
         <FloatingWhatsApp />
         <InfoDrawer contentKey={activeModal} onClose={() => setActiveModal(null)} />
@@ -1678,6 +1717,17 @@ export default function App() {
           onClose={() => setActivePopup(null)}
         />
       </div>
+
+      <AnimatePresence>
+        {showEntryPortal && (
+          <GlassEntryPortal
+            todayNewsCount={sharedTodayCount}
+            onEnterSite={handleEnterSiteFromPortal}
+            onEnterNews={handleEnterNewsFromPortal}
+            onEnterSection={handleEnterSectionFromPortal}
+          />
+        )}
+      </AnimatePresence>
     </MotionConfig>
   );
 }

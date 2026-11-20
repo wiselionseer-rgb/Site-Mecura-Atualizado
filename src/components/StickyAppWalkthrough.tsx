@@ -11,6 +11,9 @@ import type { InteractivePopupPayload } from "./InteractivePopupModal";
 
 const AUTO_CYCLE_MS = 4800;
 const POPUP_SWAP_MS = 2350;
+const APP_WALKTHROUGH_VIDEO_SRC = `${import.meta.env.BASE_URL}${encodeURIComponent(
+  "User_scrolling_medical_service_w…_1b9323c5.mp4"
+)}`;
 
 const ChapterBlock: React.FC<{
   item: AppScreenItem;
@@ -99,15 +102,18 @@ export function StickyAppWalkthrough({
   onOpenPopup: (payload: InteractivePopupPayload) => void;
 }) {
   const sectionRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const isSectionVisible = useInView(sectionRef, { amount: 0.12 });
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [spotlightPopup, setSpotlightPopup] = useState(0);
   const [isHoveringStage, setIsHoveringStage] = useState(false);
   const [isUserPaused, setIsUserPaused] = useState(false);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [cycleTick, setCycleTick] = useState(0);
 
   const isRunning = isSectionVisible && !isHoveringStage && !isUserPaused;
+  const shouldPlayVideo = isSectionVisible && !isUserPaused;
   const current = APP_SCREENS[activeIndex];
 
   const handleSelectScreen = useCallback((idx: number) => {
@@ -116,7 +122,48 @@ export function StickyAppWalkthrough({
     setCycleTick((t) => t + 1);
   }, []);
 
-  // Automatically advance screens + synchronized pop-up spotlight
+  // Sync phone demo video playback with viewport visibility & play/pause toggle
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+
+    el.defaultMuted = true;
+    el.muted = true;
+    el.playsInline = true;
+    el.setAttribute("muted", "");
+    el.setAttribute("playsinline", "");
+    el.setAttribute("webkit-playsinline", "");
+
+    const tryPlay = () => {
+      if (!shouldPlayVideo) return;
+      el.muted = true;
+      el.play().catch(() => {});
+    };
+
+    if (shouldPlayVideo) {
+      tryPlay();
+    } else if (!el.paused) {
+      el.pause();
+    }
+
+    const onUnlock = () => {
+      if (shouldPlayVideo && el.paused) {
+        tryPlay();
+      }
+    };
+
+    window.addEventListener("touchstart", onUnlock, { passive: true });
+    window.addEventListener("pointerdown", onUnlock, { passive: true });
+    window.addEventListener("scroll", onUnlock, { passive: true });
+
+    return () => {
+      window.removeEventListener("touchstart", onUnlock);
+      window.removeEventListener("pointerdown", onUnlock);
+      window.removeEventListener("scroll", onUnlock);
+    };
+  }, [shouldPlayVideo]);
+
+  // Automatically advance chapter highlights + synchronized pop-up spotlight
   useEffect(() => {
     if (!isRunning) return;
 
@@ -181,7 +228,7 @@ export function StickyAppWalkthrough({
               onMouseLeave={() => setIsHoveringStage(false)}
               className="flex flex-col items-center relative py-4"
             >
-              {/* Main Edge-to-Edge Phone Container with Crisp Retina Display + Subtle Motion Breath */}
+              {/* Main Edge-to-Edge Phone Container Playing Official App Walkthrough Video */}
               <motion.div
                 whileHover={{ scale: 1.015 }}
                 transition={{ type: "spring", stiffness: 260, damping: 24 }}
@@ -194,35 +241,55 @@ export function StickyAppWalkthrough({
                     openCurrentZoom();
                   }
                 }}
-                aria-label={`Ampliar tela ${current.label} do aplicativo Mecura`}
-                className="relative group w-[238px] sm:w-[272px] lg:w-[292px] rounded-[2.4rem] lg:rounded-[2.6rem] p-[6px] lg:p-[7px] bg-[#141e17] border border-white/15 shadow-[0_32px_90px_rgba(0,0,0,0.82)] cursor-zoom-in"
+                aria-label={`Ampliar detalhes de ${current.label} do aplicativo Mecura`}
+                className="relative group w-[250px] sm:w-[284px] lg:w-[306px] rounded-[2.4rem] lg:rounded-[2.6rem] p-[6px] lg:p-[7px] bg-[#141e17] border border-white/15 shadow-[0_32px_90px_rgba(0,0,0,0.82)] cursor-zoom-in"
               >
-                <div className="relative rounded-[2rem] lg:rounded-[2.2rem] overflow-hidden aspect-[274/584] bg-[#070b08]">
-                  {APP_SCREENS.map((screen, idx) => {
-                    const isCurrent = idx === activeIndex;
-                    return (
-                      <motion.img
-                        key={screen.id}
-                        src={screen.image}
-                        alt={screen.alt}
-                        referrerPolicy="no-referrer"
-                        initial={false}
-                        animate={{
-                          opacity: isCurrent ? 1 : 0,
-                          scale: isCurrent ? (isRunning ? 1.018 : 1.0) : 1.03,
-                        }}
-                        transition={{
-                          opacity: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
-                          scale: {
-                            duration: isCurrent && isRunning ? 4.4 : 0.45,
-                            ease: "easeOut",
-                          },
-                        }}
-                        style={{ zIndex: isCurrent ? 2 : 1 }}
-                        className="absolute inset-0 w-full h-full object-contain bg-[#070b08] pointer-events-none select-none"
-                      />
-                    );
-                  })}
+                <div className="relative rounded-[2rem] lg:rounded-[2.2rem] overflow-hidden aspect-[9/16] bg-[#070b08]">
+                  {/* Crisp Fallback Screen While Video Buffers (Zero Black Frame / Zero iOS Play Icon) */}
+                  <img
+                    src={current.image}
+                    alt={current.alt}
+                    referrerPolicy="no-referrer"
+                    className="absolute inset-0 w-full h-full object-cover bg-[#070b08] pointer-events-none select-none"
+                  />
+
+                  {/* Official 9:16 App Walkthrough Video */}
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    controls={false}
+                    disablePictureInPicture
+                    disableRemotePlayback
+                    preload="auto"
+                    onLoadedData={(e) => {
+                      const el = e.currentTarget;
+                      if (shouldPlayVideo && el.paused) {
+                        el.muted = true;
+                        el.play().catch(() => {});
+                      }
+                    }}
+                    onCanPlay={(e) => {
+                      const el = e.currentTarget;
+                      if (shouldPlayVideo && el.paused) {
+                        el.muted = true;
+                        el.play().catch(() => {});
+                      }
+                    }}
+                    onPlaying={() => setIsVideoPlaying(true)}
+                    onTimeUpdate={(e) => {
+                      if (!isVideoPlaying && e.currentTarget.currentTime > 0.04) {
+                        setIsVideoPlaying(true);
+                      }
+                    }}
+                    className={`relative z-[2] w-full h-full object-cover transition-opacity duration-500 pointer-events-none select-none ${
+                      isVideoPlaying ? "opacity-100" : "opacity-0"
+                    }`}
+                  >
+                    <source src={APP_WALKTHROUGH_VIDEO_SRC} type="video/mp4" />
+                  </video>
 
                   {/* Hover Motion Zoom Hint */}
                   <div className="absolute inset-x-0 bottom-0 z-10 p-4 bg-gradient-to-t from-black/75 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">

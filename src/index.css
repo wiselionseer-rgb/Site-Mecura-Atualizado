@@ -360,6 +360,263 @@ video::-webkit-media-controls-start-playback-button {
     0 0 26px rgba(196, 255, 26, 0.4);
 }
 
+/* --- Botanical Liquid Glass Entry Gateway --- */
+@keyframes mecura-canopy-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1.04);
+  }
+  50% {
+    transform: translate3d(-1.4%, -1.2%, 0) scale(1.1);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.04);
+  }
+}
+
+.mecura-canopy-drift {
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  animation: mecura-canopy-drift 22s ease-in-out infinite;
+}
+
+.mecura-liquid-stage {
+  position: relative;
+  background: linear-gradient(
+    148deg,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(218, 255, 160, 0.05) 26%,
+    rgba(10, 26, 15, 0.36) 64%,
+    rgba(6, 16, 10, 0.56) 100%
+  );
+  backdrop-filter: blur(26px) saturate(168%) brightness(1.04);
+  -webkit-backdrop-filter: blur(26px) saturate(168%) brightness(1.04);
+  border: 1px solid rgba(236, 255, 214, 0.28);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.46),
+    inset 1px 0 0 rgba(232, 255, 198, 0.22),
+    inset 0 -1px 0 rgba(196, 255, 26, 0.16),
+    0 40px 96px -24px rgba(2, 10, 5, 0.82);
+}
+
+.mecura-liquid-clock {
+  background: linear-gradient(
+    160deg,
+    rgba(18, 42, 24, 0.56) 0%,
+    rgba(8, 22, 13, 0.38) 100%
+  );
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  border: 1px solid rgba(234, 255, 210, 0.24);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    0 12px 28px -12px rgba(2, 10, 5, 0.55);
+}
+
+.mecura-liquid-card {
+  position: relative;
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.13) 0%,
+    rgba(255, 255, 255, 0.045) 45%,
+    rgba(8, 22, 13, 0.38) 100%
+  );
+  backdrop-filter: blur(18px) saturate(155%);
+  -webkit-backdrop-filter: blur(18px) saturate(155%);
+  border: 1px solid rgba(236, 255, 216, 0.2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -1px 0 rgba(196, 255, 26, 0.08),
+    0 16px 38px -16px rgba(2, 10, 5, 0.56);
+  transition:
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 220ms ease,
+    box-shadow 240ms ease,
+    background-color 220ms ease;
+}
+
+.mecura-liquid-card:hover {
+  transform: translate3d(0, -2px, 0);
+  border-color: rgba(196, 255, 26, 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(242, 255, 200, 0.5),
+    0 22px 46px -14px rgba(2, 10, 5, 0.7),
+    0 0 28px -8px rgba(196, 255, 26, 0.28);
+}
+
+.mecura-liquid-card:active {
+  transform: scale(0.985);
+}
+
+.mecura-liquid-card-accent {
+  position: relative;
+  background: linear-gradient(
+    148deg,
+    rgba(196, 255, 26, 0.24) 0%,
+    rgba(196, 255, 26, 0.09) 42%,
+    rgba(10, 28, 15, 0.54) 100%
+  );
+  backdrop-filter: blur(20px) saturate(175%);
+  -webkit-backdrop-filter: blur(20px) saturate(175%);
+  border: 1px solid rgba(196, 255, 26, 0.54);
+  box-shadow:
+    inset 0 1.5px 0 rgba(238, 255, 186, 0.58),
+    0 20px 48px -14px rgba(2, 10, 5, 0.65),
+    0 0 36px -8px rgba(196, 255, 26, 0.32);
+  transition:
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 220ms ease,
+    box-shadow 240ms ease;
+}
+
+.mecura-liquid-card-accent:hover {
+  transform: translate3d(0, -2px, 0);
+  border-color: rgba(216, 255, 92, 0.8);
+  box-shadow:
+    inset 0 1.5px 0 rgba(245, 255, 210, 0.72),
+    0 24px 52px -14px rgba(2, 10, 5, 0.72),
+    0 0 46px -6px rgba(196, 255, 26, 0.45);
+}
+
+.mecura-liquid-card-accent:active {
+  transform: scale(0.985);
+}
+
+.mecura-liquid-sheet {
+  background: linear-gradient(
+    155deg,
+    rgba(22, 46, 28, 0.76) 0%,
+    rgba(8, 20, 12, 0.88) 100%
+  );
+  backdrop-filter: blur(32px) saturate(165%);
+  -webkit-backdrop-filter: blur(32px) saturate(165%);
+  border: 1px solid rgba(234, 255, 210, 0.28);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.38),
+    0 36px 90px -18px rgba(0, 0, 0, 0.85);
+}
+
+/* --- Liquid Water Ripple & Caustic Surface Physics --- */
+@keyframes mecura-water-ripple {
+  0% {
+    transform: translate(-50%, -50%) scale(0.15);
+    opacity: 0.85;
+  }
+  55% {
+    opacity: 0.42;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.85);
+    opacity: 0;
+  }
+}
+
+@keyframes mecura-water-ripple-echo {
+  0% {
+    transform: translate(-50%, -50%) scale(0.08);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.35);
+    opacity: 0;
+  }
+}
+
+@keyframes mecura-water-caustic {
+  0% {
+    transform: translate3d(-120%, -18%, 0) rotate(-14deg);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.52;
+  }
+  70% {
+    opacity: 0.36;
+  }
+  100% {
+    transform: translate3d(145%, 18%, 0) rotate(-14deg);
+    opacity: 0;
+  }
+}
+
+@keyframes mecura-mobile-buoy {
+  0%,
+  100% {
+    transform: translate3d(0, 0px, 0);
+  }
+  50% {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+.mecura-water-ripple-ring {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border-radius: 9999px;
+  pointer-events: none;
+  border: 1.5px solid rgba(226, 255, 168, 0.65);
+  background: radial-gradient(
+    circle,
+    rgba(230, 255, 180, 0.2) 0%,
+    rgba(196, 255, 26, 0.08) 48%,
+    transparent 74%
+  );
+  box-shadow:
+    inset 0 0 18px rgba(255, 255, 255, 0.25),
+    0 0 22px rgba(196, 255, 26, 0.28);
+  will-change: transform, opacity;
+  animation: mecura-water-ripple 920ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.mecura-water-ripple-echo {
+  position: absolute;
+  width: 112px;
+  height: 112px;
+  border-radius: 9999px;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  will-change: transform, opacity;
+  animation: mecura-water-ripple-echo 1150ms cubic-bezier(0.16, 1, 0.3, 1) 120ms forwards;
+}
+
+.mecura-water-caustic-wave {
+  position: absolute;
+  inset: -45% auto -45% 0;
+  width: 58%;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(220, 255, 160, 0.08) 32%,
+    rgba(240, 255, 210, 0.24) 50%,
+    rgba(196, 255, 26, 0.09) 68%,
+    transparent 100%
+  );
+  filter: blur(8px);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.group:hover .mecura-water-caustic-wave {
+  animation: mecura-water-caustic 1.75s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+.mecura-water-caustic-ambient {
+  animation: mecura-water-caustic 4.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+@media (max-width: 767px) {
+  .mecura-mobile-buoy {
+    will-change: transform;
+    animation: mecura-mobile-buoy 5.4s ease-in-out infinite;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -369,7 +626,12 @@ video::-webkit-media-controls-start-playback-button {
     animation-duration: 9s;
   }
 
-  .mecura-hero-breathe {
-    animation-duration: 24s;
+  .mecura-hero-breathe,
+  .mecura-canopy-drift {
+    animation-duration: 30s;
+  }
+
+  .mecura-mobile-buoy {
+    animation: none;
   }
 }
