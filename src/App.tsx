@@ -12,16 +12,16 @@ import {
   ArrowDown,
   ArrowRight,
   ArrowUpRight,
+  Check,
   Instagram,
   Menu,
   MessageCircle,
-  Plus,
+  Scale,
   X,
   ZoomIn,
 } from "lucide-react";
 import {
   BRAND,
-  CLINICAL_TRACKS,
   PROCESS_PILLARS,
   TEAM_MEMBERS,
   type ModalContentKey,
@@ -30,6 +30,10 @@ import { SmoothScroll } from "./components/SmoothScroll";
 import { EditorialManifesto } from "./components/EditorialManifesto";
 import { RemotionCinema } from "./components/RemotionCinema";
 import { StickyAppWalkthrough } from "./components/StickyAppWalkthrough";
+import { PlansSection } from "./components/PlansSection";
+import { PathologiesAtlasSection } from "./components/PathologiesAtlasSection";
+import { ScientificDataSection } from "./components/ScientificDataSection";
+import { FaqAndSolutionsSection } from "./components/FaqAndSolutionsSection";
 import { InfoDrawer } from "./components/InfoDrawer";
 import { NewsBlogSection } from "./components/NewsBlogSection";
 import { PartnersShowcase } from "./components/PartnersShowcase";
@@ -151,11 +155,17 @@ function TopBar({ onOpenLegal }: { onOpenLegal: (key: ModalContentKey) => void }
   }, [menuOpen]);
 
   const navLinks = [
-    { label: "O Filme", href: "#filme" },
     { label: "O App", href: "#app" },
-    { label: "A Jornada", href: "#jornada" },
-    { label: "Ciência", href: "#ciencia" },
-    { label: "Blog", href: "#blog" },
+    { label: "Planos", href: "#planos" },
+    { label: "Patologias", href: "#patologias" },
+    { label: "Dados Científicos", href: "#dados-cientificos" },
+    { label: "Profissionais", href: "#equipe" },
+    { label: "Dúvidas", href: "#duvidas" },
+  ];
+
+  const mobileExtraLinks = [
+    { label: "Associações", href: "#associacoes" },
+    { label: "Notícias (Blog)", href: "#blog" },
     { label: "Jurídico", href: "#juridico" },
   ];
 
@@ -246,16 +256,19 @@ function TopBar({ onOpenLegal }: { onOpenLegal: (key: ModalContentKey) => void }
               </button>
             </div>
 
-            <nav className="flex flex-col gap-5 my-auto">
-              {navLinks.map((item, idx) => (
+            <nav
+              data-lenis-prevent
+              className="flex flex-col gap-3.5 my-auto overflow-y-auto overscroll-contain py-4"
+            >
+              {[...navLinks, ...mobileExtraLinks].map((item, idx) => (
                 <motion.a
                   key={item.href}
                   href={item.href}
                   onClick={() => setMenuOpen(false)}
-                  initial={{ opacity: 0, y: 16 }}
+                  initial={{ opacity: 0, y: 14 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.05, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                  className="font-display text-4xl text-text-primary hover:text-accent transition-colors"
+                  transition={{ delay: idx * 0.035, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                  className="font-display text-3xl text-text-primary hover:text-accent transition-colors"
                 >
                   {item.label}
                 </motion.a>
@@ -264,11 +277,11 @@ function TopBar({ onOpenLegal }: { onOpenLegal: (key: ModalContentKey) => void }
                 type="button"
                 onClick={() => {
                   setMenuOpen(false);
-                  onOpenLegal("termos");
+                  onOpenLegal("parecer");
                 }}
-                className="text-left font-display text-3xl text-text-secondary hover:text-accent transition-colors cursor-pointer"
+                className="text-left font-display text-2xl text-accent hover:text-text-primary transition-colors cursor-pointer pt-1"
               >
-                ANVISA · RDC 660
+                Parecer Jurídico · ANVISA RDC 660
               </button>
             </nav>
 
@@ -298,63 +311,129 @@ function TopBar({ onOpenLegal }: { onOpenLegal: (key: ModalContentKey) => void }
   );
 }
 
-/* --- Act 1: Pure Cinema Full-Bleed Hero --- */
+/* --- Safe Ambient Video Backdrop (Zero Native iOS Play Button) --- */
 
-function HeroCinema() {
-  const ref = useRef<HTMLElement>(null);
+function AmbientVideoLayer({
+  videoSrc,
+  fallbackImage,
+  fallbackAlt,
+  className = "",
+}: {
+  videoSrc: string;
+  fallbackImage?: string;
+  fallbackAlt?: string;
+  className?: string;
+}) {
   const videoRef = useRef<HTMLVideoElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
-  const bgScale = useTransform(scrollYProgress, [0, 1], [1.02, 1.14]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.72], [1, 0.12]);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [allowVideo, setAllowVideo] = useState(false);
 
   useEffect(() => {
-    const play = () => {
-      if (videoRef.current && videoRef.current.paused) {
-        videoRef.current.play().catch(() => {});
-      }
-    };
-    play();
-    window.addEventListener("touchstart", play, { once: true });
-    window.addEventListener("click", play, { once: true });
-    return () => {
-      window.removeEventListener("touchstart", play);
-      window.removeEventListener("click", play);
-    };
+    // On mobile/touch devices (iOS Safari Low Power Mode, WhatsApp/Instagram WebViews),
+    // skip mounting <video> entirely so a native gray Play button can NEVER appear over the hero.
+    const isTouchOrMobile =
+      window.matchMedia("(pointer: coarse)").matches ||
+      window.innerWidth < 1024 ||
+      /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (!isTouchOrMobile) {
+      setAllowVideo(true);
+    }
   }, []);
 
+  useEffect(() => {
+    if (!allowVideo) return;
+    const el = videoRef.current;
+    if (!el) return;
+
+    el.defaultMuted = true;
+    el.muted = true;
+    el.setAttribute("muted", "");
+    el.setAttribute("playsinline", "");
+    el.setAttribute("webkit-playsinline", "");
+
+    const attempt = el.play();
+    if (attempt && typeof attempt.catch === "function") {
+      attempt.catch(() => {
+        setAllowVideo(false);
+      });
+    }
+  }, [allowVideo, videoSrc]);
+
   return (
-    <section
-      id="inicio"
-      ref={ref}
-      className="relative min-h-[100dvh] flex flex-col justify-between pt-28 pb-10 px-6 lg:px-12 overflow-hidden"
-    >
-      {/* Full-bleed Ambient Botanical Film */}
-      <motion.div
-        style={{ y: bgY, scale: bgScale }}
-        className="absolute inset-0 z-0 pointer-events-none bg-background"
-      >
+    <div className={`relative w-full h-full overflow-hidden ${className}`}>
+      {fallbackImage && (
+        <motion.img
+          src={fallbackImage}
+          alt={fallbackAlt ?? ""}
+          aria-hidden={!fallbackAlt}
+          initial={{ scale: 1.02 }}
+          animate={{ scale: 1.08 }}
+          transition={{
+            duration: 16,
+            repeat: Infinity,
+            repeatType: "reverse",
+            ease: "easeInOut",
+          }}
+          className="absolute inset-0 w-full h-full object-cover object-center"
+        />
+      )}
+
+      {allowVideo && (
         <video
           ref={videoRef}
           autoPlay
           loop
           muted
           playsInline
-          preload="auto"
-          poster="/MECURA_app_editorial_cover_design_2K_20260927234936.jpg"
-          className="w-full h-full object-cover"
+          controls={false}
+          disablePictureInPicture
+          disableRemotePlayback
+          preload="metadata"
+          onPlaying={() => setIsPlaying(true)}
+          onError={() => setAllowVideo(false)}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 pointer-events-none ${
+            isPlaying ? "opacity-100" : "opacity-0"
+          }`}
         >
-          <source
-            src={`${import.meta.env.BASE_URL}Cannabis_oil_bottle_on_moss_202608201452.mp4`}
-            type="video/mp4"
-          />
+          <source src={videoSrc} type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-r from-background/88 via-background/52 to-background/25" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/55" />
+      )}
+    </div>
+  );
+}
+
+/* --- Act 1: Pure Cinema Full-Bleed Hero --- */
+
+function HeroCinema() {
+  const ref = useRef<HTMLElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
+  const bgScale = useTransform(scrollYProgress, [0, 1], [1.02, 1.12]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.72], [1, 0.14]);
+
+  return (
+    <section
+      id="inicio"
+      ref={ref}
+      className="relative min-h-[100dvh] flex flex-col justify-between pt-24 sm:pt-28 pb-10 px-6 lg:px-12 overflow-hidden"
+    >
+      {/* Full-bleed Ambient Botanical Film — Zero Mobile Play Button & Clean Still Fallback */}
+      <motion.div
+        style={{ y: bgY, scale: bgScale }}
+        className="absolute inset-0 z-0 pointer-events-none bg-background"
+      >
+        <AmbientVideoLayer
+          videoSrc={`${import.meta.env.BASE_URL}Cannabis_oil_bottle_on_moss_202608201452.mp4`}
+          fallbackImage="/hero-oil-still.jpg"
+          fallbackAlt=""
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/60 to-background/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-background/55" />
       </motion.div>
 
       {/* Center / Lower-left Editorial Composition */}
@@ -548,11 +627,9 @@ function PhotographicSpreadsAndScience({
 }: {
   onOpenPopup: (payload: InteractivePopupPayload) => void;
 }) {
-  const [openTrack, setOpenTrack] = useState<string>(CLINICAL_TRACKS[0].id);
-
   return (
     <section className="py-24 lg:py-36 px-6 lg:px-12 bg-background">
-      <div className="max-w-[1280px] mx-auto space-y-32 lg:space-y-44">
+      <div className="max-w-[1280px] mx-auto space-y-28 lg:space-y-40">
         {/* Spread 1: Broken-Grid Specialists & Lifestyle Photography (Full Native Ratios — Zero Cut) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           <div className="lg:col-span-7">
@@ -632,89 +709,8 @@ function PhotographicSpreadsAndScience({
           </div>
         </div>
 
-        {/* Spread 2: Editorial Science & Therapeutic Index (Zero Fake Graphs) */}
-        <div id="ciencia" className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-          <div className="lg:col-span-5 lg:sticky lg:top-28">
-            <p className="text-xs uppercase tracking-[0.2em] text-accent mb-5">
-              Ciência &amp; Indicações
-            </p>
-            <h2 className="font-display text-4xl sm:text-5xl font-medium leading-[1.06] tracking-tight mb-6">
-              Sistema Endocanabinoide e cuidado{" "}
-              <span className="italic text-accent">individualizado</span>.
-            </h2>
-            <p className="text-base text-text-secondary leading-relaxed mb-8">
-              Não existe protocolo padrão. Cada paciente passa por avaliação clínica detalhada para definir a relação CBD/THC, a via de administração e a titulação segura para sua rotina.
-            </p>
-            <a
-              href={BRAND.appUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-accent hover:text-text-primary transition-colors"
-            >
-              <span>Iniciar avaliação clínica</span>
-              <ArrowUpRight className="w-4 h-4" />
-            </a>
-          </div>
-
-          <div className="lg:col-span-7 border-t border-border">
-            {CLINICAL_TRACKS.map((track, idx) => {
-              const isOpen = openTrack === track.id;
-              return (
-                <div key={track.id} className="border-b border-border">
-                  <button
-                    type="button"
-                    onClick={() => setOpenTrack(isOpen ? "" : track.id)}
-                    aria-expanded={isOpen}
-                    className="w-full py-7 flex items-center justify-between gap-6 text-left group cursor-pointer"
-                  >
-                    <div className="flex items-baseline gap-5">
-                      <span className="font-mono text-xs text-text-muted tabular-nums">
-                        0{idx + 1}
-                      </span>
-                      <span className="font-display text-2xl sm:text-3xl font-medium text-text-primary group-hover:text-accent transition-colors">
-                        {track.category}
-                      </span>
-                    </div>
-                    <Plus
-                      className={`w-5 h-5 text-accent shrink-0 transition-transform duration-300 ${
-                        isOpen ? "rotate-45" : ""
-                      }`}
-                    />
-                  </button>
-
-                  <AnimatePresence initial={false}>
-                    {isOpen && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                        className="overflow-hidden"
-                      >
-                        <div className="pb-8 pl-0 sm:pl-9 space-y-5">
-                          <p className="text-base text-text-secondary leading-relaxed">
-                            {track.summary}
-                          </p>
-                          <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-text-primary">
-                            {track.conditions.map((cond) => (
-                              <span key={cond} className="inline-flex items-center gap-2">
-                                <span className="text-accent">·</span>
-                                {cond}
-                              </span>
-                            ))}
-                          </div>
-                          <p className="font-mono text-xs text-text-muted pt-2">
-                            Vias de atuação: {track.receptors} — {track.mechanism}
-                          </p>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        {/* Spread 2: Rich Searchable Diseases & Pathologies Clinical Atlas */}
+        <PathologiesAtlasSection />
 
         {/* Spread 3: International Partners (Equal Size, Color-Balanced, Motion Pop-ups) */}
         <PartnersShowcase onOpenPopup={onOpenPopup} />
@@ -723,50 +719,64 @@ function PhotographicSpreadsAndScience({
   );
 }
 
-/* --- Staggered Editorial Team Section --- */
+/* --- Official Registered Professionals & Leadership Section --- */
 
 function TeamEditorial({
   onOpenPopup,
+  onOpenLegal,
 }: {
   onOpenPopup: (payload: InteractivePopupPayload) => void;
+  onOpenLegal: (key: ModalContentKey) => void;
 }) {
-  const offsets = ["md:mt-0", "md:mt-16", "md:mt-8"];
+  const registeredProfessionals = TEAM_MEMBERS.filter(
+    (m) => m.category === "tecnico"
+  );
+  const leadership = TEAM_MEMBERS.find((m) => m.category === "gestao");
 
   return (
     <section
       id="equipe"
-      className="py-24 lg:py-36 px-6 lg:px-12 bg-surface border-t border-border"
+      className="py-24 lg:py-36 px-6 lg:px-12 bg-surface border-t border-border scroll-mt-20"
     >
-      <div className="max-w-[1280px] mx-auto">
-        <div className="max-w-2xl mb-16 lg:mb-24">
-          <p className="text-xs uppercase tracking-[0.2em] text-accent mb-5">
-            Quem conduz o Mecura
-          </p>
-          <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-medium leading-[1.06]">
-            Especialistas com propósito e{" "}
-            <span className="italic text-accent">rigor clínico</span>.
-          </h2>
+      <div className="max-w-[1320px] mx-auto space-y-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+          <div className="lg:col-span-7">
+            <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent mb-4">
+              Profissionais Habilitados no Sistema
+            </p>
+            <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-medium leading-[1.06] text-text-primary">
+              Corpo técnico com registro ativo e{" "}
+              <span className="italic text-accent">fé pública</span>.
+            </h2>
+          </div>
+          <div className="lg:col-span-5">
+            <p className="text-sm sm:text-base text-text-secondary leading-relaxed">
+              Todas as receitas digitais ICP-Brasil, laudos médicos, TCLE, pareceres psicológicos e pareceres agronômicos emitidos no aplicativo Mecura são assinados pelos profissionais abaixo:
+            </p>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12 items-start">
-          {TEAM_MEMBERS.map((member, idx) => (
+        {/* 3 Official Registered Specialists (Médico CRM + Psicólogo CRP + Agrônomo CREA) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10 items-stretch">
+          {registeredProfessionals.map((member, idx) => (
             <motion.article
               key={member.name}
-              initial={{ opacity: 0, y: 24 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-8%" }}
               transition={{
-                duration: 0.7,
+                duration: 0.65,
                 delay: idx * 0.08,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className={`flex flex-col ${offsets[idx]}`}
+              className="flex flex-col h-full rounded-2xl bg-background border border-border overflow-hidden hover:border-border-strong transition-colors"
             >
               <ParallaxPhoto
                 src={member.image}
-                alt={`${member.name} — ${member.role}`}
-                className="aspect-[3/4] w-full mb-6"
+                alt={`${member.name} — ${member.role} (${member.credential})`}
+                className="aspect-[4/5] w-full shrink-0"
                 imgPosition="object-top"
+                fitMode="poster"
                 onInspect={() =>
                   onOpenPopup({
                     kind: "media",
@@ -775,22 +785,142 @@ function TeamEditorial({
                     description: member.bio,
                     image: member.image,
                     imageAlt: `${member.name} — ${member.role}`,
+                    points: member.emits,
                   })
                 }
               />
-              <div className="border-t border-border pt-5">
-                <p className="text-xs uppercase tracking-[0.16em] text-accent mb-2">
-                  {member.role}
-                </p>
-                <h3 className="font-display text-2xl sm:text-3xl font-medium text-text-primary mb-2">
-                  {member.name}
-                </h3>
+
+              <div className="p-6 flex flex-col flex-1 space-y-4">
+                <div className="space-y-1.5 pb-4 border-b border-border/80">
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                    <span className="text-accent uppercase tracking-[0.14em]">
+                      {member.role}
+                    </span>
+                    <span className="text-text-primary font-semibold tabular-nums">
+                      {member.credential}
+                    </span>
+                  </div>
+
+                  <h3 className="font-display text-2xl font-medium text-text-primary leading-snug pt-1">
+                    {member.name}
+                  </h3>
+
+                  {member.location && (
+                    <p className="text-xs text-text-muted">
+                      {member.location}
+                    </p>
+                  )}
+                </div>
+
                 <p className="text-sm text-text-secondary leading-relaxed">
                   {member.bio}
                 </p>
+
+                {member.emits && (
+                  <div className="pt-4 mt-auto border-t border-border/80 space-y-2">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-text-muted">
+                      Documentos &amp; Atuação no App
+                    </p>
+                    <ul className="space-y-1.5">
+                      {member.emits.map((doc) => (
+                        <li
+                          key={doc}
+                          className="flex items-start gap-2 text-xs text-text-primary/90"
+                        >
+                          <Check className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" />
+                          <span>{doc}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </motion.article>
           ))}
+        </div>
+
+        {/* Complementary Leadership & Legal Counsel Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch pt-4 border-t border-border">
+          {leadership && (
+            <div className="lg:col-span-7 rounded-2xl bg-background border border-border p-5 sm:p-6 flex flex-col sm:flex-row gap-6 items-center">
+              <div
+                onClick={() =>
+                  onOpenPopup({
+                    kind: "media",
+                    tag: `${leadership.role} · ${leadership.credential}`,
+                    title: leadership.name,
+                    description: leadership.bio,
+                    image: leadership.image,
+                    imageAlt: leadership.name,
+                    points: leadership.emits,
+                  })
+                }
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onOpenPopup({
+                      kind: "media",
+                      tag: `${leadership.role} · ${leadership.credential}`,
+                      title: leadership.name,
+                      description: leadership.bio,
+                      image: leadership.image,
+                      imageAlt: leadership.name,
+                      points: leadership.emits,
+                    });
+                  }
+                }}
+                className="w-full sm:w-40 aspect-[4/5] rounded-xl overflow-hidden bg-surface shrink-0 cursor-zoom-in"
+              >
+                <img
+                  src={leadership.image}
+                  alt={leadership.name}
+                  loading="lazy"
+                  className="w-full h-full object-cover object-top"
+                />
+              </div>
+
+              <div className="space-y-2.5">
+                <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent">
+                  {leadership.role}
+                </p>
+                <h3 className="font-display text-2xl font-medium text-text-primary">
+                  {leadership.name}
+                </h3>
+                <p className="text-sm text-text-secondary leading-relaxed">
+                  {leadership.bio}
+                </p>
+              </div>
+            </div>
+          )}
+
+          <div className="lg:col-span-5 rounded-2xl bg-background border border-border p-6 flex flex-col justify-between space-y-5">
+            <div className="space-y-2.5">
+              <div className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-accent">
+                <Scale className="w-4 h-4" />
+                <span>Consultoria Jurídica Especializada</span>
+              </div>
+              <h3 className="font-display text-2xl font-medium text-text-primary leading-snug">
+                Dr. Max Warner Santos Souza
+              </h3>
+              <p className="font-mono text-xs text-text-primary tabular-nums">
+                OAB/MG 154.052 · Direito Canábico &amp; Salvo-Conduto
+              </p>
+              <p className="text-sm text-text-secondary leading-relaxed">
+                Responsável pelo parecer técnico-jurídico que fundamenta a legalidade da plataforma, importação via ANVISA RDC nº 660/2022, LGPD e diretrizes de Habeas Corpus.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => onOpenLegal("parecer")}
+              className="inline-flex items-center gap-2 text-xs font-semibold text-accent hover:text-text-primary transition-colors w-fit cursor-pointer"
+            >
+              <span>Ler Parecer Técnico-Jurídico completo</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -909,21 +1039,11 @@ function BrandOutroClosing({
 }) {
   return (
     <section className="relative min-h-[78dvh] py-32 lg:py-44 px-6 lg:px-12 bg-background overflow-hidden border-t border-border flex items-center">
-      {/* Official Brand Outro Video cleanly visible in background */}
+      {/* Official Brand Outro Video cleanly visible in background (Zero Mobile Play Button) */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-45">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          className="w-full h-full object-cover"
-        >
-          <source
-            src={`${import.meta.env.BASE_URL}Logo_outro_animation_sequence_1080p_20260923174030.mp4`}
-            type="video/mp4"
-          />
-        </video>
+        <AmbientVideoLayer
+          videoSrc={`${import.meta.env.BASE_URL}Logo_outro_animation_sequence_1080p_20260923174030.mp4`}
+        />
         <div
           className="absolute inset-0"
           style={{
@@ -1026,32 +1146,41 @@ function Footer({
             >
               Sobre Nós
             </button>
-            <button
-              type="button"
-              onClick={() => onOpenModal("equipe")}
-              className="text-sm text-text-secondary hover:text-text-primary transition-colors text-left w-fit cursor-pointer"
+            <a
+              href="#planos"
+              className="text-sm text-text-secondary hover:text-text-primary transition-colors text-left w-fit"
             >
-              Corpo Médico-Científico
-            </button>
-            <button
-              type="button"
-              onClick={() => onOpenModal("ciencia")}
-              className="text-sm text-text-secondary hover:text-text-primary transition-colors text-left w-fit cursor-pointer"
+              Planos &amp; Modalidades
+            </a>
+            <a
+              href="#patologias"
+              className="text-sm text-text-secondary hover:text-text-primary transition-colors text-left w-fit"
             >
-              Nossa Ciência
-            </button>
-            <button
-              type="button"
-              onClick={() => onOpenModal("tratamentos")}
-              className="text-sm text-text-secondary hover:text-text-primary transition-colors text-left w-fit cursor-pointer"
+              Doenças &amp; Patologias
+            </a>
+            <a
+              href="#dados-cientificos"
+              className="text-sm text-text-secondary hover:text-text-primary transition-colors text-left w-fit"
             >
-              Tratamentos
-            </button>
+              Dados Científicos
+            </a>
+            <a
+              href="#equipe"
+              className="text-sm text-text-secondary hover:text-text-primary transition-colors text-left w-fit"
+            >
+              Profissionais (CRM · CRP · CREA)
+            </a>
             <a
               href="#associacoes"
               className="text-sm text-text-secondary hover:text-text-primary transition-colors text-left w-fit"
             >
               Associações Parceiras
+            </a>
+            <a
+              href="#duvidas"
+              className="text-sm text-text-secondary hover:text-text-primary transition-colors text-left w-fit"
+            >
+              Dúvidas &amp; Soluções do App
             </a>
             <a
               href="#blog"
@@ -1186,9 +1315,15 @@ export default function App() {
           <RemotionCinema />
           <StickyAppWalkthrough onOpenPopup={setActivePopup} />
           <ConnectedJourneyLime onOpenPopup={setActivePopup} />
+          <PlansSection />
           <PhotographicSpreadsAndScience onOpenPopup={setActivePopup} />
+          <ScientificDataSection />
           <AssociationsSection onOpenPopup={setActivePopup} />
-          <TeamEditorial onOpenPopup={setActivePopup} />
+          <TeamEditorial
+            onOpenPopup={setActivePopup}
+            onOpenLegal={setActiveModal}
+          />
+          <FaqAndSolutionsSection onOpenLegal={setActiveModal} />
           <NewsBlogSection />
           <LegalTransparencyBand onOpenLegal={setActiveModal} />
           <BrandOutroClosing onOpenLegal={setActiveModal} />

@@ -120,11 +120,43 @@ function InstitutionalContent({
     return (
       <div className="space-y-5">
         <p>
-          Nosso corpo clínico e multidisciplinar reúne médicos prescritores, especialistas em agronomia medicinal (padrão GACP), consultoria jurídica especializada e acolhedores de pacientes.
+          O sistema oficial do Instituto Mecura é conduzido por três profissionais legalmente registrados em seus respectivos conselhos de classe para emissão de receitas, laudos, TCLE e pareceres técnicos:
         </p>
-        <p>
-          Cada atendimento parte de uma triagem estruturada — com escalas como ASRS-18 (OMS) e AQ-10 (Cambridge) — para que o médico defina com precisão o quimiotipo (CBD/THC), a via de administração e a titulação gradual ideal para cada caso.
-        </p>
+        <ul className="space-y-3 text-sm text-text-secondary">
+          <li className="p-4 rounded-xl bg-background border border-border">
+            <strong className="text-text-primary block">
+              Dr. Guilherme Taveira Dias — Médico Prescritor
+            </strong>
+            <span className="font-mono text-xs text-accent block mt-0.5">
+              CRM/MT 17259 · Clínico Geral • Primavera do Leste – MT
+            </span>
+            <span className="block mt-1.5">
+              Emissão de Receita Digital ICP-Brasil, Laudo Pericial Médico p/ HC, TCLE, Laudo Psicomotor e Relatório Evolutivo (90 dias).
+            </span>
+          </li>
+          <li className="p-4 rounded-xl bg-background border border-border">
+            <strong className="text-text-primary block">
+              Marco Antônio Boastik — Psicólogo Clínico
+            </strong>
+            <span className="font-mono text-xs text-accent block mt-0.5">
+              CRP 08/49215 · Saúde Mental &amp; Avaliação Clínica
+            </span>
+            <span className="block mt-1.5">
+              Anamnese psicológica, acompanhamento emocional e emissão de Laudo/Parecer Psicológico Oficial para tratamento e instrução de Habeas Corpus.
+            </span>
+          </li>
+          <li className="p-4 rounded-xl bg-background border border-border">
+            <strong className="text-text-primary block">
+              Wilian Dalenogare Pereira — Engenheiro Agrônomo
+            </strong>
+            <span className="font-mono text-xs text-accent block mt-0.5">
+              CREA-BA Nº 052193520-2 · Luís Eduardo Magalhães – BA
+            </span>
+            <span className="block mt-1.5">
+              Parecer Técnico Agronômico, dimensionamento GACP de fitomassa e cálculo de plantas e ciclos anuais para instrução de Salvo-Conduto.
+            </span>
+          </li>
+        </ul>
       </div>
     );
   }

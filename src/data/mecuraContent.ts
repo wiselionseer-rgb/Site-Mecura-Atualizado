@@ -419,27 +419,76 @@ export const PARTNER_ASSOCIATIONS: PartnerAssociation[] = [
   },
 ];
 
-export const TEAM_MEMBERS = [
+export interface TeamMember {
+  name: string;
+  role: string;
+  credential: string;
+  location?: string;
+  emits?: string[];
+  bio: string;
+  image: string;
+  category: "tecnico" | "gestao";
+}
+
+export const TEAM_MEMBERS: TeamMember[] = [
   {
-    name: "Dr. Guilherme",
-    role: "Diretor Médico",
-    credential: "Médico Prescritor · Medicina Canabinoide",
-    bio: "Conduz avaliações clínicas individualizadas, protocolos personalizados e a diretoria técnica do corpo clínico integrado Mecura.",
+    name: "Dr. Guilherme Taveira Dias",
+    role: "Médico Prescritor",
+    credential: "CRM/MT 17259",
+    location: "Clínico Geral • Primavera do Leste – MT",
+    emits: [
+      "Receita Digital ICP-Brasil",
+      "Laudo Pericial Médico p/ HC",
+      "TCLE & Laudo Psicomotor",
+      "Relatório Evolutivo (90 dias)",
+    ],
+    bio: "Médico regulador e prescritor especializado em Medicina Canabinoide. Conduz avaliações clínicas individualizadas, titulação segura de fitocanabinoides e a diretoria técnica do corpo clínico integrado Mecura.",
     image: "/dr-guilherme.png",
+    category: "tecnico",
+  },
+  {
+    name: "Marco Antônio Boastik",
+    role: "Psicólogo Clínico",
+    credential: "CRP 08/49215",
+    location: "Avaliação Clínica & Saúde Mental",
+    emits: [
+      "Avaliação de Saúde Mental",
+      "Laudo & Parecer Psicológico Oficial",
+      "Acompanhamento Emocional",
+      "Relatório Evolutivo p/ Habeas Corpus",
+    ],
+    bio: "Psicólogo clínico responsável pela escuta qualificada em ansiedade, estresse crônico, humor e trauma, emitindo pareceres e laudos psicológicos oficiais integrados ao tratamento e ao dossiê de Salvo-Conduto.",
+    image: "/assets/aistudio/image_ca75a6e7.png",
+    category: "tecnico",
+  },
+  {
+    name: "Wilian Dalenogare Pereira",
+    role: "Engenheiro Agrônomo",
+    credential: "CREA-BA Nº 052193520-2",
+    location: "Luís Eduardo Magalhães – BA",
+    emits: [
+      "Parecer Técnico Agronômico",
+      "Dimensionamento GACP de Fitomassa",
+      "Cálculo de Plantas & Ciclos Anuais",
+      "Suporte Técnico p/ Ações de HC",
+    ],
+    bio: "Engenheiro Agrônomo especialista em genéticas medicinais, padrão GACP e conversão da prescrição médica em fitomassa e ciclos produtivos para rastreabilidade botânica e instrução documental de Habeas Corpus.",
+    image: "/wilian.jpg",
+    category: "tecnico",
   },
   {
     name: "Lucas & Alessandra",
-    role: "Direção Estratégica & Comunicação",
+    role: "Direção Estratégica & Acolhimento",
     credential: "Experiência do Paciente & Expansão",
-    bio: "Lideram a educação em saúde, o acolhimento digital e o crescimento da comunidade Mecura em todo o Brasil.",
+    location: "Instituto Mecura · Brasil",
+    emits: [
+      "Central de Apoio Humanizado",
+      "Educação em Medicina Canabinoide",
+      "Assessoria Documental ANVISA",
+    ],
+    bio: "Lideram a educação em saúde, a jornada humanizada do paciente no aplicativo Mecura e a expansão da rede de parceiros internacionais e associações terapêuticas em todo o Brasil.",
     image: "/lucas-alessandra-new.png",
-  },
-  {
-    name: "Wilian",
-    role: "Diretor Agronômico",
-    credential: "Padrão GACP · Rastreabilidade Botânica",
-    bio: "Especialista em genéticas medicinais, fitomassa e controle de qualidade botânica da semente até o extrato final.",
-    image: "/wilian.jpg",
+    category: "gestao",
   },
 ];
 

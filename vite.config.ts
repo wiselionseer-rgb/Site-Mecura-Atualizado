@@ -12,6 +12,9 @@ export default defineConfig(({mode}) => {
       tailwindcss(),
       VitePWA({
         registerType: 'autoUpdate',
+        workbox: {
+          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        },
         includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'masked-icon.svg'],
         manifest: {
           name: 'Instituto Mecura',
