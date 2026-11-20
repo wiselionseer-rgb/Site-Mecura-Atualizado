@@ -318,12 +318,12 @@ export const LEGAL_ARTICLES: Record<LegalTabKey, LegalArticle[]> = {
       lead: "A emissão de receita e laudo médico depende exclusivamente da avaliação clínica soberana do profissional prescritor.",
       paragraphs: [
         "A contratação ou acesso à triagem e teleconsulta não garante a emissão automática de prescrição de produtos à base de Cannabis. O médico especialista possui plena autonomia técnica para indicar, ajustar dosagens ou contraindicar o tratamento caso identifique risco clínico ou inadequação terapêutica.",
-        "Quando clinicamente indicada após a avaliação, a documentação digital (receita e laudo) é emitida e disponibilizada na Área do Paciente em média entre 3 e 5 minutos.",
+        "Quando clinicamente indicada após a avaliação, a documentação digital (receita e laudo) é emitida e disponibilizada na Área do Paciente em média entre 5 e 45 minutos.",
       ],
       keywords: [
         "autonomia médica",
         "prescrição",
-        "3 a 5 minutos",
+        "5 a 45 minutos",
         "laudo",
         "ética médica",
         "contraindicação",

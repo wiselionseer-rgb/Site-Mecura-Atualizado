@@ -269,7 +269,7 @@ export const MECURA_PLANS: MecuraPlan[] = [
       },
       {
         title: "Atendimento imediato via chat na Fila ao Vivo",
-        detail: "Avaliação sem agendamento com liberação dos documentos em 3 a 5 minutos no app.",
+        detail: "Avaliação sem agendamento com liberação dos documentos em 5 a 45 minutos no app.",
       },
       {
         title: "Protocolo inicial de dosagem & escalas validadas",
@@ -844,7 +844,7 @@ export const APP_SOLUTIONS: AppSolutionItem[] = [
   },
   {
     number: "03",
-    title: "Documentos ICP-Brasil em 3 a 5 min",
+    title: "Documentos ICP-Brasil em 5 a 45 min",
     subtitle: "Validade jurídica nacional",
     description:
       "Receita digital com QR Code, Laudo Médico (CRM/MT 17259), Laudo Psicomotor, TCLE e Laudo Psicológico (CRP 08/49215) liberados direto na Área do Paciente.",
@@ -912,7 +912,7 @@ export const FAQ_ITEMS: FaqItem[] = [
     category: "Consulta & Planos",
     question: "Em quanto tempo recebo minha receita digital e laudo médico após a avaliação?",
     answer:
-      "Quando o tratamento é clinicamente indicado após a avaliação do Dr. Guilherme Taveira Dias (CRM/MT 17259), sua receita digital com assinatura qualificada ICP-Brasil e o laudo ficam disponíveis em 3 a 5 minutos diretamente na Área do Paciente do aplicativo, prontos para download em PDF com QR Code.",
+      "Quando o tratamento é clinicamente indicado após a avaliação do Dr. Guilherme Taveira Dias (CRM/MT 17259), sua receita digital com assinatura qualificada ICP-Brasil e o laudo ficam disponíveis em 5 a 45 minutos diretamente na Área do Paciente do aplicativo, prontos para download em PDF com QR Code.",
   },
   {
     id: "diferenca-planos",

@@ -104,7 +104,7 @@ export function FaqAndSolutionsSection({
             </div>
 
             <p className="text-sm text-text-secondary leading-relaxed">
-              Consulte as perguntas mais frequentes sobre planos, emissão da receita em 3 a 5 minutos, autorização ANVISA, papel do psicólogo e dossiê de Habeas Corpus.
+              Consulte as perguntas mais frequentes sobre planos, emissão da receita em 5 a 45 minutos, autorização ANVISA, papel do psicólogo e dossiê de Habeas Corpus.
             </p>
 
             {/* Search Input */}

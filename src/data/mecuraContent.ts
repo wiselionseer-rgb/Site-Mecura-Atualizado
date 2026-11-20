@@ -9,8 +9,8 @@ export const BRAND = {
   whatsappUrl: "https://wa.me/5566996280883",
   whatsappDisplay: "(66) 99628-0883",
   email: "contato@mecura.com.br",
-  ctaFull: "Consulte agora mesmo sua receita e laudo médico em 3 a 5 minutos",
-  ctaCompact: "Consulta em 3–5 min",
+  ctaFull: "Consulte agora mesmo sua receita e laudo médico em 5 a 45 minutos",
+  ctaCompact: "Consulta em 5–45 min",
 } as const;
 
 export interface ScreenPopupHotspot {
@@ -94,7 +94,7 @@ export const APP_SCREENS: AppScreenItem[] = [
     highlights: [
       "Prescritores capacitados no Sistema Endocanabinoide",
       "Atendimento 100% digital sob diretrizes do CFM",
-      "Receita e laudo médico emitidos em 3 a 5 minutos após avaliação",
+      "Receita e laudo médico emitidos em 5 a 45 minutos após avaliação",
     ],
     image: "/screen-clinico.jpg",
     alt: "Tela do aplicativo Mecura exibindo o Corpo Clínico Integrado com Dr. Guilherme e os 4 passos simples",
@@ -116,10 +116,10 @@ export const APP_SCREENS: AppScreenItem[] = [
       },
       {
         id: "popup-receita-rapida",
-        label: "3 a 5 minutos",
+        label: "5 a 45 minutos",
         sublabel: "Receita e laudo digital",
         position: "bottom-left",
-        modalTitle: "Receita e Laudo Médico em 3 a 5 Minutos",
+        modalTitle: "Receita e Laudo Médico em 5 a 45 Minutos",
         modalTag: "Emissão Digital Segura",
         modalDescription:
           "Assim que o médico conclui a sua avaliação, toda a documentação clínica é gerada e liberada diretamente na Área do Paciente para download imediato e início do processo de importação.",
@@ -501,7 +501,7 @@ export const PROCESS_PILLARS = [
   },
   {
     number: "02",
-    title: "Receita e laudo em 3 a 5 min",
+    title: "Receita e laudo em 5 a 45 min",
     description:
       "Após a avaliação médica, sua prescrição digital e laudo clínico ficam disponíveis diretamente na Área do Paciente.",
   },

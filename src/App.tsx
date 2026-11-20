@@ -466,19 +466,11 @@ function AmbientVideoLayer({
   return (
     <div className={`relative w-full h-full overflow-hidden ${className}`}>
       {fallbackImage && (
-        <motion.img
+        <img
           src={fallbackImage}
           alt={fallbackAlt ?? ""}
           aria-hidden={!fallbackAlt}
-          initial={{ scale: 1.02 }}
-          animate={{ scale: 1.08 }}
-          transition={{
-            duration: 16,
-            repeat: Infinity,
-            repeatType: "reverse",
-            ease: "easeInOut",
-          }}
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          className="absolute inset-0 w-full h-full object-cover object-center mecura-hero-breathe"
         />
       )}
 
@@ -599,11 +591,11 @@ function HeroCinema() {
       </motion.div>
 
       {/* Quiet Editorial Footer Bar inside Hero */}
-      <div className="relative z-10 max-w-[1380px] w-full mx-auto pt-6 border-t border-white/12 flex items-center justify-between gap-4 text-xs text-text-secondary">
+      <div className="relative z-10 max-w-[1380px] w-full mx-auto pt-6 pr-16 sm:pr-0 border-t border-white/12 flex items-center justify-between gap-4 text-xs text-text-secondary">
         <span>100% legalizado pela ANVISA · Diretrizes LGPD &amp; CFM</span>
         <a
           href="#filme"
-          className="inline-flex items-center gap-2 text-text-primary hover:text-accent transition-colors whitespace-nowrap"
+          className="inline-flex items-center gap-2 text-text-primary hover:text-accent transition-colors whitespace-nowrap shrink-0"
         >
           <span>Explorar</span>
           <ArrowDown className="w-3.5 h-3.5" />
@@ -666,7 +658,7 @@ function ConnectedJourneyLime({
                   imageAlt: pillar.title,
                   points: [
                     "Atendimento 100% digital e humanizado pelo aplicativo Mecura.",
-                    "Receita e laudo médico emitidos em 3 a 5 minutos após avaliação.",
+                    "Receita e laudo médico emitidos em 5 a 45 minutos após avaliação.",
                     "Importação amparada pela Resolução ANVISA RDC nº 660/2022.",
                   ],
                 })
@@ -1167,7 +1159,7 @@ function BrandOutroClosing({
         </h2>
 
         <p className="text-base sm:text-lg text-text-primary/85 max-w-2xl leading-relaxed mb-11 drop-shadow-[0_2px_12px_rgba(0,0,0,0.55)]">
-          Somos um aplicativo facilitador em saúde que conecta você a médicos especialistas para emissão de receita e laudo em 3 a 5 minutos, com suporte completo para importação legalizada junto à ANVISA.
+          Somos um aplicativo facilitador em saúde que conecta você a médicos especialistas para emissão de receita e laudo em 5 a 45 minutos, com suporte completo para importação legalizada junto à ANVISA.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">

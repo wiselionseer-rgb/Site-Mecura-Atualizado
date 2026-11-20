@@ -220,7 +220,7 @@ function InstitutionalContent({
           2. Quanto tempo leva para receber minha receita e laudo?
         </h4>
         <p>
-          Após a realização da consulta clínica pelo aplicativo Mecura, sua receita digital assinada e o laudo médico ficam disponíveis em <strong>3 a 5 minutos</strong> na Área do Paciente.
+          Após a realização da consulta clínica pelo aplicativo Mecura, sua receita digital assinada e o laudo médico ficam disponíveis em <strong>5 a 45 minutos</strong> na Área do Paciente.
         </p>
       </div>
       <div>

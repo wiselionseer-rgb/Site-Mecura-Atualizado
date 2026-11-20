@@ -106,6 +106,31 @@
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+@media (max-width: 1023px) {
+  .botanical-grain {
+    display: none;
+  }
+}
+
+@keyframes mecura-hero-breathe {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1.02);
+  }
+  50% {
+    transform: translate3d(0, -1.5%, 0) scale(1.09);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.02);
+  }
+}
+
+.mecura-hero-breathe {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  animation: mecura-hero-breathe 18s ease-in-out infinite;
+}
+
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -257,6 +282,8 @@ video::-webkit-media-controls-start-playback-button {
     #c4ff1a 352deg,
     transparent 360deg
   );
+  will-change: transform;
+  backface-visibility: hidden;
   animation: mecura-led-orbit 4.4s linear infinite;
   pointer-events: none;
 }
@@ -272,6 +299,7 @@ video::-webkit-media-controls-start-playback-button {
     scroll-behavior: auto;
   }
 
+  .mecura-hero-breathe,
   .mecura-led-rail::after,
   .mecura-led-connector::after,
   .mecura-news-led-orbit {

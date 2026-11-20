@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Player } from "@remotion/player";
+import { Player, type PlayerRef } from "@remotion/player";
 import { AnimatePresence, motion, useInView } from "motion/react";
 import { ArrowUpRight, Check, Scale, ShieldCheck, Sparkles } from "lucide-react";
 import { BRAND } from "../data/mecuraContent";
@@ -82,11 +82,32 @@ const CARD_LUXURY_STYLES: Record<
 
 export function PlansSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const playerRef = useRef<PlayerRef>(null);
   const isInView = useInView(sectionRef, { amount: 0.15 });
+  const [isDesktop, setIsDesktop] = useState<boolean>(() =>
+    typeof window !== "undefined" ? window.innerWidth >= 768 : false
+  );
   const [focusedPlanId, setFocusedPlanId] =
     useState<MecuraPlan["id"]>("complete");
   const [userInteracted, setUserInteracted] = useState(false);
   const [showComparison, setShowComparison] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const update = () => setIsDesktop(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (!isDesktop || !playerRef.current) return;
+    if (isInView) {
+      playerRef.current.play();
+    } else {
+      playerRef.current.pause();
+    }
+  }, [isDesktop, isInView]);
 
   // Auto-showcase emphasizes Complete 360° and VIP first while visible (stops on click/hover)
   useEffect(() => {
@@ -160,22 +181,25 @@ export function PlansSection() {
           transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
           className="relative rounded-3xl overflow-hidden border border-white/12 bg-[#060a07] shadow-[0_32px_90px_rgba(0,0,0,0.65)]"
         >
-          {/* Desktop & Tablet Live Remotion Player */}
-          <div className="hidden md:block aspect-[1280/500] w-full">
-            <Player
-              component={PlansLuxuryFilm}
-              inputProps={{ activePlanId: focusedPlanId }}
-              durationInFrames={PLANS_FILM_DURATION}
-              compositionWidth={1280}
-              compositionHeight={500}
-              fps={PLANS_FILM_FPS}
-              autoPlay
-              loop
-              controls={false}
-              acknowledgeRemotionLicense
-              style={{ width: "100%", height: "100%" }}
-            />
-          </div>
+          {/* Desktop & Tablet Live Remotion Player (Never mounted on mobile so iOS stays 60fps) */}
+          {isDesktop && (
+            <div className="aspect-[1280/500] w-full">
+              <Player
+                ref={playerRef}
+                component={PlansLuxuryFilm}
+                inputProps={{ activePlanId: focusedPlanId }}
+                durationInFrames={PLANS_FILM_DURATION}
+                compositionWidth={1280}
+                compositionHeight={500}
+                fps={PLANS_FILM_FPS}
+                autoPlay={isInView}
+                loop
+                controls={false}
+                acknowledgeRemotionLicense
+                style={{ width: "100%", height: "100%" }}
+              />
+            </div>
+          )}
 
           {/* Mobile Responsive Luxury Stage Mirror (Crystal-sharp legibility on narrow screens) */}
           <div className="md:hidden relative p-6 min-h-[300px] flex flex-col justify-between overflow-hidden">

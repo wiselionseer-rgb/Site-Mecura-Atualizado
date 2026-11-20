@@ -21,7 +21,7 @@ export const BRAND_FILM_DURATION = SCENE_LEN * 4 - TRANS_LEN * 3;
 export const FILM_CHAPTERS = [
   { id: 0, title: "A Essência", frame: 0 },
   { id: 1, title: "O Aplicativo", frame: 122 },
-  { id: 2, title: "Receita em 3–5 min", frame: 244 },
+  { id: 2, title: "Receita em 5–45 min", frame: 244 },
   { id: 3, title: "Origem & ANVISA", frame: 366 },
 ] as const;
 
@@ -521,9 +521,9 @@ const SceneSpecialists: React.FC = () => {
             { text: "laudo" },
             { text: "médico" },
             { text: "em" },
-            { text: "3" },
+            { text: "5" },
             { text: "a" },
-            { text: "5", accent: true, italic: true },
+            { text: "45", accent: true, italic: true },
             { text: "minutos.", accent: true, italic: true },
           ]}
         />
@@ -547,7 +547,7 @@ const SceneSpecialists: React.FC = () => {
               textShadow: "0 0 28px rgba(196, 255, 26, 0.3)",
             }}
           >
-            3–5 min
+            5–45 min
           </div>
           <div
             style={{
