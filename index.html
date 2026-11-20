@@ -3,46 +3,63 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- Título Principal -->
-    <title>Instituto MeCura | Medicina Canabinoide</title>
-    
-    <!-- Meta Descrição (Aparece no Google e Redes Sociais) -->
-    <meta name="description" content="Prescrição com segurança e excelência. O Instituto MeCura facilita o acesso legal, seguro e humanizado ao tratamento com Cannabis Medicinal no Brasil. Da semente ao paciente." />
-    
-    <!-- Ícone (Favicon) -->
+
+    <title>Instituto Mecura | Medicina Canabinoide Integrativa</title>
+    <meta
+      name="description"
+      content="A pureza da natureza, guiada pela ciência. Consulte agora mesmo sua receita e laudo médico em 3 a 5 minutos com suporte completo ANVISA RDC nº 660/2022."
+    />
+
+    <!-- Fonts: Fraunces (Display Serif) + Plus Jakarta Sans (Body) + JetBrains Mono (Clinical Data) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Favicon & PWA Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
-    
+
     <!-- PWA Meta Tags (Android & iOS) -->
-    <meta name="theme-color" content="#0a0a0a" />
+    <meta name="theme-color" content="#070b08" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Mecura" />
-    
-    <!-- Open Graph (WhatsApp, Facebook, LinkedIn) -->
+
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Instituto MeCura | Medicina Canabinoide" />
-    <meta property="og:description" content="Prescrição com segurança e excelência. Foco total na qualidade de vida do paciente." />
-    <meta property="og:url" content="https://instmecura.sementesagrada.com/" />
-    
+    <meta property="og:title" content="Instituto Mecura | Medicina Canabinoide Integrativa" />
+    <meta
+      property="og:description"
+      content="Da semente ao paciente. Consulte agora mesmo sua receita e laudo médico em 3 a 5 minutos. 100% legalizado pela ANVISA."
+    />
+    <meta property="og:url" content="https://mecura.sementesagrada.com/" />
+
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Instituto MeCura | Medicina Canabinoide" />
-    <meta name="twitter:description" content="Prescrição com segurança e excelência. Foco total na qualidade de vida do paciente." />
+    <meta name="twitter:title" content="Instituto Mecura | Medicina Canabinoide Integrativa" />
+    <meta
+      name="twitter:description"
+      content="A pureza da natureza, guiada pela ciência. 100% legalizado pela ANVISA (RDC nº 660/2022)."
+    />
 
-    <!-- Proteções de Segurança (Anti-Ataque e Vazamento de Dados) -->
+    <!-- Security -->
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
-    
+
     <script>
-      // Suppress the benign fetch getter error caused by the preview environment/extensions
-      window.addEventListener('error', function(event) {
-        if (event.message && event.message.includes('Cannot set property fetch')) {
-          event.preventDefault();
-          event.stopImmediatePropagation();
-        }
-      }, true);
+      window.addEventListener(
+        'error',
+        function (event) {
+          if (event.message && event.message.includes('Cannot set property fetch')) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+        },
+        true
+      );
     </script>
   </head>
   <body>
@@ -50,4 +67,3 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-
