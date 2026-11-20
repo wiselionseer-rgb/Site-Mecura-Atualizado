@@ -34,14 +34,14 @@ const PLAN_FILM_CONFIG: Record<MecuraPlan["id"], PlanFilmConfig> = {
     title: "Consulta Essencial via",
     accentWord: "Chat Direto",
     subtitle:
-      "Sem agenda engessada. Avaliação clínica online com emissão digital ICP-Brasil e protocolo inicial de gotas em minutos.",
+      "Atendimento sem agenda com emissão rápida do seu Laudo Médico Inicial e Receitas Digitais ICP-Brasil (Nacional e Importado).",
     bgPhoto: "/hero-oil-still.jpg",
     accentColor: "#c4ff1a",
     glowColor: "rgba(196, 255, 26, 0.24)",
     documents: [
-      "Receita Digital ICP-Brasil",
+      "Laudo Médico Inicial",
+      "Receita Nacional & Importado",
       "Protocolo de Dosagem",
-      "Acesso ANVISA RDC 660",
     ],
     specialists: [
       {
@@ -74,18 +74,18 @@ const PLAN_FILM_CONFIG: Record<MecuraPlan["id"], PlanFilmConfig> = {
     ],
   },
   premium: {
-    eyebrow: "MODALIDADE 03 · VÍDEO 45 MIN + LAUDO MÉDICO & AGRONÔMICO",
+    eyebrow: "MODALIDADE 03 · MAIS PROCURADO · SUPORTE VIP 24H",
     title: "Acompanhamento VIP",
-    accentWord: "com Perícia HC",
+    accentWord: "Inicial + Evolutivo",
     subtitle:
-      "Vídeo médico de 45 min, Laudo Pericial com CID, Laudo Agronômico oficial (CREA) incluso e retorno evolutivo em 90 dias.",
+      "Vídeo 45 min, Laudo Inicial + Laudo Evolutivo (90d), Receitas Nacional e Importado, Laudo Agronômico (CREA) e Suporte VIP 24h.",
     bgPhoto: "/grok-image-29e89451-033b-4b4f-a232-c734b224a8b1.png",
     accentColor: "#e4e087",
-    glowColor: "rgba(228, 224, 135, 0.22)",
+    glowColor: "rgba(228, 224, 135, 0.24)",
     documents: [
-      "Laudo Médico HC + CID",
+      "Laudo Inicial + Evolutivo",
       "Laudo Agronômico CREA",
-      "Retorno & Evolução 90d",
+      "Suporte VIP 24h",
     ],
     specialists: [
       {
@@ -101,18 +101,18 @@ const PLAN_FILM_CONFIG: Record<MecuraPlan["id"], PlanFilmConfig> = {
     ],
   },
   complete: {
-    eyebrow: "MODALIDADE 04 · EXPERIÊNCIA SUPREMA 360°",
+    eyebrow: "MODALIDADE 04 · ESCOLHA Nº 1 · TUDO INCLUSO 360°",
     title: "Jornada Completa",
-    accentWord: "Dossiê Triplo",
+    accentWord: "Dossiê Triplo + 24h",
     subtitle:
-      "Os 3 especialistas unidos em uma só jornada: Médico (Vídeo 45m), Psicólogo Clínico (CRP) e Engenheiro Agrônomo (CREA).",
+      "Os 3 especialistas (Médico + Psicólogo + Agrônomo), Laudo Inicial + Evolutivo Duplo, Receitas Nacional & Importado e Concierge 24h.",
     bgPhoto: "/hero-oil-still.jpg",
     accentColor: "#c4ff1a",
-    glowColor: "rgba(196, 255, 26, 0.30)",
+    glowColor: "rgba(196, 255, 26, 0.34)",
     documents: [
-      "Laudo Médico HC (CRM)",
-      "Laudo Psicológico (CRP)",
-      "Laudo Agronômico (CREA)",
+      "Laudo Inicial + Evolutivo Duplo",
+      "Dossiê CRM + CRP + CREA",
+      "Concierge VIP 24h",
     ],
     specialists: [
       {
@@ -172,7 +172,7 @@ export const PlansLuxuryFilm: React.FC<PlansLuxuryFilmProps> = ({
     <AbsoluteFill
       style={{
         backgroundColor: "#060a07",
-        fontFamily: '"Plus Jakarta Sans", system-ui, sans-serif',
+        fontFamily: '"Outfit", system-ui, sans-serif',
         overflow: "hidden",
       }}
     >
@@ -278,12 +278,12 @@ export const PlansLuxuryFilm: React.FC<PlansLuxuryFilmProps> = ({
         >
           <div
             style={{
-              fontFamily: '"JetBrains Mono", monospace',
-              fontSize: 13,
+              fontFamily: '"IBM Plex Mono", monospace',
+              fontSize: 12,
               letterSpacing: "0.22em",
               color: cfg.accentColor,
-              marginBottom: 18,
-              fontWeight: 600,
+              marginBottom: 16,
+              fontWeight: 500,
             }}
           >
             {cfg.eyebrow}
@@ -291,17 +291,24 @@ export const PlansLuxuryFilm: React.FC<PlansLuxuryFilmProps> = ({
 
           <div
             style={{
-              fontFamily: '"Fraunces", Georgia, serif',
-              fontSize: 54,
-              lineHeight: 1.04,
-              color: "#f3f7f4",
-              fontWeight: 500,
+              fontFamily: '"Cormorant Garamond", Georgia, serif',
+              fontSize: 62,
+              lineHeight: 0.98,
+              color: "#f4f8f5",
+              fontWeight: 600,
               letterSpacing: "-0.02em",
               marginBottom: 18,
             }}
           >
             {cfg.title}{" "}
-            <span style={{ fontStyle: "italic", color: cfg.accentColor }}>
+            <span
+              style={{
+                fontStyle: "italic",
+                fontWeight: 500,
+                color: cfg.accentColor,
+                textShadow: `0 0 32px ${cfg.glowColor}`,
+              }}
+            >
               {cfg.accentWord}
             </span>
           </div>
@@ -345,7 +352,7 @@ export const PlansLuxuryFilm: React.FC<PlansLuxuryFilmProps> = ({
                 <span
                   style={{
                     color: cfg.accentColor,
-                    fontFamily: '"JetBrains Mono", monospace',
+                    fontFamily: '"IBM Plex Mono", monospace',
                     fontSize: 12,
                   }}
                 >
@@ -411,7 +418,7 @@ export const PlansLuxuryFilm: React.FC<PlansLuxuryFilmProps> = ({
                 <div style={{ minWidth: 0 }}>
                   <div
                     style={{
-                      fontFamily: '"JetBrains Mono", monospace',
+                      fontFamily: '"IBM Plex Mono", monospace',
                       fontSize: compact ? 10 : 11,
                       letterSpacing: "0.14em",
                       color: cfg.accentColor,
@@ -422,11 +429,11 @@ export const PlansLuxuryFilm: React.FC<PlansLuxuryFilmProps> = ({
                   </div>
                   <div
                     style={{
-                      fontFamily: '"Fraunces", Georgia, serif',
-                      fontSize: compact ? 17 : 20,
-                      color: "#f3f7f4",
-                      lineHeight: 1.15,
-                      fontWeight: 500,
+                      fontFamily: '"Cormorant Garamond", Georgia, serif',
+                      fontSize: compact ? 20 : 24,
+                      color: "#f4f8f5",
+                      lineHeight: 1.1,
+                      fontWeight: 600,
                     }}
                   >
                     {spec.name}
@@ -453,7 +460,7 @@ export const PlansLuxuryFilm: React.FC<PlansLuxuryFilmProps> = ({
               borderRadius: 12,
               backgroundColor: "rgba(196,255,26,0.08)",
               border: "1px solid rgba(196,255,26,0.22)",
-              fontFamily: '"JetBrains Mono", monospace',
+              fontFamily: '"IBM Plex Mono", monospace',
               fontSize: 11,
               color: "rgba(243,247,244,0.84)",
               textAlign: "center",

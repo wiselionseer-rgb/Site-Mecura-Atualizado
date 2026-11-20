@@ -23,26 +23,26 @@ const GOAL_SHORTCUTS: Array<{
   {
     planId: "basic",
     order: "01",
-    label: "Quero receita rápida via chat",
-    hint: "Atendimento imediato · Sem agenda",
+    label: "Laudo Inicial + Receitas (Nac. & Imp.)",
+    hint: "Entrada rápida via chat",
   },
   {
     planId: "psychologist",
     order: "02",
-    label: "Preciso de psicólogo & laudo CRP",
-    hint: "Marco Antônio Boastik · Saúde Mental",
+    label: "Avaliação Psicológica & Laudo CRP",
+    hint: "Marco Antônio · Saúde Mental",
   },
   {
     planId: "premium",
     order: "03",
-    label: "Vídeo 45 min + Laudo Médico & Agronômico",
-    hint: "CRM + CREA · Retorno 90 dias",
+    label: "VIP: Inicial + Evolutivo + Agrônomo + 24h",
+    hint: "Mais procurado · CRM + CREA",
   },
   {
     planId: "complete",
     order: "04",
-    label: "Jornada 360° (Médico + Psico + Agrônomo)",
-    hint: "Dossiê Triplo · CRM + CRP + CREA",
+    label: "Completo 360° (3 Especialistas + 24h)",
+    hint: "Escolha Nº 1 · Dossiê Triplo",
   },
 ];
 
@@ -88,21 +88,21 @@ export function PlansSection() {
   const [userInteracted, setUserInteracted] = useState(false);
   const [showComparison, setShowComparison] = useState(false);
 
-  // Gentle auto-showcase across the 4 modalities while visible (stops once user clicks/interacts)
+  // Auto-showcase emphasizes Complete 360° and VIP first while visible (stops on click/hover)
   useEffect(() => {
     if (!isInView || userInteracted) return;
     const order: MecuraPlan["id"][] = [
       "complete",
+      "premium",
       "basic",
       "psychologist",
-      "premium",
     ];
     const timer = window.setInterval(() => {
       setFocusedPlanId((prev) => {
         const nextIdx = (order.indexOf(prev) + 1) % order.length;
         return order[nextIdx];
       });
-    }, 6200);
+    }, 6400);
     return () => window.clearInterval(timer);
   }, [isInView, userInteracted]);
 
@@ -301,9 +301,11 @@ export function PlansSection() {
                 onMouseEnter={() => selectPlan(plan.id)}
                 onClick={() => selectPlan(plan.id)}
                 className={`group relative flex flex-col h-full rounded-2xl overflow-hidden border transition-all duration-500 cursor-pointer ${
-                  isActive
-                    ? `${styleTokens.activeBorder} shadow-[0_28px_70px_rgba(0,0,0,0.68),0_0_0_1px_rgba(196,255,26,0.16)]`
-                    : "border-white/10 hover:border-white/25 shadow-[0_14px_38px_rgba(0,0,0,0.4)]"
+                  plan.recommended
+                    ? "border-accent shadow-[0_32px_80px_rgba(0,0,0,0.75),0_0_0_1px_rgba(196,255,26,0.28)]"
+                    : isActive
+                      ? `${styleTokens.activeBorder} shadow-[0_28px_70px_rgba(0,0,0,0.68),0_0_0_1px_rgba(196,255,26,0.16)]`
+                      : "border-white/10 hover:border-white/25 shadow-[0_14px_38px_rgba(0,0,0,0.4)]"
                 }`}
                 style={{ background: styleTokens.ambientGradient }}
               >
@@ -381,9 +383,20 @@ export function PlansSection() {
                   <h3 className="font-display text-2xl font-medium text-text-primary leading-tight mb-2 group-hover:text-accent transition-colors">
                     {plan.name}
                   </h3>
-                  <p className="text-xs sm:text-sm text-text-secondary leading-relaxed mb-5 min-h-[3.5rem]">
+                  <p className="text-xs sm:text-sm text-text-secondary leading-relaxed mb-4 min-h-[3.5rem]">
                     {plan.tagline}
                   </p>
+                  {(plan.id === "premium" || plan.id === "complete") && (
+                    <p
+                      className={`font-mono text-[11px] leading-snug mb-4 px-3 py-2 rounded-lg border ${
+                        plan.id === "complete"
+                          ? "bg-accent/12 border-accent/35 text-accent"
+                          : "bg-[#e4e087]/10 border-[#e4e087]/30 text-[#e4e087]"
+                      }`}
+                    >
+                      {plan.idealFor}
+                    </p>
+                  )}
 
                   {/* Assigned Registered Professionals */}
                   <div className="space-y-2 mb-5 pb-5 border-y border-white/10 pt-4">

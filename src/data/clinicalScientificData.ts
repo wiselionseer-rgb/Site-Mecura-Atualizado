@@ -244,11 +244,11 @@ export const MECURA_PLANS: MecuraPlan[] = [
     id: "basic",
     order: "01",
     tierLabel: "Entrada Imediata",
-    highlightKicker: "Chat Direto · Sem Agendamento",
+    highlightKicker: "Chat Direto · Receita Nac. & Imp.",
     name: "Consulta Essencial",
     tagline:
-      "A porta de entrada ágil para iniciar seu tratamento legalizado hoje mesmo, sem filas nem agendas engessadas.",
-    idealFor: "Ideal para quem quer começar a terapia importada com agilidade",
+      "Início ágil via chat para sair hoje mesmo com seu Laudo Médico Inicial e suas receitas (Nacional e Importado).",
+    idealFor: "Ideal para quem busca apenas o primeiro passo rápido via chat",
     coverImage: "/hero-oil-still.jpg",
     professionals: [
       {
@@ -260,25 +260,25 @@ export const MECURA_PLANS: MecuraPlan[] = [
     ],
     deliverables: [
       {
+        title: "Laudo Médico Inicial oficial (CRM/MT 17259)",
+        detail: "Documento clínico inicial assinado digitalmente atestando a indicação terapêutica.",
+      },
+      {
+        title: "Receitas Digitais ICP-Brasil: Nacional e Importado",
+        detail: "Prescrições com QR Code válidas para associações/farmácias no Brasil e importação via ANVISA RDC 660.",
+      },
+      {
         title: "Atendimento imediato via chat na Fila ao Vivo",
-        detail: "Acompanhe sua vez em tempo real com aviso automático no app e WhatsApp.",
+        detail: "Avaliação sem agendamento com liberação dos documentos em 3 a 5 minutos no app.",
       },
       {
-        title: "Receita Digital oficial ICP-Brasil com QR Code",
-        detail: "Liberada em 3 a 5 minutos após avaliação, válida em todo o Brasil.",
-      },
-      {
-        title: "Protocolo terapêutico inicial de dosagem",
-        detail: "Orientação clara em gotas para introdução segura de fitocanabinoides.",
-      },
-      {
-        title: "Escalas validadas & acesso ANVISA RDC 660",
-        detail: "Prontuário protegido LGPD com ASRS-18 (OMS) e AQ-10 (Cambridge).",
+        title: "Protocolo inicial de dosagem & escalas validadas",
+        detail: "Orientação básica em gotas e prontuário protegido LGPD (ASRS-18 e AQ-10).",
       },
     ],
     transparencyNote:
-      "Modalidade focada em início rápido via chat: não inclui chamada por vídeo de 45 min, retorno 90d, Laudo Pericial de HC nem psicólogo.",
-    ctaLabel: "Conhecer no aplicativo",
+      "Modalidade básica de entrada: não inclui vídeo de 45 min, Laudo Evolutivo posterior, Suporte VIP 24h, Laudo Agronômico (CREA) nem Psicólogo (CRP). Para acompanhamento completo, escolha o VIP ou Completo 360°.",
+    ctaLabel: "Iniciar Consulta Essencial",
     ctaUrl: "https://mecura.sementesagrada.com/",
   },
   {
@@ -289,7 +289,7 @@ export const MECURA_PLANS: MecuraPlan[] = [
     name: "Consulta + Laudo Psicológico",
     tagline:
       "Avaliação emocional individualizada com emissão de Laudo Psicológico Oficial para tratamento e instrução jurídica.",
-    idealFor: "Ideal para acolhimento emocional e emissão de parecer CRP",
+    idealFor: "Ideal para acolhimento emocional avulso e emissão de parecer CRP",
     coverImage: "/galeria-9.jpg.png",
     professionals: [
       {
@@ -318,19 +318,19 @@ export const MECURA_PLANS: MecuraPlan[] = [
       },
     ],
     transparencyNote:
-      "Cobre exclusivamente a consulta e o laudo psicológico (CRP). Não inclui receita médica de controlados.",
-    ctaLabel: "Conhecer no aplicativo",
+      "Cobre exclusivamente a consulta e o laudo psicológico (CRP). Quer unir Psicólogo + Médico em Vídeo + Agrônomo + Suporte VIP 24h? Escolha o Plano Completo 360°.",
+    ctaLabel: "Agendar com Psicólogo",
     ctaUrl: "https://mecura.sementesagrada.com/",
   },
   {
     id: "premium",
     order: "03",
-    tierLabel: "Acompanhamento VIP",
-    highlightKicker: "Vídeo 45 min · Médico + Agrônomo",
+    tierLabel: "Acompanhamento VIP · 24h",
+    highlightKicker: "Laudo Inicial + Evolutivo · Suporte 24h",
     name: "VIP Médico + Laudo HC",
     tagline:
-      "Consulta aprofundada por vídeo, Laudo Pericial Médico com CID, Laudo Agronômico oficial e retorno evolutivo em 90 dias.",
-    idealFor: "Ideal para acompanhamento aprofundado + Laudo Médico e Agronômico p/ HC",
+      "Jornada VIP completa com Vídeo 45 min, Laudo Inicial + Laudo Evolutivo posterior, Receitas (Nacional e Importado), Laudo Agronômico e Suporte 24h.",
+    idealFor: "Mais procurado para acompanhamento contínuo, Suporte 24h e dossiê HC",
     coverImage: "/grok-image-29e89451-033b-4b4f-a232-c734b224a8b1.png",
     professionals: [
       {
@@ -348,36 +348,40 @@ export const MECURA_PLANS: MecuraPlan[] = [
     ],
     deliverables: [
       {
-        title: "Consulta exclusiva por Vídeo (45 min) + Laudo Médico HC",
-        detail: "Avaliação detalhada com CID, histórico de refratariedade e Receita ICP-Brasil + Psicomotor.",
+        title: "Vídeo 45 min + Laudo Inicial + Receitas (Nacional & Importado)",
+        detail: "Avaliação aprofundada com CID, histórico de refratariedade, prescrições completas e Laudo Psicomotor.",
+      },
+      {
+        title: "Retorno 90d + Laudo Evolutivo Posterior incluso",
+        detail: "Reavaliação clínica aos 90 dias com emissão do Laudo Evolutivo oficial comprovando resposta ao tratamento.",
       },
       {
         title: "Laudo & Parecer Técnico Agronômico incluso (CREA)",
         detail: "Dimensionamento GACP de fitomassa, número de plantas e ciclos anuais assinado pelo Eng. Agr. Wilian.",
       },
       {
-        title: "Consulta de Retorno + Relatório Evolutivo (90d)",
-        detail: "Acompanhamento evolutivo incluso aos 90 dias para ajuste terapêutico de precisão.",
+        title: "Suporte VIP 24h + Concierge ANVISA & Associações",
+        detail: "Canal dedicado 24 horas para ajuste de gotas, autorização ANVISA RDC 660 e ponte direta com associações parceiras.",
       },
       {
-        title: "Assessoria completa ANVISA RDC 660",
-        detail: "Suporte documental e resguardo para direção veicular, trabalho e importação legal.",
+        title: "Plano Personalizado de Titulação & Resguardo Laboral",
+        detail: "Guia diurno/noturno sob medida e resguardo clínico para direção veicular e rotina profissional.",
       },
     ],
     transparencyNote:
-      "Já inclui Laudo Médico Pericial + Laudo Agronômico (CREA). Para incluir também o Laudo Psicológico (CRP), escolha o Plano Completo 360°.",
-    ctaLabel: "Conhecer no aplicativo",
+      "Inclui Laudo Inicial, Laudo Evolutivo, Receitas Nacional e Importado, Laudo Agronômico (CREA) e Suporte 24h. Para somar também o Psicólogo (CRP) e o Dossiê Triplo definitivo, suba para o Plano Completo 360°.",
+    ctaLabel: "Escolher Acompanhamento VIP",
     ctaUrl: "https://mecura.sementesagrada.com/",
   },
   {
     id: "complete",
     order: "04",
-    tierLabel: "Assinatura Suprema · 360°",
-    highlightKicker: "Dossiê Triplo · CRM + CRP + CREA",
+    tierLabel: "Escolha Nº 1 · Tudo Incluso 360°",
+    highlightKicker: "Dossiê Triplo · CRM + CRP + CREA + 24h",
     name: "Plano Completo 360°",
     tagline:
-      "A experiência definitiva com os 3 especialistas: Médico em Vídeo 45 min + Psicólogo Clínico + Engenheiro Agrônomo.",
-    idealFor: "A jornada completa com os 3 laudos oficiais (Médico, Psicológico e Agronômico)",
+      "A experiência definitiva com os 3 especialistas juntos, Laudo Inicial + Evolutivo Duplo, Receitas Nacional & Importado, Concierge 24h e Dossiê completo p/ HC.",
+    idealFor: "Substitui 4 contratações avulsas na jornada mais segura e completa do Instituto",
     coverImage: "/hero-oil-still.jpg",
     recommended: true,
     professionals: [
@@ -402,25 +406,33 @@ export const MECURA_PLANS: MecuraPlan[] = [
     ],
     deliverables: [
       {
-        title: "Vídeo Médico (45 min) + Laudo Pericial HC + ICP-Brasil",
-        detail: "Avaliação completa com CID, refratariedade, Receita Digital e Laudo Psicomotor.",
+        title: "Tudo do VIP: Vídeo 45 min + Laudo Inicial + Receitas (Nac. & Imp.)",
+        detail: "Avaliação completa com CID, prescrições ICP-Brasil (Brasil + Importado), TCLE e Laudo Psicomotor.",
       },
       {
-        title: "Consulta & Laudo Psicológico Oficial (CRP 08/49215)",
-        detail: "Atendimento com Marco Antônio Boastik e parecer psicológico integrado ao dossiê.",
+        title: "Consulta + Laudo Psicológico Oficial & Evolução (CRP 08/49215)",
+        detail: "Atendimento dedicado com Marco Antônio Boastik e parecer emocional integrado ao mesmo prontuário.",
       },
       {
-        title: "Laudo & Parecer Técnico Agronômico incluso (CREA)",
-        detail: "Cálculo GACP de fitomassa, plantas e ciclos assinado pelo Eng. Agr. Wilian Dalenogare Pereira.",
+        title: "Retorno 90 dias + Laudo Evolutivo Duplo (Médico + Psicológico)",
+        detail: "Acompanhamento evolutivo conjunto comprovando eficácia clínica e estabilidade emocional.",
       },
       {
-        title: "Retorno 90 dias + Relatório Evolutivo Duplo",
-        detail: "Acompanhamento contínuo médico e psicológico com relatórios evolutivos inclusos.",
+        title: "Laudo & Parecer Técnico Agronômico incluso (CREA-BA)",
+        detail: "Cálculo GACP de fitomassa, número de plantas e ciclos assinado pelo Eng. Agr. Wilian Dalenogare Pereira.",
+      },
+      {
+        title: "Suporte Concierge VIP 24h com Prioridade Máxima",
+        detail: "Atendimento prioritário 24h, acompanhamento contínuo de dosagem, trâmite ANVISA e acesso prioritário a associações e importadoras.",
+      },
+      {
+        title: "Dossiê Jurídico-Clínico Unificado p/ Salvo-Conduto (HC)",
+        detail: "Documentação tripla organizada no padrão dos Tribunais (STJ) com direcionamento facilitado à consultoria jurídica parceira.",
       },
     ],
     transparencyNote:
-      "Reúne os 3 laudos oficiais exigidos na instrução de Salvo-Conduto (CRM + CRP + CREA) em uma única jornada integrada.",
-    ctaLabel: "Acessar Jornada Completa 360°",
+      "A opção mais vantajosa e escolhida pelos pacientes: reúne os 3 especialistas (CRM + CRP + CREA), Laudo Inicial + Evolutivo Duplo, Suporte 24h e 80% da instrução do Habeas Corpus pronta.",
+    ctaLabel: "Garantir Plano Completo 360°",
     ctaUrl: "https://mecura.sementesagrada.com/",
   },
 ];
@@ -433,7 +445,14 @@ export const PLAN_COMPARISON_ROWS: Array<{
   complete: string;
 }> = [
   {
-    feature: "Receita Digital Oficial ICP-Brasil (QR Code)",
+    feature: "Laudo Médico Inicial (CRM/MT 17259)",
+    basic: "Incluso",
+    psychologist: "—",
+    premium: "Incluso (Pericial CID)",
+    complete: "Incluso (Pericial CID)",
+  },
+  {
+    feature: "Receitas Digitais ICP-Brasil (Nacional e Importado)",
     basic: "Incluso (Chat)",
     psychologist: "—",
     premium: "Incluso",
@@ -447,11 +466,18 @@ export const PLAN_COMPARISON_ROWS: Array<{
     complete: "Incluso",
   },
   {
-    feature: "Laudo Pericial Médico p/ Habeas Corpus (CID)",
+    feature: "Retorno 90 dias + Laudo Evolutivo Posterior",
     basic: "—",
     psychologist: "—",
-    premium: "Incluso",
-    complete: "Incluso",
+    premium: "Evolutivo Médico",
+    complete: "Evolutivo Duplo (Médico + Psico)",
+  },
+  {
+    feature: "Suporte VIP 24h & Concierge ANVISA / Associações",
+    basic: "—",
+    psychologist: "—",
+    premium: "Suporte VIP 24h",
+    complete: "Concierge 24h Prioritário",
   },
   {
     feature: "Laudo & Parecer Técnico Agronômico (CREA-BA)",
@@ -465,21 +491,21 @@ export const PLAN_COMPARISON_ROWS: Array<{
     basic: "—",
     psychologist: "Incluso",
     premium: "—",
+    complete: "Incluso + Evolução",
+  },
+  {
+    feature: "Laudo Psicomotor (Direção & Trabalho)",
+    basic: "—",
+    psychologist: "—",
+    premium: "Incluso",
     complete: "Incluso",
   },
   {
-    feature: "Retorno + Relatório Evolutivo aos 90 dias",
+    feature: "Dossiê Unificado p/ Salvo-Conduto (HC) + Direcionamento",
     basic: "—",
-    psychologist: "—",
-    premium: "Médico",
-    complete: "Médico + Psico",
-  },
-  {
-    feature: "Laudo Psicomotor (Direção & Trabalho) + ANVISA",
-    basic: "ANVISA",
-    psychologist: "—",
-    premium: "Completo",
-    complete: "Completo",
+    psychologist: "Parcial (CRP)",
+    premium: "CRM + CREA",
+    complete: "Dossiê Triplo Completo",
   },
 ];
 
@@ -895,10 +921,10 @@ export const FAQ_ITEMS: FaqItem[] = [
     answer:
       "Cada modalidade foi desenhada para um momento específico da sua jornada (você consulta as condições atualizadas diretamente ao abrir o aplicativo):",
     detailPoints: [
-      "Consulta Essencial: atendimento imediato via chat com Dr. Guilherme (CRM/MT 17259), Receita Digital ICP-Brasil e protocolo inicial de gotas — ideal para começar o tratamento importado sem agendamento.",
+      "Consulta Essencial: atendimento imediato via chat com Dr. Guilherme (CRM/MT 17259), Laudo Médico Inicial e Receitas Digitais ICP-Brasil (Nacional e Importado) + protocolo inicial de gotas.",
       "Consulta + Laudo Psicológico: atendimento individual e emissão de Laudo Psicológico Oficial com Marco Antônio Boastik (CRP 08/49215).",
-      "Acompanhamento VIP + Laudo HC: vídeo de 45 min com Dr. Guilherme (CRM/MT 17259), Laudo Pericial Médico p/ HC, Laudo & Parecer Técnico Agronômico incluso com Wilian Dalenogare Pereira (CREA-BA Nº 052193520-2), Laudo Psicomotor e Retorno com Relatório Evolutivo em 90 dias.",
-      "Plano Completo 360°: reúne os 3 especialistas em uma única jornada — Médico em vídeo 45 min + Psicólogo Clínico (CRP 08/49215) + Laudo Agronômico (CREA-BA Nº 052193520-2) + Relatório Evolutivo Duplo aos 90 dias.",
+      "Acompanhamento VIP + Laudo HC: vídeo de 45 min, Laudo Inicial + Laudo Evolutivo posterior (aos 90 dias), Receitas Nacional e Importado, Laudo Agronômico (CREA-BA Nº 052193520-2), Laudo Psicomotor e Suporte VIP 24h.",
+      "Plano Completo 360° (Escolha Nº 1): reúne os 3 especialistas (Médico em vídeo 45 min + Psicólogo Clínico CRP + Agrônomo CREA), Laudo Inicial + Laudo Evolutivo Duplo, Receitas Nacional e Importado, Concierge VIP 24h Prioritário e Dossiê Triplo pronto para Salvo-Conduto.",
     ],
   },
   {

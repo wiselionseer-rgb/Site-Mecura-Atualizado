@@ -54,10 +54,10 @@ const KineticWords: React.FC<{
         flexWrap: "wrap",
         columnGap: 18,
         rowGap: 4,
-        fontFamily: "Fraunces, Georgia, serif",
-        fontSize,
-        lineHeight: 1.04,
-        fontWeight: 500,
+        fontFamily: '"Cormorant Garamond", Georgia, serif',
+        fontSize: Math.round(fontSize * 1.12),
+        lineHeight: 0.98,
+        fontWeight: 600,
         letterSpacing: "-0.02em",
       }}
     >
@@ -87,7 +87,12 @@ const KineticWords: React.FC<{
                 transform: `translateY(${y}px)`,
                 opacity: progress,
                 fontStyle: word.italic ? "italic" : "normal",
+                fontWeight: word.italic ? 500 : 600,
                 color: word.accent ? accentColor : color,
+                textShadow:
+                  word.accent && accentColor === LIME
+                    ? "0 0 32px rgba(196, 255, 26, 0.28)"
+                    : undefined,
               }}
             >
               {word.text}
@@ -203,7 +208,7 @@ const SceneEssence: React.FC = () => {
       >
         <div
           style={{
-            fontFamily: "Plus Jakarta Sans, sans-serif",
+            fontFamily: '"Outfit", sans-serif',
             fontSize: 15,
             letterSpacing: "0.18em",
             textTransform: "uppercase",
@@ -229,7 +234,7 @@ const SceneEssence: React.FC = () => {
 
         <div
           style={{
-            fontFamily: "Plus Jakarta Sans, sans-serif",
+            fontFamily: '"Outfit", sans-serif',
             fontSize: 22,
             lineHeight: 1.5,
             color: MUTED_LIGHT,
@@ -295,7 +300,7 @@ const SceneAppScreens: React.FC = () => {
       <div style={{ width: "42%", display: "flex", flexDirection: "column", gap: 26 }}>
         <div
           style={{
-            fontFamily: "Plus Jakarta Sans, sans-serif",
+            fontFamily: '"Outfit", sans-serif',
             fontSize: 15,
             fontWeight: 700,
             letterSpacing: "0.14em",
@@ -323,7 +328,7 @@ const SceneAppScreens: React.FC = () => {
 
         <div
           style={{
-            fontFamily: "Plus Jakarta Sans, sans-serif",
+            fontFamily: '"Outfit", sans-serif',
             fontSize: 20,
             lineHeight: 1.5,
             color: "rgba(10, 34, 20, 0.84)",
@@ -431,7 +436,7 @@ const SceneAppScreens: React.FC = () => {
             display: "flex",
             alignItems: "center",
             gap: 14,
-            fontFamily: "Plus Jakarta Sans, sans-serif",
+            fontFamily: '"Outfit", sans-serif',
             fontSize: 15,
             fontWeight: 600,
             whiteSpace: "nowrap",
@@ -497,7 +502,7 @@ const SceneSpecialists: React.FC = () => {
       >
         <div
           style={{
-            fontFamily: "Plus Jakarta Sans, sans-serif",
+            fontFamily: '"Outfit", sans-serif',
             fontSize: 15,
             letterSpacing: "0.16em",
             textTransform: "uppercase",
@@ -534,10 +539,12 @@ const SceneSpecialists: React.FC = () => {
         >
           <div
             style={{
-              fontFamily: "Fraunces, Georgia, serif",
-              fontSize: 48,
+              fontFamily: '"Cormorant Garamond", Georgia, serif',
+              fontSize: 56,
               color: LIME,
               fontStyle: "italic",
+              fontWeight: 600,
+              textShadow: "0 0 28px rgba(196, 255, 26, 0.3)",
             }}
           >
             3–5 min
@@ -551,7 +558,7 @@ const SceneSpecialists: React.FC = () => {
           />
           <div
             style={{
-              fontFamily: "Plus Jakarta Sans, sans-serif",
+              fontFamily: '"Outfit", sans-serif',
               fontSize: 19,
               color: MUTED_LIGHT,
               maxWidth: 360,
@@ -617,7 +624,7 @@ const SceneOriginAnvisa: React.FC = () => {
       >
         <div
           style={{
-            fontFamily: "Plus Jakarta Sans, sans-serif",
+            fontFamily: '"Outfit", sans-serif',
             fontSize: 15,
             letterSpacing: "0.16em",
             textTransform: "uppercase",
@@ -645,7 +652,7 @@ const SceneOriginAnvisa: React.FC = () => {
             paddingTop: 22,
             display: "flex",
             justifyContent: "space-between",
-            fontFamily: "Plus Jakarta Sans, sans-serif",
+            fontFamily: '"Outfit", sans-serif',
             fontSize: 17,
             color: MUTED_LIGHT,
             opacity: legalReveal,

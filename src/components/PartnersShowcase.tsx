@@ -48,7 +48,7 @@ export function PartnersShowcase({
   };
 
   return (
-    <div ref={sectionRef} className="space-y-12">
+    <div id="parceiros" ref={sectionRef} className="scroll-mt-24 space-y-12">
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
         <div className="max-w-2xl">
           <p className="text-xs uppercase tracking-[0.2em] text-accent mb-4">

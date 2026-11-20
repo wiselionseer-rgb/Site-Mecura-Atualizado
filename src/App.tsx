@@ -13,9 +13,11 @@ import {
   ArrowRight,
   ArrowUpRight,
   Check,
+  ChevronDown,
   Instagram,
   Menu,
   MessageCircle,
+  Newspaper,
   Scale,
   X,
   ZoomIn,
@@ -26,7 +28,14 @@ import {
   TEAM_MEMBERS,
   type ModalContentKey,
 } from "./data/mecuraContent";
-import { SmoothScroll } from "./components/SmoothScroll";
+import type {
+  MonitoredSourceMeta,
+  NewsArticle,
+  NewsDatePeriod,
+  NewsSortOrder,
+  NewsTopicKey,
+} from "./data/newsTopics";
+import { SmoothScroll, scrollToSection } from "./components/SmoothScroll";
 import { EditorialManifesto } from "./components/EditorialManifesto";
 import { RemotionCinema } from "./components/RemotionCinema";
 import { StickyAppWalkthrough } from "./components/StickyAppWalkthrough";
@@ -36,6 +45,7 @@ import { ScientificDataSection } from "./components/ScientificDataSection";
 import { FaqAndSolutionsSection } from "./components/FaqAndSolutionsSection";
 import { InfoDrawer } from "./components/InfoDrawer";
 import { NewsBlogSection } from "./components/NewsBlogSection";
+import { NewsPortalDrawer } from "./components/NewsPortalDrawer";
 import { PartnersShowcase } from "./components/PartnersShowcase";
 import { AssociationsSection } from "./components/AssociationsSection";
 import {
@@ -131,9 +141,32 @@ function ParallaxPhoto({
   );
 }
 
-/* --- 3-Zone Editorial Top Bar --- */
+/* --- Complete Shortcut Navigation Bar + Highlighted Mundo Cannabis Portal Trigger --- */
 
-function TopBar({ onOpenLegal }: { onOpenLegal: (key: ModalContentKey) => void }) {
+const SITE_SHORTCUTS = [
+  { label: "O App", href: "#app" },
+  { label: "Jornada", href: "#jornada" },
+  { label: "Planos", href: "#planos" },
+  { label: "Patologias", href: "#patologias" },
+  { label: "Parceiros", href: "#parceiros" },
+  { label: "Ciência", href: "#dados-cientificos" },
+  { label: "Associações", href: "#associacoes" },
+  { label: "Profissionais", href: "#equipe" },
+  { label: "Dúvidas", href: "#duvidas" },
+  { label: "Jurídico", href: "#juridico" },
+];
+
+function TopBar({
+  onOpenLegal,
+  newsPortalOpen,
+  onToggleNewsPortal,
+  todayCount,
+}: {
+  onOpenLegal: (key: ModalContentKey) => void;
+  newsPortalOpen: boolean;
+  onToggleNewsPortal: () => void;
+  todayCount: number;
+}) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { scrollY, scrollYProgress } = useScroll();
@@ -154,62 +187,109 @@ function TopBar({ onOpenLegal }: { onOpenLegal: (key: ModalContentKey) => void }
     };
   }, [menuOpen]);
 
-  const navLinks = [
-    { label: "O App", href: "#app" },
-    { label: "Planos", href: "#planos" },
-    { label: "Patologias", href: "#patologias" },
-    { label: "Dados Científicos", href: "#dados-cientificos" },
-    { label: "Profissionais", href: "#equipe" },
-    { label: "Dúvidas", href: "#duvidas" },
-  ];
-
-  const mobileExtraLinks = [
-    { label: "Associações", href: "#associacoes" },
-    { label: "Notícias (Blog)", href: "#blog" },
-    { label: "Jurídico", href: "#juridico" },
-  ];
-
   return (
     <>
       <header
         className={`fixed top-0 inset-x-0 z-40 transition-colors duration-300 ${
-          scrolled
-            ? "bg-background/85 backdrop-blur-xl border-b border-border"
-            : "bg-transparent border-b border-transparent"
+          scrolled || newsPortalOpen
+            ? "bg-[#060b07]/94 backdrop-blur-2xl border-b border-accent/15 shadow-[0_12px_40px_-18px_rgba(196,255,26,0.18)]"
+            : "bg-[#060b07]/62 backdrop-blur-xl border-b border-accent/10"
         }`}
       >
-        <div className="max-w-[1380px] mx-auto px-6 lg:px-12 h-16 flex items-center justify-between gap-8">
-          {/* Zone 1: Wordmark */}
+        {/* Architectural Top Neon LED Fiber Trace Leading Toward Mundo Cannabis */}
+        <div
+          aria-hidden="true"
+          className="mecura-led-rail h-[1px] w-full pointer-events-none"
+        />
+
+        {/* Ambient Subtle Green LED Studio Glow Behind the News Spotlight Zone */}
+        <div
+          aria-hidden="true"
+          className="hidden lg:block absolute top-0 right-[170px] xl:right-[210px] w-[360px] h-full bg-[radial-gradient(ellipse_at_center,rgba(196,255,26,0.13)_0%,rgba(196,255,26,0.03)_48%,transparent_75%)] pointer-events-none"
+        />
+
+        <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3 xl:gap-5">
+          {/* Zone 1: Luxury Wordmark */}
           <a
             href="#inicio"
-            className="font-display text-xl font-semibold tracking-tight text-text-primary hover:text-accent transition-colors whitespace-nowrap shrink-0"
+            className="font-display text-[22px] font-semibold tracking-[0.06em] text-text-primary hover:text-accent transition-colors whitespace-nowrap shrink-0"
           >
             {BRAND.shortName}
           </a>
 
-          {/* Zone 2: 5 clean text nav links */}
+          {/* Zone 2: Complete Site Shortcuts */}
           <nav
             aria-label="Navegação principal"
-            className="hidden lg:flex items-center gap-8 text-sm text-text-secondary"
+            className="hidden lg:flex items-center gap-2.5 xl:gap-4 text-[12px] xl:text-[13px] text-text-secondary min-w-0 overflow-x-auto hide-scrollbar py-1"
           >
-            {navLinks.map((link) => (
+            {SITE_SHORTCUTS.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="hover:text-text-primary transition-colors relative py-1 after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[1px] after:bg-accent hover:after:w-full after:transition-all whitespace-nowrap shrink-0"
+                className="hover:text-text-primary transition-colors relative py-1 after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[1.5px] after:bg-accent after:shadow-[0_0_8px_rgba(196,255,26,0.8)] hover:after:w-full after:transition-all whitespace-nowrap shrink-0"
               >
                 {link.label}
               </a>
             ))}
           </nav>
 
-          {/* Zone 3: 1 primary action */}
-          <div className="flex items-center gap-3 shrink-0">
+          {/* Zone 3: Directional Neon LED Guide + Single 'Notícias no Mundo Canábico' Spotlight Button + Primary CTA */}
+          <div className="flex items-center gap-2.5 xl:gap-3 shrink-0">
+            {/* Directional Neon LED Guide Ray Pointing Directly Into Notícias no Mundo Canábico */}
+            <div
+              aria-hidden="true"
+              className="hidden xl:flex items-center shrink-0"
+            >
+              <span className="mecura-led-connector block w-8 h-[1.5px] rounded-full" />
+              <span className="w-1.5 h-1.5 rotate-45 border-t border-r border-accent -ml-1 shadow-[0_0_10px_rgba(196,255,26,0.9)]" />
+            </div>
+
+            {/* Single Unified Neon LED Illuminated Button */}
+            <button
+              type="button"
+              onClick={onToggleNewsPortal}
+              aria-expanded={newsPortalOpen}
+              className="mecura-news-led-shell inline-flex shrink-0 cursor-pointer group"
+            >
+              <span aria-hidden="true" className="mecura-news-led-orbit" />
+              <span
+                className={`relative z-10 inline-flex items-center gap-1.5 px-3 sm:px-3.5 xl:px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-semibold transition-all whitespace-nowrap ${
+                  newsPortalOpen
+                    ? "bg-accent text-accent-ink"
+                    : "bg-[#08130b]/95 text-accent group-hover:bg-[#0e2214] shadow-[inset_0_1px_0_rgba(196,255,26,0.28)]"
+                }`}
+              >
+                <Newspaper className="w-3.5 h-3.5 shrink-0 drop-shadow-[0_0_6px_rgba(196,255,26,0.65)]" />
+                <span className="hidden md:inline tracking-[0.01em]">
+                  Notícias no Mundo Canábico
+                </span>
+                <span className="md:hidden tracking-[0.01em]">
+                  Mundo Canábico
+                </span>
+                {todayCount > 0 && (
+                  <span
+                    className={`hidden 2xl:inline font-mono text-[10.5px] tabular-nums ${
+                      newsPortalOpen
+                        ? "text-accent-ink/85"
+                        : "text-text-primary/80 group-hover:text-accent"
+                    }`}
+                  >
+                    · {todayCount}
+                  </span>
+                )}
+                <ChevronDown
+                  className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${
+                    newsPortalOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </span>
+            </button>
+
             <a
               href={BRAND.appUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-2 px-5 py-2 rounded-full bg-accent text-accent-ink text-xs font-semibold hover:bg-accent-hover active:scale-[0.98] transition-all whitespace-nowrap shrink-0"
+              className="hidden sm:inline-flex items-center gap-1.5 px-4 xl:px-5 py-2 rounded-full bg-accent text-accent-ink text-xs font-semibold hover:bg-accent-hover active:scale-[0.98] transition-all whitespace-nowrap shrink-0"
             >
               <span>{BRAND.ctaCompact}</span>
               <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
@@ -226,9 +306,10 @@ function TopBar({ onOpenLegal }: { onOpenLegal: (key: ModalContentKey) => void }
           </div>
         </div>
 
+        {/* Recessed Neon LED Scroll Progress Strip */}
         <motion.div
           style={{ scaleX }}
-          className="h-[1.5px] bg-accent origin-left w-full"
+          className="mecura-led-scroll-bar h-[2px] bg-accent origin-left w-full"
         />
       </header>
 
@@ -258,17 +339,39 @@ function TopBar({ onOpenLegal }: { onOpenLegal: (key: ModalContentKey) => void }
 
             <nav
               data-lenis-prevent
-              className="flex flex-col gap-3.5 my-auto overflow-y-auto overscroll-contain py-4"
+              className="flex flex-col gap-3 my-auto overflow-y-auto overscroll-contain py-4"
             >
-              {[...navLinks, ...mobileExtraLinks].map((item, idx) => (
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  onToggleNewsPortal();
+                }}
+                className="flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl bg-accent/15 border border-accent/55 text-accent text-left cursor-pointer mb-2"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Newspaper className="w-5 h-5 shrink-0" />
+                  <div>
+                    <span className="block font-display text-xl font-semibold leading-none">
+                      Notícias no Mundo Canábico
+                    </span>
+                    <span className="block text-[11px] text-text-secondary mt-1">
+                      Abrir editorias &amp; busca profunda
+                    </span>
+                  </div>
+                </div>
+                <ArrowUpRight className="w-4 h-4 shrink-0" />
+              </button>
+
+              {SITE_SHORTCUTS.map((item, idx) => (
                 <motion.a
                   key={item.href}
                   href={item.href}
                   onClick={() => setMenuOpen(false)}
-                  initial={{ opacity: 0, y: 14 }}
+                  initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.035, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                  className="font-display text-3xl text-text-primary hover:text-accent transition-colors"
+                  transition={{ delay: idx * 0.03, duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                  className="font-display text-2xl sm:text-3xl text-text-primary hover:text-accent transition-colors"
                 >
                   {item.label}
                 </motion.a>
@@ -279,7 +382,7 @@ function TopBar({ onOpenLegal }: { onOpenLegal: (key: ModalContentKey) => void }
                   setMenuOpen(false);
                   onOpenLegal("parecer");
                 }}
-                className="text-left font-display text-2xl text-accent hover:text-text-primary transition-colors cursor-pointer pt-1"
+                className="text-left font-display text-xl text-accent hover:text-text-primary transition-colors cursor-pointer pt-1"
               >
                 Parecer Jurídico · ANVISA RDC 660
               </button>
@@ -1107,16 +1210,66 @@ function BrandOutroClosing({
   );
 }
 
-/* --- Quiet Editorial Footer --- */
+/* --- Complete Editorial Footer with All Site Shortcuts & Featured Mundo Cannabis Portal --- */
 
 function Footer({
   onOpenModal,
+  onOpenNewsPortal,
 }: {
   onOpenModal: (key: ModalContentKey) => void;
+  onOpenNewsPortal: () => void;
 }) {
+  const allSitePoints = [
+    { label: "Início", href: "#inicio" },
+    { label: "Apresentação", href: "#filme" },
+    { label: "O App", href: "#app" },
+    { label: "Jornada", href: "#jornada" },
+    { label: "Planos", href: "#planos" },
+    { label: "Patologias", href: "#patologias" },
+    { label: "Parceiros", href: "#parceiros" },
+    { label: "Dados Científicos", href: "#dados-cientificos" },
+    { label: "Associações", href: "#associacoes" },
+    { label: "Profissionais", href: "#equipe" },
+    { label: "Dúvidas & Soluções", href: "#duvidas" },
+    { label: "Jurídico", href: "#juridico" },
+  ];
+
   return (
     <footer className="py-16 px-6 lg:px-12 bg-background border-t border-border">
-      <div className="max-w-[1280px] mx-auto">
+      <div className="max-w-[1320px] mx-auto">
+        {/* Complete Site Shortcuts Strip + Featured Mundo Cannabis Button */}
+        <div className="pb-12 mb-12 border-b border-border flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="space-y-3">
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-text-muted">
+              Atalhos Rápidos do Site
+            </p>
+            <nav
+              aria-label="Atalhos completos do rodapé"
+              className="flex flex-wrap items-center gap-2"
+            >
+              {allSitePoints.map((pt) => (
+                <a
+                  key={pt.href}
+                  href={pt.href}
+                  className="px-3.5 py-2 rounded-full bg-surface border border-border text-xs font-medium text-text-secondary hover:border-accent/60 hover:text-text-primary transition-colors whitespace-nowrap"
+                >
+                  {pt.label}
+                </a>
+              ))}
+            </nav>
+          </div>
+
+          <button
+            type="button"
+            onClick={onOpenNewsPortal}
+            className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full bg-accent/15 border border-accent/70 text-accent font-semibold text-xs sm:text-sm hover:bg-accent hover:text-accent-ink transition-all shadow-[0_0_28px_rgba(196,255,26,0.16)] whitespace-nowrap shrink-0 cursor-pointer w-fit"
+          >
+            <Newspaper className="w-4 h-4 shrink-0" />
+            <span>Mundo Cannabis · Notícias</span>
+            <ArrowUpRight className="w-4 h-4 shrink-0" />
+          </button>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 pb-14 border-b border-border">
           <div className="space-y-3">
             <a
@@ -1182,12 +1335,13 @@ function Footer({
             >
               Dúvidas &amp; Soluções do App
             </a>
-            <a
-              href="#blog"
-              className="text-sm text-text-secondary hover:text-text-primary transition-colors text-left w-fit"
+            <button
+              type="button"
+              onClick={onOpenNewsPortal}
+              className="text-sm font-medium text-accent hover:text-text-primary transition-colors text-left w-fit cursor-pointer"
             >
-              Diário &amp; Notícias (Blog)
-            </a>
+              Portal Mundo Cannabis (Notícias)
+            </button>
           </div>
 
           <div className="flex flex-col gap-3">
@@ -1300,6 +1454,73 @@ function FloatingWhatsApp() {
 export default function App() {
   const [activeModal, setActiveModal] = useState<ModalContentKey | null>(null);
   const [activePopup, setActivePopup] = useState<InteractivePopupPayload | null>(null);
+  const [newsPortalOpen, setNewsPortalOpen] = useState(false);
+  const [activeNewsTopic, setActiveNewsTopic] = useState<NewsTopicKey>("inicio");
+  const [activeNewsSourceId, setActiveNewsSourceId] = useState<string | null>(null);
+  const [newsDatePeriod, setNewsDatePeriod] = useState<NewsDatePeriod>("todos");
+  const [newsExactDate, setNewsExactDate] = useState<string>("");
+  const [newsSortOrder, setNewsSortOrder] = useState<NewsSortOrder>("destaques");
+  const [newsSearchQuery, setNewsSearchQuery] = useState("");
+  const [newsSearchTrigger, setNewsSearchTrigger] = useState(0);
+  const [todayRefreshTrigger, setTodayRefreshTrigger] = useState(0);
+  const [sharedNewsArticles, setSharedNewsArticles] = useState<NewsArticle[]>([]);
+  const [sharedTopicCounts, setSharedTopicCounts] = useState<Record<string, number>>({});
+  const [sharedSourcesMeta, setSharedSourcesMeta] = useState<MonitoredSourceMeta[]>([]);
+  const [sharedTodayCount, setSharedTodayCount] = useState<number>(0);
+  const [externalArticle, setExternalArticle] = useState<NewsArticle | null>(null);
+
+  const handleSelectTopicAndJump = (
+    topic: NewsTopicKey,
+    query?: string,
+    options?: { period?: NewsDatePeriod; exactDate?: string; sort?: NewsSortOrder }
+  ) => {
+    setActiveNewsTopic(topic);
+    setActiveNewsSourceId(null);
+    if (options?.period !== undefined) setNewsDatePeriod(options.period);
+    if (options?.exactDate !== undefined) setNewsExactDate(options.exactDate);
+    if (options?.sort !== undefined) setNewsSortOrder(options.sort);
+    if (query !== undefined) {
+      setNewsSearchQuery(query);
+      setNewsSearchTrigger((n) => n + 1);
+    }
+    setNewsPortalOpen(false);
+    scrollToSection("blog", -80);
+  };
+
+  const handleSelectSourceAndJump = (sourceId: string) => {
+    setActiveNewsTopic("inicio");
+    setActiveNewsSourceId(sourceId);
+    setNewsDatePeriod("todos");
+    setNewsExactDate("");
+    setNewsSearchQuery("");
+    setNewsPortalOpen(false);
+    scrollToSection("blog", -80);
+  };
+
+  const handleDrawerRefreshToday = () => {
+    setActiveNewsTopic("ultimas");
+    setActiveNewsSourceId(null);
+    setNewsDatePeriod("hoje");
+    setNewsExactDate("");
+    setNewsSortOrder("recentes");
+    setNewsSearchQuery("");
+    setTodayRefreshTrigger((n) => n + 1);
+  };
+
+  const handleFeedSynced = React.useCallback(
+    (
+      articles: NewsArticle[],
+      counts: Record<string, number>,
+      sources: MonitoredSourceMeta[],
+      todayCount: number
+    ) => {
+      setSharedNewsArticles(articles);
+      setSharedTopicCounts(counts);
+      setSharedSourcesMeta(sources);
+      setSharedTodayCount(todayCount);
+    },
+    []
+  );
 
   return (
     <MotionConfig reducedMotion="user">
@@ -1307,7 +1528,26 @@ export default function App() {
       <div className="min-h-screen bg-background text-text-primary relative">
         <div className="botanical-grain" aria-hidden="true" />
 
-        <TopBar onOpenLegal={setActiveModal} />
+        <TopBar
+          onOpenLegal={setActiveModal}
+          newsPortalOpen={newsPortalOpen}
+          onToggleNewsPortal={() => setNewsPortalOpen((prev) => !prev)}
+          todayCount={sharedTodayCount}
+        />
+
+        <NewsPortalDrawer
+          open={newsPortalOpen}
+          onClose={() => setNewsPortalOpen(false)}
+          articles={sharedNewsArticles}
+          topicCounts={sharedTopicCounts}
+          sourcesMeta={sharedSourcesMeta}
+          todayCount={sharedTodayCount}
+          activeTopic={activeNewsTopic}
+          onSelectTopicAndJump={handleSelectTopicAndJump}
+          onSelectSourceAndJump={handleSelectSourceAndJump}
+          onRefreshToday={handleDrawerRefreshToday}
+          onOpenArticle={(article) => setExternalArticle(article)}
+        />
 
         <main>
           <HeroCinema />
@@ -1324,12 +1564,33 @@ export default function App() {
             onOpenLegal={setActiveModal}
           />
           <FaqAndSolutionsSection onOpenLegal={setActiveModal} />
-          <NewsBlogSection />
+          <NewsBlogSection
+            activeTopic={activeNewsTopic}
+            onChangeTopic={setActiveNewsTopic}
+            activeSourceId={activeNewsSourceId}
+            onChangeSourceId={setActiveNewsSourceId}
+            datePeriod={newsDatePeriod}
+            onChangeDatePeriod={setNewsDatePeriod}
+            exactDate={newsExactDate}
+            onChangeExactDate={setNewsExactDate}
+            sortOrder={newsSortOrder}
+            onChangeSortOrder={setNewsSortOrder}
+            searchQuery={newsSearchQuery}
+            onChangeSearchQuery={setNewsSearchQuery}
+            searchTrigger={newsSearchTrigger}
+            todayRefreshTrigger={todayRefreshTrigger}
+            externalSelectedArticle={externalArticle}
+            onClearExternalArticle={() => setExternalArticle(null)}
+            onFeedSynced={handleFeedSynced}
+          />
           <LegalTransparencyBand onOpenLegal={setActiveModal} />
           <BrandOutroClosing onOpenLegal={setActiveModal} />
         </main>
 
-        <Footer onOpenModal={setActiveModal} />
+        <Footer
+          onOpenModal={setActiveModal}
+          onOpenNewsPortal={() => setNewsPortalOpen(true)}
+        />
         <FloatingWhatsApp />
         <InfoDrawer contentKey={activeModal} onClose={() => setActiveModal(null)} />
         <InteractivePopupModal

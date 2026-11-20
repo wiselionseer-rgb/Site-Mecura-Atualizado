@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --font-display: "Fraunces", Georgia, serif;
-  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Outfit", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 
   /* Botanical Obsidian Palette (60-30-10) */
   --color-background: #070b08;
@@ -13,12 +13,12 @@
   --color-border: rgba(235, 246, 238, 0.09);
   --color-border-strong: rgba(235, 246, 238, 0.18);
   --color-accent: #c4ff1a;
-  --color-accent-hover: #b2ee0e;
-  --color-accent-ink: #0a2214;
+  --color-accent-hover: #d2ff4d;
+  --color-accent-ink: #071b10;
   --color-forest: #0a2214;
-  --color-text-primary: #f3f7f4;
-  --color-text-secondary: rgba(243, 247, 244, 0.72);
-  --color-text-muted: rgba(243, 247, 244, 0.48);
+  --color-text-primary: #f4f8f5;
+  --color-text-secondary: rgba(244, 248, 245, 0.74);
+  --color-text-muted: rgba(244, 248, 245, 0.50);
 }
 
 @layer base {
@@ -31,19 +31,59 @@
   body {
     @apply bg-background text-text-primary font-sans antialiased selection:bg-accent selection:text-accent-ink;
     overflow-x: hidden;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    letter-spacing: 0.005em;
+    font-optical-sizing: auto;
   }
 
   h1,
   h2,
   h3 {
     @apply font-display text-text-primary;
+    font-weight: 600;
+    letter-spacing: -0.02em;
     text-wrap: balance;
+    font-feature-settings: "liga" 1, "kern" 1;
+  }
+
+  h1 em,
+  h2 em,
+  h3 em,
+  h1 .italic,
+  h2 .italic,
+  h3 .italic {
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  h1 .text-accent,
+  h2 .text-accent,
+  h3 .text-accent,
+  .font-display .text-accent,
+  .font-display.text-accent {
+    text-shadow: 0 0 28px rgba(196, 255, 26, 0.24);
   }
 
   p {
     @apply text-text-secondary leading-relaxed;
     text-wrap: pretty;
+  }
+
+  a.bg-accent,
+  button.bg-accent {
+    box-shadow: 0 10px 28px -8px rgba(196, 255, 26, 0.36);
+    transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+      background-color 180ms ease,
+      box-shadow 220ms ease;
+  }
+
+  a.bg-accent:hover,
+  button.bg-accent:hover {
+    box-shadow: 0 14px 36px -6px rgba(196, 255, 26, 0.5);
+  }
+
+  a.bg-accent:active,
+  button.bg-accent:active {
+    transform: scale(0.985);
   }
 
   a:focus-visible,
@@ -86,8 +126,155 @@ video::-webkit-media-controls-start-playback-button {
   -webkit-appearance: none !important;
 }
 
+/* --- Luxury Architectural Neon-Green LED Utilities --- */
+@keyframes mecura-led-orbit {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes mecura-led-beam {
+  0% {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.95;
+  }
+  82% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateX(320%);
+    opacity: 0;
+  }
+}
+
+@keyframes mecura-led-guide-pulse {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(260%);
+    opacity: 0;
+  }
+}
+
+.mecura-led-rail {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    90deg,
+    rgba(196, 255, 26, 0.04) 0%,
+    rgba(196, 255, 26, 0.24) 55%,
+    rgba(196, 255, 26, 0.58) 80%,
+    rgba(196, 255, 26, 0.14) 100%
+  );
+}
+
+.mecura-led-rail::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 28%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(196, 255, 26, 0.2) 25%,
+    #d6ff5c 50%,
+    rgba(196, 255, 26, 0.2) 75%,
+    transparent 100%
+  );
+  box-shadow: 0 0 14px rgba(196, 255, 26, 0.85);
+  animation: mecura-led-beam 4.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.mecura-led-connector {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    90deg,
+    rgba(196, 255, 26, 0) 0%,
+    rgba(196, 255, 26, 0.45) 55%,
+    #c4ff1a 100%
+  );
+  box-shadow: 0 0 10px rgba(196, 255, 26, 0.45);
+}
+
+.mecura-led-connector::after {
+  content: "";
+  position: absolute;
+  inset: -1px 0;
+  width: 45%;
+  background: linear-gradient(90deg, transparent, #ecff9e, transparent);
+  animation: mecura-led-guide-pulse 2.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.mecura-news-led-shell {
+  position: relative;
+  padding: 1.5px;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: rgba(196, 255, 26, 0.22);
+  box-shadow:
+    0 0 22px -2px rgba(196, 255, 26, 0.34),
+    0 0 46px -8px rgba(196, 255, 26, 0.22);
+  transition: box-shadow 220ms ease, transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mecura-news-led-shell:hover {
+  box-shadow:
+    0 0 28px 0px rgba(196, 255, 26, 0.56),
+    0 0 58px -6px rgba(196, 255, 26, 0.32);
+}
+
+.mecura-news-led-shell:active {
+  transform: scale(0.98);
+}
+
+.mecura-news-led-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 240%;
+  aspect-ratio: 1 / 1;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 230deg,
+    rgba(196, 255, 26, 0.45) 285deg,
+    #d6ff5c 330deg,
+    #c4ff1a 352deg,
+    transparent 360deg
+  );
+  animation: mecura-led-orbit 4.4s linear infinite;
+  pointer-events: none;
+}
+
+.mecura-led-scroll-bar {
+  box-shadow:
+    0 0 12px rgba(196, 255, 26, 0.85),
+    0 0 26px rgba(196, 255, 26, 0.4);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .mecura-led-rail::after,
+  .mecura-led-connector::after,
+  .mecura-news-led-orbit {
+    animation: none;
   }
 }
