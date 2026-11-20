@@ -126,46 +126,46 @@ export function PartnersShowcase({
                 <div className="absolute top-3.5 right-3.5 w-8 h-8 rounded-full bg-background/75 backdrop-blur-md border border-white/15 flex items-center justify-center text-text-secondary group-hover:text-accent group-hover:border-accent/50 transition-colors">
                   <ZoomIn className="w-3.5 h-3.5" />
                 </div>
+              </div>
 
-                {/* Synchronized Animated Motion Pop-up Chip */}
-                <div className="absolute inset-x-3.5 bottom-3.5 z-10 pointer-events-none">
-                  <motion.div
-                    animate={{
-                      y: isSpotlight ? 0 : 4,
-                      scale: isSpotlight ? 1 : 0.97,
-                    }}
-                    transition={{ type: "spring", stiffness: 280, damping: 24 }}
-                    className={`rounded-xl px-3.5 py-2.5 backdrop-blur-xl border transition-colors duration-300 ${
-                      isSpotlight
-                        ? "bg-background/92 border-accent/60 shadow-[0_12px_30px_rgba(0,0,0,0.65)]"
-                        : "bg-background/80 border-white/12"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-accent truncate">
-                        {partner.popupHighlight}
-                      </span>
-                      <ArrowUpRight className="w-3 h-3 text-accent shrink-0" />
-                    </div>
-                    <AnimatePresence initial={false}>
-                      {isSpotlight && (
-                        <motion.p
-                          initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                          animate={{ opacity: 1, height: "auto", marginTop: 4 }}
-                          exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                          transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                          className="overflow-hidden text-[11px] text-text-secondary leading-snug line-clamp-2"
-                        >
-                          {partner.popupDetail}
-                        </motion.p>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                </div>
+              {/* Synchronized Animated Motion Pop-up Strip (Docked cleanly below the image — zero text overlap) */}
+              <div className="px-4 pt-4">
+                <motion.div
+                  animate={{
+                    y: isSpotlight ? -2 : 0,
+                    scale: isSpotlight ? 1 : 0.985,
+                  }}
+                  transition={{ type: "spring", stiffness: 280, damping: 24 }}
+                  className={`rounded-xl px-3.5 py-2.5 border transition-colors duration-300 ${
+                    isSpotlight
+                      ? "bg-background/95 border-accent/60 shadow-[0_12px_28px_rgba(0,0,0,0.45)]"
+                      : "bg-background/55 border-white/10"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-accent truncate">
+                      {partner.popupHighlight}
+                    </span>
+                    <ArrowUpRight className="w-3 h-3 text-accent shrink-0" />
+                  </div>
+                  <AnimatePresence initial={false}>
+                    {isSpotlight && (
+                      <motion.p
+                        initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                        animate={{ opacity: 1, height: "auto", marginTop: 4 }}
+                        exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                        transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                        className="overflow-hidden text-[11px] text-text-secondary leading-snug line-clamp-2"
+                      >
+                        {partner.popupDetail}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
               </div>
 
               {/* Uniform Aligned Copy Area */}
-              <div className="p-5 sm:p-6 flex flex-col flex-1">
+              <div className="p-5 sm:p-6 pt-4 flex flex-col flex-1">
                 <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-accent mb-2">
                   {partner.category}
                 </span>

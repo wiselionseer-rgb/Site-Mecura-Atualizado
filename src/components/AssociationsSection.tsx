@@ -82,7 +82,7 @@ export function AssociationsSection({
               onMouseLeave={() => setIsHovering(false)}
               className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center rounded-3xl bg-surface/75 border border-border-strong p-6 sm:p-8 lg:p-10"
             >
-              {/* Left: Deep Obsidian Logo Stage + Motion Zoom + Floating Pop-ups */}
+              {/* Left: Deep Obsidian Logo Stage + Motion Zoom + Non-Overlapping Pop-up Strip */}
               <div
                 onClick={() => openAssociationModal(assoc)}
                 role="button"
@@ -94,7 +94,7 @@ export function AssociationsSection({
                   }
                 }}
                 aria-label={`Ampliar detalhes da associação ${assoc.name}`}
-                className="group lg:col-span-5 relative aspect-[4/3] sm:aspect-[16/11] lg:aspect-[5/4] rounded-2xl bg-[#030504] border border-white/10 overflow-hidden flex items-center justify-center p-8 sm:p-10 cursor-zoom-in"
+                className="group lg:col-span-5 relative rounded-2xl bg-[#030504] border border-white/10 overflow-hidden flex flex-col justify-between gap-6 p-5 sm:p-6 cursor-zoom-in"
               >
                 {/* Soft botanical obsidian halo */}
                 <div
@@ -102,43 +102,46 @@ export function AssociationsSection({
                   className="absolute inset-0 pointer-events-none"
                   style={{
                     background:
-                      "radial-gradient(circle at 50% 44%, rgba(196,255,26,0.08) 0%, rgba(10,34,20,0.16) 42%, rgba(3,5,4,0.95) 85%)",
+                      "radial-gradient(circle at 50% 42%, rgba(196,255,26,0.08) 0%, rgba(10,34,20,0.14) 44%, rgba(3,5,4,0.96) 86%)",
                   }}
                 />
 
-                <motion.img
-                  animate={{ scale: isHovering ? 1.06 : [1, 1.03, 1] }}
-                  transition={
-                    isHovering
-                      ? { duration: 0.55, ease: [0.16, 1, 0.3, 1] }
-                      : { duration: 6.5, repeat: Infinity, ease: "easeInOut" }
-                  }
-                  src={assoc.image}
-                  alt={`${assoc.name} — ${assoc.subtitle}`}
-                  loading="lazy"
-                  className="relative z-10 w-full max-w-[330px] h-auto object-contain select-none"
-                />
+                {/* Top Row: Partner Badge + Zoom Hint */}
+                <div className="relative z-10 flex items-center justify-between gap-3">
+                  <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent/90 bg-background/80 backdrop-blur-md border border-white/12 px-3 py-1 rounded-full">
+                    Parceira {assoc.order}
+                  </span>
+                  <span className="w-8 h-8 rounded-full bg-background/80 backdrop-blur-md border border-white/12 flex items-center justify-center text-text-secondary group-hover:text-accent group-hover:border-accent/50 transition-colors">
+                    <ZoomIn className="w-3.5 h-3.5" />
+                  </span>
+                </div>
 
-                {/* Top-left Partner Number */}
-                <span className="absolute top-4 left-4 z-10 font-mono text-[11px] uppercase tracking-[0.16em] text-accent/90 bg-background/80 backdrop-blur-md border border-white/12 px-3 py-1 rounded-full">
-                  Parceira {assoc.order}
-                </span>
+                {/* Middle Row: 100% Unobstructed SouCannabis Emblem */}
+                <div className="relative z-10 py-6 sm:py-8 px-4 flex items-center justify-center">
+                  <motion.img
+                    animate={{ scale: isHovering ? 1.05 : [1, 1.025, 1] }}
+                    transition={
+                      isHovering
+                        ? { duration: 0.55, ease: [0.16, 1, 0.3, 1] }
+                        : { duration: 6.5, repeat: Infinity, ease: "easeInOut" }
+                    }
+                    src={assoc.image}
+                    alt={`${assoc.name} — ${assoc.subtitle}`}
+                    loading="lazy"
+                    className="w-full max-w-[300px] h-auto object-contain select-none"
+                  />
+                </div>
 
-                {/* Top-right Zoom Trigger Hint */}
-                <span className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-md border border-white/12 flex items-center justify-center text-text-secondary group-hover:text-accent group-hover:border-accent/50 transition-colors">
-                  <ZoomIn className="w-3.5 h-3.5" />
-                </span>
-
-                {/* Bottom Automatic Synchronized Motion Pop-up */}
-                <div className="absolute inset-x-4 bottom-4 z-10 pointer-events-none">
+                {/* Bottom Row: Synchronized Motion Pop-up cleanly BELOW the logo (Zero Text Overlap) */}
+                <div className="relative z-10 min-h-[78px] flex items-end pointer-events-none">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={assoc.popups[activeChip]?.label ?? "chip"}
-                      initial={{ opacity: 0, y: 10, scale: 0.96 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -6, scale: 0.96 }}
-                      transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
-                      className="rounded-xl bg-background/90 backdrop-blur-xl border border-accent/45 px-4 py-3 shadow-[0_14px_34px_rgba(0,0,0,0.65)]"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                      className="w-full rounded-xl bg-background/90 backdrop-blur-xl border border-accent/40 px-4 py-3 shadow-[0_14px_34px_rgba(0,0,0,0.55)]"
                     >
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent">

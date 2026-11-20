@@ -408,7 +408,10 @@ export function InfoDrawer({
             </div>
 
             {/* Scrollable Body */}
-            <div className="p-5 sm:p-7 flex-1 overflow-y-auto text-sm sm:text-[15px] leading-relaxed text-text-secondary">
+            <div
+              data-lenis-prevent
+              className="p-5 sm:p-7 flex-1 overflow-y-auto overscroll-contain text-sm sm:text-[15px] leading-relaxed text-text-secondary"
+            >
               {mode === "legal" ? (
                 <div className="space-y-6">
                   {/* Pessoa Jurídica Registrada Card (faithful to official app) */}

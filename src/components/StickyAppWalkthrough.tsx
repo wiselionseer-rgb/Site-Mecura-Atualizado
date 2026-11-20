@@ -181,9 +181,9 @@ export function StickyAppWalkthrough({
               onMouseLeave={() => setIsHoveringStage(false)}
               className="flex flex-col items-center relative py-4"
             >
-              {/* Main Edge-to-Edge Phone Container with Bulletproof Crossfade + Automatic Motion Zoom */}
+              {/* Main Edge-to-Edge Phone Container with Crisp Retina Display + Subtle Motion Breath */}
               <motion.div
-                whileHover={{ scale: 1.02 }}
+                whileHover={{ scale: 1.015 }}
                 transition={{ type: "spring", stiffness: 260, damping: 24 }}
                 onClick={openCurrentZoom}
                 role="button"
@@ -195,9 +195,9 @@ export function StickyAppWalkthrough({
                   }
                 }}
                 aria-label={`Ampliar tela ${current.label} do aplicativo Mecura`}
-                className="relative group w-[268px] sm:w-[296px] rounded-[2.6rem] p-[7px] bg-[#141e17] border border-white/15 shadow-[0_36px_100px_rgba(0,0,0,0.85)] cursor-zoom-in"
+                className="relative group w-[238px] sm:w-[272px] lg:w-[292px] rounded-[2.4rem] lg:rounded-[2.6rem] p-[6px] lg:p-[7px] bg-[#141e17] border border-white/15 shadow-[0_32px_90px_rgba(0,0,0,0.82)] cursor-zoom-in"
               >
-                <div className="relative rounded-[2.2rem] overflow-hidden aspect-[274/584] bg-[#070b08]">
+                <div className="relative rounded-[2rem] lg:rounded-[2.2rem] overflow-hidden aspect-[274/584] bg-[#070b08]">
                   {APP_SCREENS.map((screen, idx) => {
                     const isCurrent = idx === activeIndex;
                     return (
@@ -209,17 +209,17 @@ export function StickyAppWalkthrough({
                         initial={false}
                         animate={{
                           opacity: isCurrent ? 1 : 0,
-                          scale: isCurrent ? (isRunning ? 1.045 : 1.01) : 1.08,
+                          scale: isCurrent ? (isRunning ? 1.018 : 1.0) : 1.03,
                         }}
                         transition={{
-                          opacity: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
+                          opacity: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
                           scale: {
-                            duration: isCurrent && isRunning ? 4.4 : 0.5,
+                            duration: isCurrent && isRunning ? 4.4 : 0.45,
                             ease: "easeOut",
                           },
                         }}
                         style={{ zIndex: isCurrent ? 2 : 1 }}
-                        className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none select-none"
+                        className="absolute inset-0 w-full h-full object-contain bg-[#070b08] pointer-events-none select-none"
                       />
                     );
                   })}
@@ -234,8 +234,8 @@ export function StickyAppWalkthrough({
                 </div>
               </motion.div>
 
-              {/* Floating Interactive Pop-ups Animating Automatically in Sync with the Screen */}
-              <div className="pointer-events-none absolute inset-0">
+              {/* Desktop Only: Floating Interactive Pop-ups orbiting outside the phone (Zero Overlap) */}
+              <div className="hidden lg:block pointer-events-none absolute inset-0">
                 <AnimatePresence initial={false}>
                   {current.popups.map((hotspot, idx) => {
                     const isTopRight = hotspot.position === "top-right";
@@ -271,8 +271,8 @@ export function StickyAppWalkthrough({
                         }}
                         className={`pointer-events-auto absolute z-20 ${
                           isTopRight
-                            ? "top-14 right-0 sm:right-2 lg:-right-3 xl:-right-8"
-                            : "bottom-24 left-0 sm:left-2 lg:-left-3 xl:-left-8"
+                            ? "top-14 -right-4 xl:-right-8"
+                            : "bottom-24 -left-4 xl:-left-8"
                         }`}
                       >
                         <motion.button
@@ -327,6 +327,42 @@ export function StickyAppWalkthrough({
                     );
                   })}
                 </AnimatePresence>
+              </div>
+
+              {/* Mobile Only: Clean Synchronized Pop-ups Below Phone (Never Covers Screen Text) */}
+              <div className="lg:hidden w-full max-w-[340px] mt-5 grid grid-cols-1 gap-2.5">
+                {current.popups.map((hotspot, idx) => {
+                  const isSpotlight = spotlightPopup === idx;
+                  return (
+                    <button
+                      key={hotspot.id}
+                      type="button"
+                      onClick={() => openHotspot(hotspot)}
+                      className={`w-full rounded-xl px-4 py-3 text-left border transition-all duration-300 cursor-pointer ${
+                        isSpotlight
+                          ? "bg-surface border-accent shadow-[0_12px_30px_rgba(196,255,26,0.12)]"
+                          : "bg-surface/65 border-border hover:border-border-strong"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-text-primary leading-tight">
+                            {hotspot.label}
+                          </p>
+                          <p className="text-[11px] text-text-secondary mt-0.5">
+                            {hotspot.sublabel}
+                          </p>
+                        </div>
+                        <ArrowUpRight className="w-3.5 h-3.5 text-accent shrink-0" />
+                      </div>
+                      {isSpotlight && hotspot.modalPoints[0] && (
+                        <p className="mt-2 pt-2 border-t border-white/10 text-[11px] text-accent/95 leading-snug">
+                          {hotspot.modalPoints[0]}
+                        </p>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
 
               {/* Animated Progress Bars + Auto-Play Toggle */}

@@ -523,7 +523,10 @@ export function NewsBlogSection() {
                 </button>
               </div>
 
-              <div className="p-6 overflow-y-auto space-y-5 text-sm sm:text-base text-text-secondary leading-relaxed">
+              <div
+                data-lenis-prevent
+                className="p-6 overflow-y-auto overscroll-contain space-y-5 text-sm sm:text-base text-text-secondary leading-relaxed"
+              >
                 {selectedArticle.image && !failedImages[selectedArticle.id] && (
                   <div className="aspect-[16/9] rounded-xl overflow-hidden bg-background border border-border">
                     <img

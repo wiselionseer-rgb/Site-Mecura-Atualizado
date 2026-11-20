@@ -6,13 +6,16 @@ export function SmoothScroll() {
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
-    if (prefersReduced) return;
+    // Keep 100% native hardware-accelerated scroll on mobile / touch devices for fluid iOS & Android UX
+    const isTouchOrMobile =
+      window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 1024;
+
+    if (prefersReduced || isTouchOrMobile) return;
 
     const lenis = new Lenis({
-      duration: 1.15,
+      duration: 1.05,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
-      touchMultiplier: 1.4,
     });
 
     let rafId = 0;
