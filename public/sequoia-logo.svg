@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img" aria-label="SEQUOIA — Associação Brasileira para Cannabis Medicinal e Pesquisas">
+  <rect width="600" height="600" fill="#ffffff" />
+
+  <!-- Three overlapping botanical emerald circles (exact geometry & palette) -->
+  <g>
+    <circle cx="274" cy="176" r="70" fill="#096556" />
+    <circle cx="344" cy="210" r="50" fill="#71b898" />
+    <circle cx="290" cy="256" r="34" fill="#b1d9c1" />
+  </g>
+
+  <!-- Crisp vector wordmark & subtitle -->
+  <text
+    x="300"
+    y="386"
+    text-anchor="middle"
+    fill="#091811"
+    font-family="'Outfit', 'Montserrat', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+    font-size="96"
+    font-weight="700"
+    letter-spacing="10"
+  >SEQUOIA</text>
+
+  <text
+    x="300"
+    y="436"
+    text-anchor="middle"
+    fill="#3c4f47"
+    font-family="'Outfit', 'Montserrat', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+    font-size="25"
+    font-weight="600"
+    letter-spacing="2.2"
+  >ASSOCIAÇÃO BRASILEIRA PARA</text>
+
+  <text
+    x="300"
+    y="470"
+    text-anchor="middle"
+    fill="#3c4f47"
+    font-family="'Outfit', 'Montserrat', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+    font-size="25"
+    font-weight="600"
+    letter-spacing="1.6"
+  >CANNABIS MEDICINAL E PESQUISAS</text>
+</svg>

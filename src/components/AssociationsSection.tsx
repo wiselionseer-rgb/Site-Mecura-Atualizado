@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useInView } from "motion/react";
-import { ArrowUpRight, Instagram, ZoomIn } from "lucide-react";
+import { ArrowUpRight, Globe, Instagram, ZoomIn } from "lucide-react";
 import {
   BRAND,
   PARTNER_ASSOCIATIONS,
@@ -36,8 +36,12 @@ export function AssociationsSection({
       image: assoc.image,
       imageAlt: `${assoc.name} — ${assoc.subtitle}`,
       points: assoc.pillars,
-      ctaLabel: `Seguir ${assoc.instagramHandle} no Instagram`,
-      ctaHref: assoc.instagramUrl,
+      ctaLabel: assoc.websiteUrl
+        ? assoc.websiteLabel ?? `Acessar site oficial da ${assoc.name}`
+        : assoc.instagramHandle
+          ? `Seguir ${assoc.instagramHandle} no Instagram`
+          : undefined,
+      ctaHref: assoc.websiteUrl ?? assoc.instagramUrl,
     });
   };
 
@@ -94,29 +98,34 @@ export function AssociationsSection({
                   }
                 }}
                 aria-label={`Ampliar detalhes da associação ${assoc.name}`}
-                className="group lg:col-span-5 relative rounded-2xl bg-[#030504] border border-white/10 overflow-hidden flex flex-col justify-between gap-6 p-5 sm:p-6 cursor-zoom-in"
+                className={`group lg:col-span-5 relative rounded-2xl border overflow-hidden flex flex-col justify-between gap-6 p-5 sm:p-6 cursor-zoom-in ${
+                  assoc.lightStage
+                    ? "bg-white border-emerald-950/15"
+                    : "bg-[#030504] border-white/10"
+                }`}
               >
-                {/* Soft botanical obsidian halo */}
+                {/* Soft botanical halo */}
                 <div
                   aria-hidden="true"
                   className="absolute inset-0 pointer-events-none"
                   style={{
-                    background:
-                      "radial-gradient(circle at 50% 42%, rgba(196,255,26,0.08) 0%, rgba(10,34,20,0.14) 44%, rgba(3,5,4,0.96) 86%)",
+                    background: assoc.lightStage
+                      ? "radial-gradient(circle at 50% 42%, rgba(16,94,64,0.04) 0%, rgba(16,94,64,0.08) 85%)"
+                      : "radial-gradient(circle at 50% 42%, rgba(196,255,26,0.08) 0%, rgba(10,34,20,0.14) 44%, rgba(3,5,4,0.96) 86%)",
                   }}
                 />
 
                 {/* Top Row: Partner Badge + Zoom Hint */}
                 <div className="relative z-10 flex items-center justify-between gap-3">
-                  <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent/90 bg-background/80 backdrop-blur-md border border-white/12 px-3 py-1 rounded-full">
+                  <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent/95 bg-[#070b08]/88 backdrop-blur-md border border-white/15 px-3 py-1 rounded-full">
                     Parceira {assoc.order}
                   </span>
-                  <span className="w-8 h-8 rounded-full bg-background/80 backdrop-blur-md border border-white/12 flex items-center justify-center text-text-secondary group-hover:text-accent group-hover:border-accent/50 transition-colors">
+                  <span className="w-8 h-8 rounded-full bg-[#070b08]/88 backdrop-blur-md border border-white/15 flex items-center justify-center text-white/80 group-hover:text-accent group-hover:border-accent/50 transition-colors">
                     <ZoomIn className="w-3.5 h-3.5" />
                   </span>
                 </div>
 
-                {/* Middle Row: 100% Unobstructed SouCannabis Emblem */}
+                {/* Middle Row: 100% Unobstructed Association Emblem */}
                 <div className="relative z-10 py-6 sm:py-8 px-4 flex items-center justify-center">
                   <motion.img
                     animate={{ scale: isHovering ? 1.05 : [1, 1.025, 1] }}
@@ -128,7 +137,9 @@ export function AssociationsSection({
                     src={assoc.image}
                     alt={`${assoc.name} — ${assoc.subtitle}`}
                     loading="lazy"
-                    className="w-full max-w-[300px] h-auto object-contain select-none"
+                    className={`w-full h-auto object-contain select-none ${
+                      assoc.lightStage ? "max-w-[240px]" : "max-w-[300px]"
+                    }`}
                   />
                 </div>
 
@@ -199,15 +210,30 @@ export function AssociationsSection({
                     <ArrowUpRight className="w-4 h-4" />
                   </button>
 
-                  <a
-                    href={assoc.instagramUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-border-strong bg-background text-xs sm:text-sm font-medium text-text-primary hover:border-accent hover:text-accent transition-colors"
-                  >
-                    <Instagram className="w-4 h-4 text-accent" />
-                    <span>{assoc.instagramHandle}</span>
-                  </a>
+                  {assoc.websiteUrl ? (
+                    <a
+                      href={assoc.websiteUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-border-strong bg-background text-xs sm:text-sm font-medium text-text-primary hover:border-accent hover:text-accent transition-colors"
+                    >
+                      <Globe className="w-4 h-4 text-accent" />
+                      <span>{assoc.websiteLabel ?? "Site oficial"}</span>
+                    </a>
+                  ) : (
+                    assoc.instagramUrl &&
+                    assoc.instagramHandle && (
+                      <a
+                        href={assoc.instagramUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-border-strong bg-background text-xs sm:text-sm font-medium text-text-primary hover:border-accent hover:text-accent transition-colors"
+                      >
+                        <Instagram className="w-4 h-4 text-accent" />
+                        <span>{assoc.instagramHandle}</span>
+                      </a>
+                    )
+                  )}
 
                   <a
                     href={BRAND.appUrl}

@@ -1030,7 +1030,7 @@ export function NewsBlogSection({
               {activeSourceMeta
                 ? `Publicações sincronizadas diretamente de ${activeSourceMeta.siteUrl?.replace(/^https?:\/\//, "")} assim que entram no ar.`
                 : searchQuery.trim().length >= 2
-                  ? "Cruzamento em tempo real entre 12 portais especializados, G1/Folha/CNN/BBC/UOL, cobertura global traduzida e artigos científicos do PubMed."
+                  ? "Cruzamento em tempo real entre portais especializados do Brasil e do mundo, Grande Imprensa (O Globo, Folha, CNN, JOTA, Poder360, Agência Brasil, Senado, Reuters, BBC), cobertura global traduzida e PubMed."
                   : activeDeskMeta.description}
             </p>
           </div>

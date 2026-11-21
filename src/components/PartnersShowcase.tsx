@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useInView } from "motion/react";
-import { ArrowUpRight, Instagram, ZoomIn } from "lucide-react";
+import { ArrowUpRight, Globe, Instagram, ZoomIn } from "lucide-react";
 import { ECOSYSTEM_PARTNERS, type EcosystemPartner } from "../data/mecuraContent";
 import type { InteractivePopupPayload } from "./InteractivePopupModal";
 
@@ -16,7 +16,7 @@ export function PartnersShowcase({
   const [spotlightIdx, setSpotlightIdx] = useState(0);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
-  // Automatic subtle spotlight rotation across the 4 partners when visible
+  // Automatic subtle spotlight rotation across the partners when visible
   useEffect(() => {
     if (!isInView || hoveredIdx !== null) return;
     const timer = window.setInterval(() => {
@@ -35,15 +35,17 @@ export function PartnersShowcase({
       description: partner.description,
       image: partner.image,
       imageAlt: partner.name,
-      points: [
+      points: partner.modalPoints ?? [
         partner.popupDetail,
         "Rastreabilidade completa de lote e pureza laboratorial.",
         "Importação legal mediante prescrição médica e autorização ANVISA (RDC nº 660/2022).",
       ],
-      ctaLabel: partner.instagramHandle
-        ? `Seguir ${partner.instagramHandle} no Instagram`
-        : undefined,
-      ctaHref: partner.instagramUrl,
+      ctaLabel: partner.websiteUrl
+        ? `Acessar site oficial da ${partner.name}`
+        : partner.instagramHandle
+          ? `Seguir ${partner.instagramHandle} no Instagram`
+          : undefined,
+      ctaHref: partner.websiteUrl ?? partner.instagramUrl,
     });
   };
 
@@ -52,19 +54,19 @@ export function PartnersShowcase({
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
         <div className="max-w-2xl">
           <p className="text-xs uppercase tracking-[0.2em] text-accent mb-4">
-            Rede Internacional
+            Rede Nacional &amp; Internacional
           </p>
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-medium leading-[1.08]">
             Pureza farmacêutica e genética com origem conhecida.
           </h2>
         </div>
         <p className="text-sm sm:text-base text-text-secondary max-w-md">
-          Rastreabilidade completa da semente ao extrato final, com documentação auditada para importação nominal via ANVISA.
+          Associações brasileiras, pesquisa científica e rastreabilidade completa da semente ao extrato final, com documentação auditada para acesso legal via ANVISA.
         </p>
       </div>
 
-      {/* Equal-Height, Color-Balanced 4-Column Grid with Synchronized Motion Pop-ups */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-7 items-stretch">
+      {/* Equal-Height, Color-Balanced 3x2 Grid with Synchronized Motion Pop-ups */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-7 items-stretch">
         {ECOSYSTEM_PARTNERS.map((partner, idx) => {
           const isSpotlight = activeIdx === idx;
           return (
@@ -75,7 +77,7 @@ export function PartnersShowcase({
               viewport={{ once: true, margin: "-8%" }}
               transition={{
                 duration: 0.65,
-                delay: idx * 0.08,
+                delay: idx * 0.07,
                 ease: [0.16, 1, 0.3, 1],
               }}
               onMouseEnter={() => setHoveredIdx(idx)}
@@ -86,7 +88,7 @@ export function PartnersShowcase({
                   : "border-border hover:border-border-strong"
               }`}
             >
-              {/* Uniform 1:1 Studio-Graded Media Frame + Floating Motion Pop-up */}
+              {/* Uniform 1:1 Studio-Graded Media Frame */}
               <div
                 onClick={() => openPartnerModal(partner)}
                 role="button"
@@ -99,36 +101,60 @@ export function PartnersShowcase({
                 }}
                 aria-label={`Ver detalhes de ${partner.name}`}
                 style={{ backgroundColor: partner.logoBg ?? "#080e0a" }}
-                className="relative aspect-square w-full overflow-hidden cursor-zoom-in shrink-0"
+                className="relative aspect-square w-full overflow-hidden cursor-zoom-in shrink-0 flex items-center justify-center"
               >
                 <motion.img
-                  animate={{ scale: isSpotlight ? 1.06 : 1 }}
+                  animate={{ scale: isSpotlight ? 1.05 : 1 }}
                   transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
                   src={partner.image}
                   alt={`${partner.name} · ${partner.category}`}
                   loading="lazy"
-                  className={`w-full h-full object-cover object-center transition-all duration-700 ${
-                    partner.toneFilter ?? ""
-                  } group-hover:saturate-100 group-hover:brightness-100`}
+                  className={
+                    partner.containLogo
+                      ? `w-full h-full object-contain object-center ${
+                          partner.image.endsWith(".svg") ? "p-3 sm:p-4" : "p-8 sm:p-10"
+                        } transition-all duration-700 ${partner.toneFilter ?? ""}`
+                      : `w-full h-full object-cover object-center transition-all duration-700 ${
+                          partner.toneFilter ?? ""
+                        } group-hover:saturate-100 group-hover:brightness-100`
+                  }
                 />
 
-                {/* Unified Obsidian Edge Vignette to Harmonize All 4 Brand Palettes */}
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    background:
-                      "radial-gradient(ellipse 82% 78% at 50% 45%, rgba(7,11,8,0.04) 32%, rgba(7,11,8,0.52) 78%, rgba(7,11,8,0.92) 100%)",
-                  }}
-                />
-                <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#0d1410] via-[#0d1410]/65 to-transparent pointer-events-none" />
+                {/* Edge Harmonizer: Light Studio Sheen for white logos vs Obsidian Vignette for dark imagery */}
+                {partner.lightStage ? (
+                  <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      background:
+                        "radial-gradient(ellipse 85% 82% at 50% 48%, rgba(16,66,46,0) 58%, rgba(12,48,34,0.08) 100%)",
+                    }}
+                  />
+                ) : (
+                  <>
+                    <div
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        background:
+                          "radial-gradient(ellipse 82% 78% at 50% 45%, rgba(7,11,8,0.04) 32%, rgba(7,11,8,0.48) 78%, rgba(7,11,8,0.9) 100%)",
+                      }}
+                    />
+                    <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0d1410] via-[#0d1410]/60 to-transparent pointer-events-none" />
+                  </>
+                )}
 
                 {/* Top-right subtle zoom indicator */}
-                <div className="absolute top-3.5 right-3.5 w-8 h-8 rounded-full bg-background/75 backdrop-blur-md border border-white/15 flex items-center justify-center text-text-secondary group-hover:text-accent group-hover:border-accent/50 transition-colors">
+                <div
+                  className={`absolute top-3.5 right-3.5 w-8 h-8 rounded-full backdrop-blur-md border flex items-center justify-center transition-colors ${
+                    partner.lightStage
+                      ? "bg-[#0b1812]/80 border-[#0b1812]/20 text-white group-hover:text-accent group-hover:border-accent/60"
+                      : "bg-background/75 border-white/15 text-text-secondary group-hover:text-accent group-hover:border-accent/50"
+                  }`}
+                >
                   <ZoomIn className="w-3.5 h-3.5" />
                 </div>
               </div>
 
-              {/* Synchronized Animated Motion Pop-up Strip (Docked cleanly below the image — zero text overlap) */}
+              {/* Synchronized Animated Motion Pop-up Strip */}
               <div className="px-4 pt-4">
                 <motion.div
                   animate={{
@@ -182,7 +208,7 @@ export function PartnersShowcase({
                   {partner.description}
                 </p>
 
-                {/* Pinned Bottom Action Row (Consistent Baseline Across All 4 Cards) */}
+                {/* Pinned Bottom Action Row */}
                 <div className="mt-auto pt-4 border-t border-border/80 flex items-center justify-between gap-3">
                   <button
                     type="button"
@@ -193,16 +219,29 @@ export function PartnersShowcase({
                     <ArrowUpRight className="w-3.5 h-3.5 text-accent" />
                   </button>
 
-                  {partner.instagramUrl && partner.instagramHandle && (
+                  {partner.websiteUrl ? (
                     <a
-                      href={partner.instagramUrl}
+                      href={partner.websiteUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 text-xs font-medium text-accent hover:text-text-primary transition-colors truncate"
                     >
-                      <Instagram className="w-3.5 h-3.5 shrink-0" />
-                      <span className="truncate">{partner.instagramHandle}</span>
+                      <Globe className="w-3.5 h-3.5 shrink-0" />
+                      <span className="truncate">{partner.websiteLabel ?? "Site oficial"}</span>
                     </a>
+                  ) : (
+                    partner.instagramUrl &&
+                    partner.instagramHandle && (
+                      <a
+                        href={partner.instagramUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-xs font-medium text-accent hover:text-text-primary transition-colors truncate"
+                      >
+                        <Instagram className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate">{partner.instagramHandle}</span>
+                      </a>
+                    )
                   )}
                 </div>
               </div>

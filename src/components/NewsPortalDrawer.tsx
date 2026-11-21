@@ -605,7 +605,7 @@ export function NewsPortalDrawer({
                     </h3>
                     <p className="text-xs sm:text-sm text-text-secondary">
                       {localQuery.trim().length >= 2
-                        ? "Varredura simultânea em 12 portais especializados, G1/Folha/CNN/BBC/UOL, mídia internacional (PT-BR) e artigos revisados por pares no PubMed."
+                        ? "Varredura simultânea em portais especializados do Brasil e do mundo, Grande Imprensa (O Globo, Folha, CNN, JOTA, Poder360, Agência Brasil, Senado, Reuters, BBC), tradução automática e PubMed."
                         : currentDesk.description}
                     </p>
                   </div>

@@ -307,15 +307,41 @@ export interface EcosystemPartner {
   description: string;
   image: string;
   isLogo?: boolean;
+  containLogo?: boolean;
+  lightStage?: boolean;
   logoBg?: string;
   toneFilter?: string;
   popupHighlight: string;
   popupDetail: string;
+  modalPoints?: string[];
   instagramUrl?: string;
   instagramHandle?: string;
+  websiteUrl?: string;
+  websiteLabel?: string;
 }
 
 export const ECOSYSTEM_PARTNERS: EcosystemPartner[] = [
+  {
+    name: "SouCannabis",
+    category: "Associação Terapêutica",
+    origin: "Brasil · Saúde Integrativa & Acolhimento",
+    description:
+      "Associação terapêutica brasileira dedicada à saúde integrativa e fitoterápica, com acolhimento multidisciplinar, redução de danos e acesso responsável à Cannabis Medicinal.",
+    image: "/assets/aistudio/image_58575dd2.png",
+    isLogo: true,
+    containLogo: true,
+    logoBg: "#030504",
+    toneFilter: "brightness-[1.04] contrast-[1.04]",
+    popupHighlight: "Associação Parceira · Brasil",
+    popupDetail: "Acolhimento multidisciplinar integrado à receita e laudo emitidos no app Mecura.",
+    modalPoints: [
+      "Acolhimento humanizado e acompanhamento multidisciplinar para associados.",
+      "Foco em saúde integrativa, fitoterapia canabinoide e redução de danos.",
+      "Integração documental facilitada com a receita e o laudo emitidos no aplicativo Mecura.",
+    ],
+    instagramUrl: "https://www.instagram.com/_soucannabis/",
+    instagramHandle: "@_soucannabis",
+  },
   {
     name: "GreenBudz",
     category: "Medicamentos & Óleos",
@@ -370,6 +396,27 @@ export const ECOSYSTEM_PARTNERS: EcosystemPartner[] = [
     popupHighlight: "Espanha → Brasil · GACP",
     popupDetail: "Estabilidade quimiotípica (CBD/THC) da semente ao protocolo.",
   },
+  {
+    name: "SEQUOIA",
+    category: "Associação · Pesquisa",
+    origin: "Cannabis Medicinal e Pesquisas · Brasil",
+    description:
+      "Associação Brasileira para Cannabis Medicinal e Pesquisas, dedicada à ciência, pesquisa clínica e ampliação do acesso seguro e acolhedor à terapia canabinoide.",
+    image: "/sequoia-logo.svg",
+    isLogo: true,
+    containLogo: true,
+    lightStage: true,
+    logoBg: "#FFFFFF",
+    popupHighlight: "Cannabis Medicinal & Pesquisas",
+    popupDetail: "Associação brasileira voltada à pesquisa científica e cuidado ao paciente.",
+    modalPoints: [
+      "Associação Brasileira para Cannabis Medicinal e Pesquisas.",
+      "Foco em evidência científica, educação e acolhimento responsável ao paciente.",
+      "Integração documental direta com a receita e o laudo emitidos no aplicativo Mecura.",
+    ],
+    websiteUrl: "https://sequoia.esteio.app/#quem-somos",
+    websiteLabel: "Site oficial",
+  },
 ];
 
 export interface PartnerAssociation {
@@ -380,8 +427,11 @@ export interface PartnerAssociation {
   region: string;
   description: string;
   image: string;
-  instagramUrl: string;
-  instagramHandle: string;
+  lightStage?: boolean;
+  instagramUrl?: string;
+  instagramHandle?: string;
+  websiteUrl?: string;
+  websiteLabel?: string;
   pillars: string[];
   popups: Array<{
     label: string;
@@ -414,6 +464,34 @@ export const PARTNER_ASSOCIATIONS: PartnerAssociation[] = [
       {
         label: "Receita & Laudo Integrados",
         detail: "Sua prescrição digital Mecura pronta para iniciar o vínculo associativo.",
+      },
+    ],
+  },
+  {
+    id: "sequoia",
+    order: "02",
+    name: "SEQUOIA",
+    subtitle: "Cannabis Medicinal e Pesquisas",
+    region: "Associação Brasileira · Pesquisa & Saúde",
+    description:
+      "A SEQUOIA — Associação Brasileira para Cannabis Medicinal e Pesquisas — une produção de conhecimento científico, orientação responsável e acolhimento associativo para pacientes que buscam terapia canabinoide com respaldo e transparência.",
+    image: "/sequoia-logo.svg",
+    lightStage: true,
+    websiteUrl: "https://sequoia.esteio.app/#quem-somos",
+    websiteLabel: "Acessar site SEQUOIA",
+    pillars: [
+      "Associação Brasileira para Cannabis Medicinal e Pesquisas com foco em evidência científica.",
+      "Atendimento acolhedor e orientação contínua para pacientes e familiares associados.",
+      "Integração ágil com a receita e o laudo digital emitidos pelos médicos do aplicativo Mecura.",
+    ],
+    popups: [
+      {
+        label: "Pesquisa & Ciência",
+        detail: "Compromisso com estudos, qualidade e informação responsável em medicina canabinoide.",
+      },
+      {
+        label: "Vínculo Facilitado",
+        detail: "Documentação médica emitida no app Mecura pronta para iniciar seu acolhimento.",
       },
     ],
   },

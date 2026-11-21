@@ -867,7 +867,7 @@ export function GlassEntryPortal({
                   Notícias do Mundo Canábico
                 </h2>
                 <p className="mt-1.5 text-xs text-white/82 leading-relaxed line-clamp-2">
-                  20 portais do Brasil e do mundo atualizados em tempo real.
+                  Mais de 30 portais e radares do Brasil e do mundo em tempo real.
                 </p>
                 <div className="mt-3 pt-2.5 border-t border-white/15 flex items-center justify-between text-xs font-medium text-white/92 group-hover:text-accent transition-colors">
                   <span>Abrir redação agora</span>

@@ -199,7 +199,7 @@ const WP_NEWS_SOURCES = [
   },
 ];
 
-// Direct Portal RSS Feeds + Today 24h + Grande Imprensa BR + Thematic Real-Time Radars
+// Direct Portal RSS Feeds + Today 24h + Grande Imprensa BR + Oficial/Legislativo + Global Multi-Region Real-Time Radars
 const THEMATIC_RSS_FEEDS = [
   {
     id: "gnews-hoje-br",
@@ -207,7 +207,7 @@ const THEMATIC_RSS_FEEDS = [
     language: "pt",
     defaultSource: "Hoje · Brasil",
     hintTopic: "brasil",
-    url: "https://news.google.com/rss/search?q=(canabidiol+OR+%22cannabis+medicinal%22+OR+%22maconha+medicinal%22+OR+c%C3%A2nhamo)+when:1d&hl=pt-BR&gl=BR&ceid=BR:pt-419",
+    url: "https://news.google.com/rss/search?q=(canabidiol+OR+%22cannabis+medicinal%22+OR+%22maconha+medicinal%22+OR+c%C3%A2nhamo+OR+(cannabis+(Anvisa+OR+sa%C3%BAde+OR+mercado+OR+lei+OR+cultivo+OR+pacientes+OR+STJ+OR+STF+OR+Senado)))+when:1d&hl=pt-BR&gl=BR&ceid=BR:pt-419",
   },
   {
     id: "gnews-hoje-mundo",
@@ -215,7 +215,7 @@ const THEMATIC_RSS_FEEDS = [
     language: "en",
     defaultSource: "Hoje · Global",
     hintTopic: "mundo",
-    url: "https://news.google.com/rss/search?q=(%22medical+cannabis%22+OR+%22cannabidiol%22+OR+%22CBD+clinical%22)+when:1d&hl=en-US&gl=US&ceid=US:en",
+    url: "https://news.google.com/rss/search?q=(%22medical+cannabis%22+OR+%22cannabidiol%22+OR+%22CBD+clinical%22+OR+%22cannabis+legalization%22)+when:1d&hl=en-US&gl=US&ceid=US:en",
   },
   {
     id: "gnews-grande-imprensa-br",
@@ -224,7 +224,16 @@ const THEMATIC_RSS_FEEDS = [
     sourceTier: "imprensa",
     defaultSource: "Grande Imprensa BR",
     hintTopic: "brasil",
-    url: "https://news.google.com/rss/search?q=(canabidiol+OR+%22cannabis+medicinal%22+OR+c%C3%A2nhamo+OR+(%22habeas+corpus%22+cannabis))+when:14d+(site:g1.globo.com+OR+site:folha.uol.com.br+OR+site:cnnbrasil.com.br+OR+site:bbc.com+OR+site:uol.com.br+OR+site:estadao.com.br+OR+site:agenciabrasil.ebc.com.br+OR+site:metropoles.com+OR+site:veja.abril.com.br)&hl=pt-BR&gl=BR&ceid=BR:pt-419",
+    url: "https://news.google.com/rss/search?q=(cannabis+OR+canabidiol+OR+%22maconha+medicinal%22+OR+c%C3%A2nhamo)+when:30d+(site:g1.globo.com+OR+site:oglobo.globo.com+OR+site:folha.uol.com.br+OR+site:cnnbrasil.com.br+OR+site:bbc.com+OR+site:uol.com.br+OR+site:estadao.com.br+OR+site:metropoles.com+OR+site:veja.abril.com.br+OR+site:terra.com.br+OR+site:r7.com)&hl=pt-BR&gl=BR&ceid=BR:pt-419",
+  },
+  {
+    id: "gnews-politica-justica-oficial-br",
+    region: "brasil",
+    language: "pt",
+    sourceTier: "imprensa",
+    defaultSource: "Imprensa & Oficial BR",
+    hintTopic: "anvisa",
+    url: "https://news.google.com/rss/search?q=(cannabis+OR+canabidiol+OR+%22maconha+medicinal%22+OR+c%C3%A2nhamo)+when:45d+(site:jota.info+OR+site:poder360.com.br+OR+site:agenciabrasil.ebc.com.br+OR+site:senado.leg.br+OR+site:camara.leg.br+OR+site:valor.globo.com+OR+site:conjur.com.br+OR+site:gov.br+OR+site:infomoney.com.br+OR+site:exame.com+OR+site:cartacapital.com.br+OR+site:correiobraziliense.com.br)&hl=pt-BR&gl=BR&ceid=BR:pt-419",
   },
   {
     id: "sechat-br",
@@ -274,6 +283,165 @@ const THEMATIC_RSS_FEEDS = [
     defaultSource: "MJBizDaily",
     hintTopic: "mercado",
     url: "https://mjbizdaily.com/feed/",
+  },
+  {
+    id: "el-planteo-latam",
+    isDirectPortal: true,
+    sourceName: "El Planteo",
+    handle: "@elplanteo",
+    siteUrl: "https://elplanteo.com",
+    region: "mundo",
+    language: "es",
+    defaultSource: "El Planteo",
+    hintTopic: "mundo",
+    url: "https://elplanteo.com/feed/",
+  },
+  {
+    id: "canamo-es",
+    isDirectPortal: true,
+    sourceName: "Cáñamo",
+    handle: "@revistacanamo",
+    siteUrl: "https://canamo.net",
+    region: "mundo",
+    language: "es",
+    defaultSource: "Cáñamo",
+    hintTopic: "mundo",
+    url: "https://canamo.net/rss.xml",
+  },
+  {
+    id: "stratcann-ca",
+    isDirectPortal: true,
+    sourceName: "StratCann",
+    handle: "@stratcann",
+    siteUrl: "https://stratcann.com",
+    region: "mundo",
+    language: "en",
+    defaultSource: "StratCann",
+    hintTopic: "mundo",
+    url: "https://stratcann.com/feed/",
+  },
+  {
+    id: "newsweed-fr",
+    isDirectPortal: true,
+    sourceName: "Newsweed",
+    handle: "@newsweedfr",
+    siteUrl: "https://www.newsweed.fr",
+    region: "mundo",
+    language: "fr",
+    defaultSource: "Newsweed",
+    hintTopic: "mundo",
+    url: "https://www.newsweed.fr/feed/",
+  },
+  {
+    id: "international-cbc-eu",
+    isDirectPortal: true,
+    sourceName: "International CBC",
+    handle: "@intlcannabisbc",
+    siteUrl: "https://internationalcbc.com",
+    region: "mundo",
+    language: "en",
+    defaultSource: "International CBC",
+    hintTopic: "mundo",
+    url: "https://internationalcbc.com/feed/",
+  },
+  {
+    id: "cannabiz-au",
+    isDirectPortal: true,
+    sourceName: "Cannabiz Australia",
+    siteUrl: "https://www.cannabiz.com.au",
+    region: "mundo",
+    language: "en",
+    defaultSource: "Cannabiz Australia",
+    hintTopic: "mercado",
+    url: "https://www.cannabiz.com.au/feed/",
+  },
+  {
+    id: "cannabis-now-us",
+    isDirectPortal: true,
+    sourceName: "Cannabis Now",
+    handle: "@cannabisnow",
+    siteUrl: "https://cannabisnow.com",
+    region: "mundo",
+    language: "en",
+    defaultSource: "Cannabis Now",
+    hintTopic: "mundo",
+    url: "https://cannabisnow.com/feed/",
+  },
+  {
+    id: "hanfverband-de",
+    isDirectPortal: true,
+    sourceName: "Hanfverband (Alemanha)",
+    siteUrl: "https://hanfverband.de",
+    region: "mundo",
+    language: "de",
+    defaultSource: "Hanfverband",
+    hintTopic: "mundo",
+    url: "https://hanfverband.de/rss.xml",
+  },
+  {
+    id: "gnews-grande-imprensa-global",
+    region: "mundo",
+    language: "en",
+    sourceTier: "imprensa",
+    defaultSource: "Grande Imprensa Global",
+    hintTopic: "mundo",
+    url: "https://news.google.com/rss/search?q=(cannabis+OR+cannabidiol)+when:14d+(site:reuters.com+OR+site:bbc.com+OR+site:theguardian.com+OR+site:bloomberg.com+OR+site:apnews.com+OR+site:dw.com+OR+site:elpais.com+OR+site:nature.com+OR+site:forbes.com)&hl=en-US&gl=US&ceid=US:en",
+  },
+  {
+    id: "gnews-latam-es",
+    region: "mundo",
+    language: "es",
+    defaultSource: "Radar América Latina",
+    hintTopic: "mundo",
+    url: "https://news.google.com/rss/search?q=(%22cannabis+medicinal%22+OR+canabidiol+OR+%22legalizaci%C3%B3n+cannabis%22)+when:7d&hl=es-419&gl=AR&ceid=AR:es-419",
+  },
+  {
+    id: "gnews-espanha-es",
+    region: "mundo",
+    language: "es",
+    defaultSource: "Radar Espanha",
+    hintTopic: "mundo",
+    url: "https://news.google.com/rss/search?q=(%22cannabis+medicinal%22+OR+%22regulaci%C3%B3n+cannabis%22)+when:10d&hl=es&gl=ES&ceid=ES:es",
+  },
+  {
+    id: "gnews-portugal-pt",
+    region: "mundo",
+    language: "pt",
+    defaultSource: "Radar Portugal",
+    hintTopic: "mundo",
+    url: "https://news.google.com/rss/search?q=(%22can%C3%A1bis+medicinal%22+OR+%22cannabis+medicinal%22)+when:14d&hl=pt-PT&gl=PT&ceid=PT:pt-150",
+  },
+  {
+    id: "gnews-reino-unido-uk",
+    region: "mundo",
+    language: "en",
+    defaultSource: "Radar Reino Unido",
+    hintTopic: "mundo",
+    url: "https://news.google.com/rss/search?q=(%22medical+cannabis%22+OR+%22cannabis+clinic%22+OR+%22cannabis+law%22)+when:7d&hl=en-GB&gl=GB&ceid=GB:en",
+  },
+  {
+    id: "gnews-alemanha-de",
+    region: "mundo",
+    language: "de",
+    defaultSource: "Radar Alemanha",
+    hintTopic: "mundo",
+    url: "https://news.google.com/rss/search?q=(%22medizinisches+cannabis%22+OR+%22cannabis+gesetz%22)+when:7d&hl=de&gl=DE&ceid=DE:de",
+  },
+  {
+    id: "gnews-franca-fr",
+    region: "mundo",
+    language: "fr",
+    defaultSource: "Radar França",
+    hintTopic: "mundo",
+    url: "https://news.google.com/rss/search?q=(%22cannabis+m%C3%A9dical%22+OR+%22cannabis+th%C3%A9rapeutique%22)+when:10d&hl=fr&gl=FR&ceid=FR:fr",
+  },
+  {
+    id: "gnews-canada-ca",
+    region: "mundo",
+    language: "en",
+    defaultSource: "Radar Canadá",
+    hintTopic: "mundo",
+    url: "https://news.google.com/rss/search?q=(%22medical+cannabis%22+OR+%22cannabis+industry%22+OR+%22cannabis+research%22)+when:7d&hl=en-CA&gl=CA&ceid=CA:en",
   },
   {
     id: "gnews-anvisa-leis",
@@ -371,30 +539,103 @@ function normalizeText(value = "") {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
+const NAMED_HTML_ENTITIES = {
+  aacute: "á", Aacute: "Á", agrave: "à", Agrave: "À", acirc: "â", Acirc: "Â", atilde: "ã", Atilde: "Ã",
+  eacute: "é", Eacute: "É", ecirc: "ê", Ecirc: "Ê", egrave: "è", Egrave: "È",
+  iacute: "í", Iacute: "Í", icirc: "î", Icirc: "Î",
+  oacute: "ó", Oacute: "Ó", ocirc: "ô", Ocirc: "Ô", otilde: "õ", Otilde: "Õ", ograve: "ò", Ograve: "Ò",
+  uacute: "ú", Uacute: "Ú", uuml: "ü", Uuml: "Ü",
+  ccedil: "ç", Ccedil: "Ç", ntilde: "ñ", Ntilde: "Ñ",
+  ordf: "ª", ordm: "º", deg: "°", laquo: "«", raquo: "»", rsquo: "'", lsquo: "'", rdquo: '"', ldquo: '"',
+  copy: "©", reg: "®", trade: "™", middot: "·", bull: "•",
+};
+
 function decodeHtmlEntities(input = "") {
-  return input
+  return String(input || "")
     .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#039;|&apos;|&#39;/g, "'")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&#8211;|&ndash;/g, "–")
-    .replace(/&#8212;|&mdash;/g, "—")
-    .replace(/&#8216;|&#8217;/g, "'")
-    .replace(/&#8220;|&#8221;/g, '"')
-    .replace(/&#8230;|&hellip;/g, "…")
-    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(Number(dec)));
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex) => {
+      const code = parseInt(hex, 16);
+      return Number.isFinite(code) && code > 0 ? String.fromCodePoint(code) : "";
+    })
+    .replace(/&#(\d+);/g, (_, dec) => {
+      const code = Number(dec);
+      return Number.isFinite(code) && code > 0 ? String.fromCodePoint(code) : "";
+    })
+    .replace(/&([a-z]+);/gi, (full, name) => {
+      if (name.toLowerCase() === "amp") return "&";
+      if (name.toLowerCase() === "lt") return "<";
+      if (name.toLowerCase() === "gt") return ">";
+      if (name.toLowerCase() === "quot") return '"';
+      if (name.toLowerCase() === "apos") return "'";
+      if (name.toLowerCase() === "nbsp") return " ";
+      if (name.toLowerCase() === "ndash") return "–";
+      if (name.toLowerCase() === "mdash") return "—";
+      if (name.toLowerCase() === "hellip") return "…";
+      return NAMED_HTML_ENTITIES[name] || full;
+    });
+}
+
+function sanitizeEditorialText(text = "") {
+  return String(text || "")
+    // Strip zero-width, BOM, soft-hyphen, and Unicode replacement junk
+    .replace(/[\u200B-\u200D\uFEFF\u00AD\uFFFD]/g, "")
+    // Strip any leaked Tailwind arbitrary selectors, SVG/CSS fragments, or stray HTML tags
+    .replace(/\[&>?[^\]]*\][^\s"']*["'>]*/gi, " ")
+    .replace(/\b(?:svg|path|div|span|button)\]:[^\s]+/gi, " ")
+    .replace(/<\/?[a-z][a-z0-9-]*(?:\s+[^<>]*)?>/gi, " ")
+    // Strip common news-page UI controls that leak into scraped <article> blocks
+    .replace(/\bA\s*[-–—]\s*A\s*\+/gi, " ")
+    .replace(/\bOuvir a mat[ée]ria\b/gi, " ")
+    .replace(/\bCompartilhar\s*:?/gi, " ")
+    .replace(/\bFoto:\s*[^.\n]{3,110}\(CC[^)]*\)/gi, " ")
+    .replace(/\bFoto:\s*Reprodu[çc][ãa]o\b/gi, " ")
+    .replace(/\bO post .*? apareceu primeiro em .*$/i, " ")
+    // Normalize spacing & punctuation cleanly
+    .replace(/\s+([,.;:!?])/g, "$1")
+    .replace(/([(\[«“])\s+/g, "$1")
+    .replace(/\s+([)\]»”])/g, "$1")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+function hasMojibakeOrMarkupJunk(text = "") {
+  if (!text) return true;
+  if (/\uFFFD/.test(text)) return true;
+  if (/Ã[\x80-\xBF]|â€[™œ\x9D\x93\x94]|Â\s/.test(text)) return true;
+  if (/\[&>?svg\]|svg\]:w-|svg\]:h-|className=|xmlns=|data-[a-z-]+=|<script|<style|function\s*\(|=>\s*\{/i.test(text)) {
+    return true;
+  }
+  return false;
 }
 
 function stripHtml(html = "") {
-  return decodeHtmlEntities(html)
-    .replace(/<script[\s\S]*?<\/script>/gi, " ")
-    .replace(/<style[\s\S]*?<\/style>/gi, " ")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+  if (!html) return "";
+  // IMPORTANT: Remove scripts/styles/SVGs/UI chrome and HTML tags FIRST (quote-aware),
+  // BEFORE decoding HTML entities, so attributes like class="[&amp;&gt;svg]:w-5" NEVER leak!
+  const withoutBlocks = String(html)
+    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
+    .replace(/<!--[\s\S]*?-->/g, " ")
+    .replace(/<(script|style|svg|noscript|iframe|button|nav|aside|form|select|template|figcaption|header|footer)\b[^>]*>[\s\S]*?<\/\1>/gi, " ")
+    .replace(/<(?:[^>"']|"[^"]*"|'[^']*')*>/g, " ");
+
+  return sanitizeEditorialText(decodeHtmlEntities(withoutBlocks));
+}
+
+async function readResponseTextSafe(response) {
+  const buf = Buffer.from(await response.arrayBuffer());
+  const ct = (response.headers.get("content-type") || "").toLowerCase();
+  const charsetMatch = ct.match(/charset=([a-z0-9_-]+)/i);
+  const declaredCharset = charsetMatch?.[1]?.toLowerCase() || "";
+
+  if (declaredCharset === "iso-8859-1" || declaredCharset === "latin1" || declaredCharset === "windows-1252") {
+    return new TextDecoder("windows-1252").decode(buf);
+  }
+  const utf8 = new TextDecoder("utf-8", { fatal: false }).decode(buf);
+  // Fallback to windows-1252 if server omitted charset header and UTF-8 produced replacement chars
+  if (!declaredCharset && (utf8.match(/\uFFFD/g) || []).length >= 3) {
+    return new TextDecoder("windows-1252").decode(buf);
+  }
+  return utf8;
 }
 
 function extractTag(block, tagName) {
@@ -403,87 +644,205 @@ function extractTag(block, tagName) {
   return match ? match[1].trim() : "";
 }
 
-/* --- Automatic EN -> PT-BR Translation Engine (Cached & Batched) --- */
+/* --- Automatic Multi-Language (EN / ES / FR / DE / IT / Auto) -> PT-BR Translation Engine --- */
 
-function looksLikeEnglish(text = "") {
+function looksLikeForeignLanguage(text = "") {
   if (!text) return false;
-  const sample = ` ${text.toLowerCase()} `;
+  const clean = String(text).trim();
+  if (clean.length < 12) return false;
+  const sample = ` ${clean.toLowerCase()} `;
+
   const enMarkers = [
-    " the ",
-    " with ",
-    " says ",
-    " over ",
-    " should ",
-    " study ",
-    " lawmakers ",
-    " patients ",
-    " medical marijuana ",
-    " legalization ",
-    " federal ",
-    " cannabis companies ",
-    " research ",
-    " senate ",
-    " bill ",
-    " voters ",
-    " state ",
-    " after ",
-    " could ",
-    " would ",
-    " from ",
+    " the ", " with ", " says ", " over ", " should ", " study ", " lawmakers ",
+    " patients ", " medical marijuana ", " medical cannabis ", " legalization ",
+    " federal ", " cannabis companies ", " research ", " senate ", " bill ",
+    " voters ", " state ", " after ", " could ", " would ", " from ", " that ",
+    " this ", " have ", " their ", " about ", " into ", " more ", " than ",
+    " lawsuit ", " appeals ", " court ", " rules ", " health ", " drug ", " drugs ",
+    " people ", " helps ", " how ", " why ", " what ", " when ", " where ",
+    " during ", " against ", " county ", " residents ", " milestone ", " historic ",
   ];
-  let hits = 0;
+  let enHits = 0;
   for (const m of enMarkers) {
-    if (sample.includes(m)) hits += 1;
+    if (sample.includes(m)) enHits += 1;
   }
-  const hasPtAccents = /[ãõçáéíóúâêôà]/i.test(text);
-  return hits >= 2 || (!hasPtAccents && hits >= 1 && /\b(marijuana|hemp|rescheduling|congressman|governor|fda|dea|court|legalize)\b/i.test(text));
+
+  const esMarkers = [
+    " los ", " las ", " del ", " con ", " para ", " según ", " sobre ", " medicinal ",
+    " también ", " gobierno ", " pacientes ", " estudio ", " salud ", " ley ", " cannabis ",
+    " puede ", " pero ", " entre ", " hacia ", " desde ", " mientras ", " además ",
+  ];
+  let esHits = 0;
+  for (const m of esMarkers) {
+    if (sample.includes(m)) esHits += 1;
+  }
+  const hasSpanishMarkers =
+    /[¿¡ñ]/i.test(clean) ||
+    (esHits >= 2 && /\b(los|las|según|también|gobierno|además|hacia|mientras|puede|país|españa|méxico|colombia|argentina|uruguay|marihuana|cáñamo|regulación|legalización|salud|ley|qué|cómo|más)\b/i.test(clean));
+
+  const hasGermanMarkers =
+    /[äöüß]/i.test(clean) ||
+    /\b(medizinisches cannabis|cannabisgesetz|bundestag|apotheken|patienten|forschung|gesetz|deutschland|studie|hanf|kiffen|verbot|und|der|die|das|für|über|gegen|nicht|wird|nach|beim)\b/i.test(
+      clean
+    );
+
+  const hasFrenchMarkers =
+    /\b(le cannabis|la cannabis|les patients|cannabis médical|cannabis thérapeutique|santé|recherche|selon|avec|dans|pour|une étude|légalisation|chanvre|consommation|france|chez|contre|médical|thérapeutique|expérimentation)\b/i.test(
+      clean
+    );
+
+  const hasItalianMarkers =
+    /\b(ricerca|salute|pazienti|secondo|della|degli|cannabis terapeutica|legge|italia)\b/i.test(clean);
+
+  const hasPtSpecific = /[ãõç]|(\b(não|são|está|estão|também|através|saúde|pacientes no brasil|anvisa|canabidiol|maconha|cânhamo)\b)/i.test(
+    clean
+  );
+
+  if (enHits >= 2 && !hasPtSpecific) return true;
+  if (
+    !hasPtSpecific &&
+    enHits >= 1 &&
+    /\b(marijuana|hemp|rescheduling|congressman|governor|fda|dea|court|legalize|opioid|harm reduction|cannabidiol|dispensary|edibles|lawsuit)\b/i.test(
+      clean
+    )
+  ) {
+    return true;
+  }
+  if (hasSpanishMarkers && !/[ãõç]/i.test(clean)) return true;
+  if ((hasGermanMarkers || hasFrenchMarkers || hasItalianMarkers) && !hasPtSpecific) return true;
+  return false;
 }
 
-async function translateSingleChunkEnToPt(text) {
+// Keep alias for compatibility
+const looksLikeEnglish = looksLikeForeignLanguage;
+
+function isAlreadyPortuguese(text = "", explicitLang = "") {
+  const clean = String(text || "").trim();
+  if (!clean) return true;
+  if (/^Reportagem publicada por\b/i.test(clean)) return true;
+  if (explicitLang && explicitLang !== "pt") return false;
+  if (looksLikeForeignLanguage(clean)) return false;
+  // NOTE: Do NOT test 'ç' alone because French uses 'ç' (e.g. "française")! Only ã/õ are uniquely Portuguese.
+  return /[ãõ]/i.test(clean) ||
+    /\b(não|são|está|estão|também|através|saúde|anvisa|canabidiol|cânhamo|maconha|pacientes no brasil|brasília|são paulo)\b/i.test(clean);
+}
+
+function guessSourceLang(text = "", explicitLang = "") {
+  if (explicitLang && explicitLang !== "pt" && explicitLang !== "auto") {
+    return explicitLang;
+  }
+  const clean = String(text || "").trim();
+  if (!clean) return "auto";
+  if (/[äöüß]/i.test(clean) || /\b(medizinisches|cannabisgesetz|bundestag|apotheken|patienten|forschung|gesetz|deutschland|hanf|und|für|über|nicht|wird)\b/i.test(clean)) {
+    return "de";
+  }
+  if (/\b(française|polynésie|huiles|bientôt|vente libre|thérapeutique|médical|santé|légalisation|chanvre|selon|avec|dans|pour|étude|expérimentation|france|chez|les|des)\b/i.test(clean)) {
+    return "fr";
+  }
+  if (/[¿¡ñ]/i.test(clean) || /\b(según|también|gobierno|además|españa|méxico|colombia|argentina|uruguay|marihuana|cáñamo|regulación|legalización|salud|ley|los|las)\b/i.test(clean)) {
+    return "es";
+  }
+  if (/\b(the|with|from|that|this|have|been|their|would|could|should|voters|lawsuit|rules|scientists|evidence|patients|marijuana|hemp|medical|research|study|state|federal|sleep|crosstalk|therapeutic)\b/i.test(clean)) {
+    return "en";
+  }
+  return "auto";
+}
+
+function isBrokenTruncatedText(text = "") {
+  const clean = String(text || "").trim();
+  if (!clean) return true;
+  const openParens = (clean.match(/\(/g) || []).length;
+  const closeParens = (clean.match(/\)/g) || []).length;
+  if (openParens > closeParens) return true;
+  if (/\([0-9]{1,2}$/.test(clean)) return true;
+  return false;
+}
+
+function truncateCleanly(text = "", maxLen = 290) {
+  const clean = String(text || "").replace(/\s+/g, " ").trim();
+  if (clean.length <= maxLen) return clean;
+  const sliced = clean.slice(0, maxLen - 1);
+  const lastSpace = sliced.lastIndexOf(" ");
+  const cut = lastSpace > maxLen * 0.6 ? sliced.slice(0, lastSpace) : sliced;
+  return `${cut.replace(/[,;:\-(]+$/, "").trim()}…`;
+}
+
+async function translateSingleChunkEnToPt(text, attempt = 0, sourceLang = "auto") {
   const clean = String(text || "").trim();
   if (!clean) return clean;
   const cached = translationCache.get(clean);
-  if (cached) return cached;
+  if (cached && !(cached === clean && looksLikeForeignLanguage(clean))) {
+    return cached;
+  }
 
+  const sl = sourceLang || "auto";
   try {
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=pt&dt=t&q=${encodeURIComponent(clean)}`;
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${encodeURIComponent(sl)}&tl=pt&dt=t&q=${encodeURIComponent(clean)}`;
     const response = await fetch(url, {
-      signal: AbortSignal.timeout(4500),
+      signal: AbortSignal.timeout(7000),
       headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; InstitutoMecuraNewsBot/2.0)",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
       },
     });
-    if (!response.ok) return clean;
+    if (!response.ok) {
+      if (attempt < 2 && (response.status === 429 || response.status >= 500)) {
+        await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
+        return translateSingleChunkEnToPt(clean, attempt + 1, sl);
+      }
+      return clean;
+    }
     const data = await response.json();
     const translated = Array.isArray(data?.[0])
       ? data[0].map((part) => (Array.isArray(part) ? part[0] : "")).join("").trim()
       : clean;
 
     if (translated) {
-      translationCache.set(clean, translated);
-      if (translationCache.size > 1200) {
-        const firstKey = translationCache.keys().next().value;
-        if (firstKey) translationCache.delete(firstKey);
+      // If sl=auto misdetected language and returned foreign text unchanged, retry explicitly with guessed lang (e.g. en/fr/es/de)
+      if (translated === clean && sl === "auto" && looksLikeForeignLanguage(clean)) {
+        const guessed = guessSourceLang(clean);
+        if (guessed !== "auto") {
+          return translateSingleChunkEnToPt(clean, attempt + 1, guessed);
+        }
+      }
+      if (!(translated === clean && looksLikeForeignLanguage(clean))) {
+        translationCache.set(clean, translated);
+        if (translationCache.size > 2400) {
+          const firstKey = translationCache.keys().next().value;
+          if (firstKey) translationCache.delete(firstKey);
+        }
       }
       return translated;
     }
     return clean;
   } catch {
+    if (attempt < 2) {
+      await new Promise((r) => setTimeout(r, 300 * (attempt + 1)));
+      return translateSingleChunkEnToPt(clean, attempt + 1, sl);
+    }
     return clean;
   }
 }
 
-async function translateBatchEnToPt(texts) {
+async function translateBatchEnToPt(texts, concurrency = 4, explicitLangs = []) {
   if (!Array.isArray(texts) || texts.length === 0) return [];
   const results = new Array(texts.length);
   const pendingIndices = [];
 
   for (let i = 0; i < texts.length; i += 1) {
     const t = String(texts[i] || "").trim();
+    const expLang = explicitLangs[i] || "";
     if (!t) {
       results[i] = "";
+    } else if (isAlreadyPortuguese(t, expLang)) {
+      results[i] = t;
     } else if (translationCache.has(t)) {
-      results[i] = translationCache.get(t);
+      const cached = translationCache.get(t);
+      if (cached && !(cached === t && (expLang !== "pt" || looksLikeForeignLanguage(t)))) {
+        results[i] = cached;
+      } else {
+        pendingIndices.push(i);
+      }
     } else {
       pendingIndices.push(i);
     }
@@ -491,44 +850,62 @@ async function translateBatchEnToPt(texts) {
 
   if (pendingIndices.length === 0) return results;
 
-  // Group pending strings into batches <= 1400 chars separated by a unique token
+  // Group pending strings into homogeneous language batches <= 1200 chars separated by a unique token
   const SEP = "\n§§§\n";
   const batches = [];
   let currentBatch = [];
   let currentLen = 0;
+  let currentLang = null;
 
   for (const idx of pendingIndices) {
     const txt = String(texts[idx]).trim();
-    if (currentBatch.length > 0 && (currentLen + txt.length > 1350 || currentBatch.length >= 8)) {
-      batches.push(currentBatch);
+    const itemLang = guessSourceLang(txt, explicitLangs[idx] || "");
+    if (
+      currentBatch.length > 0 &&
+      (currentLen + txt.length > 1200 || currentBatch.length >= 6 || itemLang !== currentLang)
+    ) {
+      batches.push({ lang: currentLang || "auto", items: currentBatch });
       currentBatch = [];
       currentLen = 0;
     }
-    currentBatch.push({ idx, txt });
+    currentLang = itemLang;
+    currentBatch.push({ idx, txt, lang: itemLang });
     currentLen += txt.length + SEP.length;
   }
-  if (currentBatch.length > 0) batches.push(currentBatch);
+  if (currentBatch.length > 0) {
+    batches.push({ lang: currentLang || "auto", items: currentBatch });
+  }
 
+  let cursor = 0;
+  const workerCount = Math.min(concurrency, batches.length);
   await Promise.all(
-    batches.map(async (batch) => {
-      const joined = batch.map((b) => b.txt).join(SEP);
-      const translatedJoined = await translateSingleChunkEnToPt(joined);
-      const parts = translatedJoined.split(/\s*§§§\s*/);
+    Array.from({ length: workerCount }, async () => {
+      while (cursor < batches.length) {
+        const bIdx = cursor;
+        cursor += 1;
+        const batchObj = batches[bIdx];
+        const batch = batchObj.items;
+        const joined = batch.map((b) => b.txt).join(SEP);
+        const translatedJoined = await translateSingleChunkEnToPt(joined, 0, batchObj.lang);
+        const parts = translatedJoined.split(/\s*§§§\s*/);
 
-      if (parts.length === batch.length) {
-        for (let k = 0; k < batch.length; k += 1) {
-          const out = parts[k].trim() || batch[k].txt;
-          translationCache.set(batch[k].txt, out);
-          results[batch[k].idx] = out;
-        }
-      } else {
-        // Fallback per item if separator split drifted
-        await Promise.all(
-          batch.map(async (item) => {
-            const out = await translateSingleChunkEnToPt(item.txt);
+        if (parts.length === batch.length) {
+          for (let k = 0; k < batch.length; k += 1) {
+            let out = parts[k].trim() || batch[k].txt;
+            if ((out === batch[k].txt || looksLikeForeignLanguage(out)) && (batch[k].lang !== "auto" || looksLikeForeignLanguage(batch[k].txt))) {
+              out = await translateSingleChunkEnToPt(batch[k].txt, 0, batch[k].lang);
+            }
+            if (!(out === batch[k].txt && looksLikeForeignLanguage(batch[k].txt))) {
+              translationCache.set(batch[k].txt, out);
+            }
+            results[batch[k].idx] = out;
+          }
+        } else {
+          for (const item of batch) {
+            const out = await translateSingleChunkEnToPt(item.txt, 0, item.lang);
             results[item.idx] = out;
-          })
-        );
+          }
+        }
       }
     })
   );
@@ -539,7 +916,7 @@ async function translateBatchEnToPt(texts) {
 /* --- Strategic Journalistic Headline & Engagement Engine --- */
 
 function cleanRawHeadline(title = "") {
-  return String(title)
+  return sanitizeEditorialText(String(title || ""))
     .replace(/\s*\(Newsletter:[^)]+\)\s*/gi, "")
     .replace(/\s*\(Boletim:[^)]+\)\s*/gi, "")
     .replace(/\s*\(Op-Ed\)\s*/gi, "")
@@ -551,15 +928,28 @@ function cleanRawHeadline(title = "") {
 }
 
 function polishPtTerminology(text = "") {
-  return String(text)
-    .replace(/\bmaconha medicinal\b/gi, "cannabis medicinal")
+  return sanitizeEditorialText(String(text || ""))
     .replace(/\bMaconha medicinal\b/g, "Cannabis medicinal")
-    .replace(/\bmaconha\b/g, "cannabis")
+    .replace(/\bmaconha medicinal\b/gi, "cannabis medicinal")
     .replace(/\bMaconha\b/g, "Cannabis")
+    .replace(/\bmaconha\b/g, "cannabis")
     .replace(/\bresschedulamento\b/gi, "reclassificação")
     .replace(/\breescalonamento\b/gi, "reclassificação")
+    .replace(/\bregistadas\b/g, "registradas")
+    .replace(/\bregistados\b/g, "registrados")
+    .replace(/\bregistada\b/g, "registrada")
+    .replace(/\bregistado\b/g, "registrado")
+    .replace(/\butilizadores\b/g, "usuários")
+    .replace(/\butilizador\b/g, "usuário")
+    .replace(/\bcancro\b/g, "câncer")
+    .replace(/\bcanabidiol\s+cbd\b/gi, "canabidiol (CBD)")
+    .replace(/\brdc\s*660\b/gi, "RDC 660")
+    .replace(/\brdc\s*327\b/gi, "RDC 327")
+    .replace(/\b(anvisa)\b/gi, (m) => (m === "Anvisa" ? "Anvisa" : "ANVISA"))
+    .replace(/\b(stj|stf|sus|cbd|thc|cbg|cbn|oms|fda|lgpd|cfm)\b/gi, (m) => m.toUpperCase())
     .replace(/\bDEA\b/g, "DEA (EUA)")
     .replace(/\bDEA \(EUA\) \(EUA\)/g, "DEA (EUA)")
+    .replace(/\s+([,.;:!?])/g, "$1")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -597,6 +987,9 @@ function deriveEditorialKicker(article) {
   return "Destaque Brasil";
 }
 
+const LOWERCASEABLE_PT_OPENERS =
+  /^(o|a|os|as|um|uma|uns|umas|novo|nova|novos|novas|estudo|pesquisa|pacientes|médicos|medicos|uso|tratamento|consumo|aumento|queda|mercado|cultivo|produção|producao|projeto|lei|decisão|decisao|avanço|avanco|revisão|revisao|benefícios|beneficios|impacto|acesso|como|por|quando|onde|qual|quais|cresce|sobe|cai|chega|avança|avanca|aprova|libera|debate|discute|analisa|mostra|revela|aponta|indica|destaca|cannabis|canabidiol|cânhamo|canhamo|processo|ação|acao|operadores|total|número|numero|dados|relatório|relatorio|fórum|forum|regras|normas|empresas|setor)\b/i;
+
 function craftStrategicHeadline(cleanTitle, kicker, category, region) {
   let headline = polishPtTerminology(cleanTitle);
   if (!headline) return headline;
@@ -616,18 +1009,11 @@ function craftStrategicHeadline(cleanTitle, kicker, category, region) {
     return headline;
   }
 
-  // Add a concise, magnetic InfoMoney-style lead-in prefix that hooks curiosity and highlights real-world impact
-  const isProperOrCamel =
-    /^[A-Z]{2,}\b/.test(headline) ||
-    /^[A-Z][a-z]+[A-Z]/.test(headline) ||
-    /^(Brasil|ANVISA|Anvisa|STJ|STF|SUS|CBD|THC|CBG|CBN|EUA|DEA|FDA|OMS|ONU|USP|Fiocruz|Europa|Alemanha|Canadá|Uruguai|Espanha|Portugal|Texas|Pensilvânia|Califórnia|Nova York|São Paulo|Rio|Bahia|Minas|Paraná|Sergipe|Goiás)\b/.test(
-      headline
-    );
-
-  const lowerFirst =
-    /^[A-ZÁÉÍÓÚÂÊÔÃÕÇ][a-záéíóúâêôãõç]/.test(headline) && !isProperOrCamel
-      ? headline.charAt(0).toLowerCase() + headline.slice(1)
-      : headline;
+  // Only lowercase unambiguous Portuguese common words after a colon; NEVER lowercase proper nouns (e.g. Tennessee, Guto Volpi)
+  const shouldLowerFirst = LOWERCASEABLE_PT_OPENERS.test(headline);
+  const formattedTitle = shouldLowerFirst
+    ? headline.charAt(0).toLowerCase() + headline.slice(1)
+    : headline;
 
   const hookByCategory = {
     anvisa: "O que muda na regulação: ",
@@ -650,7 +1036,7 @@ function craftStrategicHeadline(cleanTitle, kicker, category, region) {
     return headline;
   }
 
-  return `${prefix}${lowerFirst}`;
+  return `${prefix}${formattedTitle}`;
 }
 
 function computeEditorialEngagementScore(article) {
@@ -829,7 +1215,7 @@ function classifyArticleMulti(title, summary, bodyText, feedRegion, hintTopic) {
 }
 
 const MAJOR_PRESS_REGEX =
-  /\b(g1|folha|uol|cnn|bbc|estadao|estadão|agencia brasil|agência brasil|valor economico|valor econômico|o globo|veja|metropoles|metrópoles|band|sbt|r7|terra|ig|exame|forbes|reuters|bloomberg|ap news|the guardian|new york times|conjur|consultor juridico|consultor jurídico|jota|migalhas)\b/i;
+  /\b(g1|folha|uol|cnn|bbc|estadao|estadão|agencia brasil|agência brasil|valor economico|valor econômico|o globo|veja|metropoles|metrópoles|band|sbt|r7|terra|ig|exame|forbes|reuters|bloomberg|ap news|associated press|the guardian|new york times|conjur|consultor juridico|consultor jurídico|jota|migalhas|poder360|senado|agência senado|agencia senado|câmara|camara|gov\.br|infomoney|cartacapital|correio braziliense|deutsche welle|dw|el país|el pais|le monde|der spiegel|financial times|sky news|público|observador|expresso)\b/i;
 
 const SCIENTIFIC_SOURCE_REGEX =
   /\b(pubmed|wecann|project cbd|nature|lancet|jama|fiocruz|usp|unicamp|unifesp|nih|frontiers|journal)\b/i;
@@ -841,12 +1227,19 @@ function classifySourceTier(source = "", explicitTier = null) {
   return "especializado";
 }
 
+function isRelevantCannabisArticle(title = "", desc = "") {
+  const norm = normalizeText(`${title} ${desc}`);
+  return /\b(cannabis|canabis|canabidiol|cbd|thc|cbg|cbn|maconha|marijuana|canhamo|hemp|hanf|chanvre|canabinoide|canabinoides|endocanabinoide|anvisa|rdc\s*660|rdc\s*327|habeas corpus|salvo-conduto|weed|pot|dispensary|kiffen|cannabisgesetz|cultivo domestico|cultivo medicinal)\b/.test(
+    norm
+  );
+}
+
 function isOffTopicCrimeBlotter(title = "", desc = "") {
   const norm = normalizeText(`${title} ${desc}`);
-  if (/\b(medicinal|canabidiol|cbd|anvisa|habeas corpus|salvo-conduto|paciente|estudo|pesquisa|associacao)\b/.test(norm)) {
+  if (/\b(medicinal|canabidiol|cbd|anvisa|habeas corpus|salvo-conduto|paciente|estudo|pesquisa|associacao|regulament|legaliz)\b/.test(norm)) {
     return false;
   }
-  return /\b(preso com|presa com|presos com|apreensao de|apreende|flagrante de trafico|trafico de drogas|policia civil prende|policia militar prende|prf apreende|kg de maconha|toneladas de maconha|boca de fumo)\b/.test(
+  return /\b(preso com|presa com|presos com|preso apos apreensao|apreensao de|apreende|flagrante de trafico|trafico de drogas|policia civil prende|policia militar prende|prf apreende|kg de maconha|toneladas de maconha|boca de fumo|arrested with|arrested after|pounds of cannabis|seized at airport|smuggling)\b/.test(
     norm
   );
 }
@@ -883,41 +1276,41 @@ function extractKeyPoints(paragraphs = [], summary = "") {
 async function localizeAndEnrichArticles(rawArticles) {
   if (!Array.isArray(rawArticles) || rawArticles.length === 0) return [];
 
-  // Identify every English article (by source language OR content detection)
+  // Identify EVERY non-Portuguese article (by source language OR automatic foreign-language detection across title/summary/body)
   const itemsNeedingTranslation = [];
   for (let i = 0; i < rawArticles.length; i += 1) {
     const art = rawArticles[i];
     const cleanTitle = cleanRawHeadline(art.title);
-    const isEn = art.language === "en" || looksLikeEnglish(cleanTitle) || looksLikeEnglish(art.summary);
-    if (isEn) {
+    const firstPara = art.excerptParagraphs?.[0] || "";
+    const isForeign =
+      (art.language && art.language !== "pt") ||
+      looksLikeForeignLanguage(cleanTitle) ||
+      looksLikeForeignLanguage(art.summary) ||
+      looksLikeForeignLanguage(firstPara);
+    if (isForeign) {
       itemsNeedingTranslation.push({ index: i, cleanTitle });
     }
   }
 
-  // Batch-translate titles, summaries, and up to 4 body paragraphs of English articles in parallel
+  // Translate titles, summaries, and lead body paragraphs in parallel with explicit language tags
   if (itemsNeedingTranslation.length > 0) {
+    const explicitLangs = itemsNeedingTranslation.map((item) => rawArticles[item.index].language || "");
     const titlesToTranslate = itemsNeedingTranslation.map((item) => item.cleanTitle);
-    const summariesToTranslate = itemsNeedingTranslation.map((item) => rawArticles[item.index].summary || "");
-    const p1ToTranslate = itemsNeedingTranslation.map(
-      (item) => rawArticles[item.index].excerptParagraphs?.[0] || ""
+    const summariesToTranslate = itemsNeedingTranslation.map((item) =>
+      sanitizeEditorialText(rawArticles[item.index].summary || "")
     );
-    const p2ToTranslate = itemsNeedingTranslation.map(
-      (item) => rawArticles[item.index].excerptParagraphs?.[1] || ""
+    const p1ToTranslate = itemsNeedingTranslation.map((item) =>
+      sanitizeEditorialText(rawArticles[item.index].excerptParagraphs?.[0] || "")
     );
-    const p3ToTranslate = itemsNeedingTranslation.map(
-      (item) => rawArticles[item.index].excerptParagraphs?.[2] || ""
-    );
-    const p4ToTranslate = itemsNeedingTranslation.map(
-      (item) => rawArticles[item.index].excerptParagraphs?.[3] || ""
+    const p2ToTranslate = itemsNeedingTranslation.map((item) =>
+      sanitizeEditorialText(rawArticles[item.index].excerptParagraphs?.[1] || "")
     );
 
-    const [trTitles, trSummaries, trP1, trP2, trP3, trP4] = await Promise.all([
-      translateBatchEnToPt(titlesToTranslate),
-      translateBatchEnToPt(summariesToTranslate),
-      translateBatchEnToPt(p1ToTranslate),
-      translateBatchEnToPt(p2ToTranslate),
-      translateBatchEnToPt(p3ToTranslate),
-      translateBatchEnToPt(p4ToTranslate),
+    const [trTitles, trSummaries, trP1, trP2] = await Promise.all([
+      translateBatchEnToPt(titlesToTranslate, 5, explicitLangs),
+      translateBatchEnToPt(summariesToTranslate, 4, explicitLangs),
+      translateBatchEnToPt(p1ToTranslate, 3, explicitLangs),
+      translateBatchEnToPt(p2ToTranslate, 3, explicitLangs),
     ]);
 
     for (let k = 0; k < itemsNeedingTranslation.length; k += 1) {
@@ -928,9 +1321,7 @@ async function localizeAndEnrichArticles(rawArticles) {
       const translatedParagraphs = [
         polishPtTerminology(trP1[k] || ""),
         polishPtTerminology(trP2[k] || ""),
-        polishPtTerminology(trP3[k] || ""),
-        polishPtTerminology(trP4[k] || ""),
-      ].filter((p) => p.length > 20);
+      ].filter((p) => p.length > 25 && !hasMojibakeOrMarkupJunk(p));
 
       rawArticles[idx] = {
         ...art,
@@ -949,13 +1340,80 @@ async function localizeAndEnrichArticles(rawArticles) {
     }
   }
 
-  // Apply strategic editorial headlines, kickers, sourceTier, keyPoints, readingTime, and engagement score
-  return rawArticles.map((art) => {
+  // Final safety sweep (parallelized): catch any single title or summary that slipped through in a foreign language
+  const residualIndices = [];
+  for (let i = 0; i < rawArticles.length; i += 1) {
+    const a = rawArticles[i];
+    const t = cleanRawHeadline(a.title);
+    const s = sanitizeEditorialText(a.summary || "");
+    const titleForeign = looksLikeForeignLanguage(t);
+    const summaryForeign = !/^Reportagem publicada por\b/i.test(s) && looksLikeForeignLanguage(s);
+    if (titleForeign || summaryForeign) {
+      residualIndices.push({ i, t, s, titleForeign, summaryForeign });
+    }
+  }
+  if (residualIndices.length > 0) {
+    let rCursor = 0;
+    const workers = Math.min(4, residualIndices.length);
+    await Promise.all(
+      Array.from({ length: workers }, async () => {
+        while (rCursor < residualIndices.length) {
+          const item = residualIndices[rCursor];
+          rCursor += 1;
+          const a = rawArticles[item.i];
+          const nextTitle = item.titleForeign
+            ? polishPtTerminology(await translateSingleChunkEnToPt(item.t, 0, guessSourceLang(item.t)))
+            : a.title;
+          const nextSummary = item.summaryForeign
+            ? polishPtTerminology(await translateSingleChunkEnToPt(item.s, 0, guessSourceLang(item.s)))
+            : a.summary;
+          rawArticles[item.i] = {
+            ...a,
+            title: nextTitle || a.title,
+            summary: nextSummary || a.summary,
+            language: "pt",
+            translatedFromEn: true,
+          };
+        }
+      })
+    );
+  }
+
+  // Quality gate + strategic headlines, kickers, sourceTier, keyPoints, readingTime, and engagement score
+  const finalized = [];
+  for (const art of rawArticles) {
     const cleanedTitle = cleanRawHeadline(art.title);
+    if (!cleanedTitle || cleanedTitle.length < 12 || hasMojibakeOrMarkupJunk(cleanedTitle)) {
+      continue;
+    }
+
+    const cleanSummaryRaw = polishPtTerminology(art.summary || "");
+    const cleanSummaryCandidate = hasMojibakeOrMarkupJunk(cleanSummaryRaw) ? "" : cleanSummaryRaw;
+
+    const rawParagraphs = Array.isArray(art.excerptParagraphs) ? art.excerptParagraphs : [];
+    const paragraphs = rawParagraphs
+      .map((p) => polishPtTerminology(p))
+      .filter((p) => p.length > 25 && !hasMojibakeOrMarkupJunk(p));
+
+    // If scraped og:description was truncated mid-parenthesis/mid-word, prefer a clean full paragraph
+    const cleanSummary =
+      cleanSummaryCandidate && !isBrokenTruncatedText(cleanSummaryCandidate)
+        ? truncateCleanly(cleanSummaryCandidate, 290)
+        : paragraphs.find((p) => p.length >= 60 && !isBrokenTruncatedText(p))
+          ? truncateCleanly(paragraphs.find((p) => p.length >= 60 && !isBrokenTruncatedText(p)), 290)
+          : cleanSummaryCandidate
+            ? truncateCleanly(cleanSummaryCandidate.replace(/\([^)]*$/, "").trim(), 290)
+            : "";
+
+    const finalSummary =
+      cleanSummary ||
+      truncateCleanly(paragraphs[0] || "", 290) ||
+      `Reportagem publicada por ${art.source}. Acesse a publicação original para leitura completa.`;
+
     const { category, topics, tags } = classifyArticleMulti(
       cleanedTitle,
-      art.summary || "",
-      (art.excerptParagraphs || []).join(" "),
+      finalSummary,
+      paragraphs.join(" "),
       art.region,
       art.category
     );
@@ -963,6 +1421,7 @@ async function localizeAndEnrichArticles(rawArticles) {
     const editorialKicker = deriveEditorialKicker({
       ...art,
       title: cleanedTitle,
+      summary: finalSummary,
     });
     const strategicTitle = craftStrategicHeadline(
       cleanedTitle,
@@ -971,22 +1430,16 @@ async function localizeAndEnrichArticles(rawArticles) {
       art.region
     );
 
-    const cleanSummary = polishPtTerminology(art.summary || "");
-    const paragraphs = Array.isArray(art.excerptParagraphs)
-      ? art.excerptParagraphs.map((p) => polishPtTerminology(p)).filter((p) => p.length > 20)
-      : cleanSummary
-        ? [cleanSummary]
-        : [];
     const sourceTier = classifySourceTier(art.source, art.sourceTier);
-    const keyPoints = extractKeyPoints(paragraphs, cleanSummary);
-    const readingTimeMin = computeReadingTimeMin(paragraphs, cleanSummary);
+    const keyPoints = extractKeyPoints(paragraphs, finalSummary);
+    const readingTimeMin = computeReadingTimeMin(paragraphs, finalSummary);
 
     const enriched = {
       ...art,
       originalTitle: art.originalTitle || art.title,
       title: strategicTitle,
-      summary: cleanSummary,
-      excerptParagraphs: paragraphs.length > 0 ? paragraphs : cleanSummary ? [cleanSummary] : [],
+      summary: finalSummary,
+      excerptParagraphs: paragraphs.length > 0 ? paragraphs : [finalSummary],
       keyPoints,
       readingTimeMin,
       sourceTier,
@@ -997,26 +1450,41 @@ async function localizeAndEnrichArticles(rawArticles) {
     };
 
     enriched.editorialScore = computeEditorialEngagementScore(enriched);
-    return enriched;
-  });
+    finalized.push(enriched);
+  }
+  return finalized;
 }
 
 function extractParagraphsFromHtml(html = "", maxParagraphs = 8) {
   if (!html) return [];
-  const matches = [...html.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/gi)];
+  // Remove embedded widgets, share toolbars, SVG icons, headers, footers, and nav blocks before extracting <p>
+  const cleanedHtml = String(html)
+    .replace(/<!--[\s\S]*?-->/g, " ")
+    .replace(
+      /<(script|style|svg|noscript|iframe|button|nav|aside|form|select|template|figcaption|header|footer)\b[^>]*>[\s\S]*?<\/\1>/gi,
+      " "
+    );
+
+  const matches = [...cleanedHtml.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)];
   const paragraphs = [];
+  const seen = new Set();
+
   for (const m of matches) {
-    const clean = stripHtml(m[1])
-      .replace(/O post .*? apareceu primeiro em .*$/i, "")
-      .trim();
+    const clean = stripHtml(m[1]);
     if (
       clean.length >= 45 &&
+      !hasMojibakeOrMarkupJunk(clean) &&
       !/apareceu primeiro em/i.test(clean) &&
-      !/leia também/i.test(clean) &&
-      !/subscribe to/i.test(clean) &&
-      !/aceitar cookies|política de privacidade/i.test(clean)
+      !/leia tamb[ée]m/i.test(clean) &&
+      !/subscribe to|sign up for our newsletter|assine nossa newsletter/i.test(clean) &&
+      !/aceitar cookies|pol[íi]tica de privacidade|todos os direitos reservados|all rights reserved/i.test(clean) &&
+      !/^compartilhar\b|^ouvir a mat[ée]ria\b|^foto:/i.test(clean)
     ) {
-      paragraphs.push(clean);
+      const dedupeKey = normalizeText(clean).slice(0, 48);
+      if (!seen.has(dedupeKey)) {
+        seen.add(dedupeKey);
+        paragraphs.push(clean);
+      }
     }
     if (paragraphs.length >= maxParagraphs) break;
   }
@@ -1463,7 +1931,7 @@ async function fetchPageVisualMeta(originalUrl) {
       return miss;
     }
 
-    const html = await res.text();
+    const html = await readResponseTextSafe(res);
     const meta = extractArticleMetaFromHtml(html, finalUrl);
     const result = {
       ts: Date.now(),
@@ -1594,6 +2062,10 @@ async function fetchRssSource(meta, maxItems = 10, isDeepResult = false) {
       }
     } else if (rawSource && title.endsWith(` - ${rawSource}`)) {
       title = title.slice(0, -(rawSource.length + 3)).trim();
+    }
+
+    if (!meta.isDirectPortal && !isRelevantCannabisArticle(title, rawDesc)) {
+      continue;
     }
 
     if (isOffTopicCrimeBlotter(title, rawDesc)) {
@@ -2384,7 +2856,7 @@ async function fetchDeepArticleContent(targetUrl, fallbackLanguage = "pt") {
       return null;
     }
 
-    const html = await response.text();
+    const html = await readResponseTextSafe(response);
     const extracted = extractArticleMetaFromHtml(html, finalUrl);
     const articleBlock = html.match(/<article[^>]*>([\s\S]*?)<\/article>/i)?.[1] || html;
     let paragraphs =
@@ -2392,16 +2864,25 @@ async function fetchDeepArticleContent(targetUrl, fallbackLanguage = "pt") {
         ? extracted.paragraphs
         : extractParagraphsFromHtml(articleBlock, 8).filter((p) => !isGoogleNewsBoilerplate(p));
 
-    const cleanOgDesc = extracted.description;
-    if (paragraphs.length === 0 && cleanOgDesc.length > 45) {
+    const cleanOgDesc = sanitizeEditorialText(extracted.description);
+    if (paragraphs.length === 0 && cleanOgDesc.length > 45 && !hasMojibakeOrMarkupJunk(cleanOgDesc)) {
       paragraphs = [cleanOgDesc];
     }
 
-    if (paragraphs.length > 0 && (fallbackLanguage === "en" || looksLikeEnglish(paragraphs[0]))) {
-      const translated = await translateBatchEnToPt(paragraphs.slice(0, 6));
-      paragraphs = translated.map((p) => polishPtTerminology(p)).filter((p) => p.length > 25);
+    if (
+      paragraphs.length > 0 &&
+      (fallbackLanguage !== "pt" ||
+        looksLikeForeignLanguage(paragraphs[0]) ||
+        looksLikeForeignLanguage(paragraphs.slice(0, 2).join(" ")))
+    ) {
+      const translated = await translateBatchEnToPt(paragraphs.slice(0, 6), 3);
+      paragraphs = translated
+        .map((p) => polishPtTerminology(p))
+        .filter((p) => p.length > 25 && !hasMojibakeOrMarkupJunk(p));
     } else {
-      paragraphs = paragraphs.map((p) => polishPtTerminology(p));
+      paragraphs = paragraphs
+        .map((p) => polishPtTerminology(p))
+        .filter((p) => p.length > 25 && !hasMojibakeOrMarkupJunk(p));
     }
 
     const safeImage = extracted.image;
@@ -2483,11 +2964,14 @@ async function fetchAllNews() {
           ? fetchSechatDirectSource(src, 12)
           : fetchRssSource(
               src,
-              src.id === "gnews-hoje-br" || src.id === "gnews-grande-imprensa-br"
+              src.id === "gnews-hoje-br" ||
+                src.id === "gnews-grande-imprensa-br" ||
+                src.id === "gnews-politica-justica-oficial-br" ||
+                src.id === "gnews-grande-imprensa-global"
                 ? 14
                 : src.isDirectPortal
-                  ? 10
-                  : 8
+                  ? 8
+                  : 7
             )
       )
     ),
@@ -2500,9 +2984,9 @@ async function fetchAllNews() {
     }
   }
 
-  const deduped = deduplicateArticles(combined).slice(0, 340);
+  const deduped = deduplicateArticles(combined).slice(0, 480);
   // Resolve Google News links & hydrate real publisher OG images + lead descriptions (today's news prioritized first)
-  await hydrateMissingArticleImages(deduped, 34, 8);
+  await hydrateMissingArticleImages(deduped, 42, 8);
   const localizedAndStrategic = await localizeAndEnrichArticles(deduped);
 
   if (localizedAndStrategic.length > 0) {
