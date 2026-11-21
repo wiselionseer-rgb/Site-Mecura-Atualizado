@@ -33,6 +33,7 @@ interface NewsPortalDrawerProps {
   sourcesMeta?: MonitoredSourceMeta[];
   todayCount?: number;
   activeTopic: NewsTopicKey;
+  articleReaderOpen?: boolean;
   onSelectTopicAndJump: (
     topic: NewsTopicKey,
     query?: string,
@@ -116,6 +117,7 @@ export function NewsPortalDrawer({
   sourcesMeta = [],
   todayCount = 0,
   activeTopic,
+  articleReaderOpen = false,
   onSelectTopicAndJump,
   onSelectSourceAndJump,
   onRefreshToday,
@@ -131,29 +133,55 @@ export function NewsPortalDrawer({
   const [pubmedMatchCount, setPubmedMatchCount] = useState<number>(0);
   const [searchingLive, setSearchingLive] = useState(false);
   const [refreshingToday, setRefreshingToday] = useState(false);
-  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
+  const [imageStage, setImageStage] = useState<Record<string, "proxy" | "failed">>({});
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const getImgSrc = (imgUrl: string) =>
+    imageStage[imgUrl] === "proxy"
+      ? `/api/news/image?url=${encodeURIComponent(imgUrl)}`
+      : imgUrl;
+
+  const handleImgError = (imgUrl: string) => {
+    setImageStage((prev) => {
+      if (!prev[imgUrl]) return { ...prev, [imgUrl]: "proxy" };
+      if (prev[imgUrl] === "proxy") return { ...prev, [imgUrl]: "failed" };
+      return prev;
+    });
+  };
 
   const computedTodayCount = useMemo(
     () => todayCount || articles.filter((a) => isFromToday(a.publishedAt)).length,
     [todayCount, articles]
   );
 
+  const wasOpenRef = useRef(false);
+
   useEffect(() => {
-    if (open) {
+    if (open && !wasOpenRef.current) {
       setPreviewTopic(activeTopic);
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      const onKeyDown = (e: KeyboardEvent) => {
-        if (e.key === "Escape") onClose();
-      };
-      window.addEventListener("keydown", onKeyDown);
-      return () => {
-        document.body.style.overflow = prev;
-        window.removeEventListener("keydown", onKeyDown);
-      };
     }
-  }, [open, activeTopic, onClose]);
+    wasOpenRef.current = open;
+  }, [open, activeTopic]);
+
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !articleReaderOpen) onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open, articleReaderOpen, onClose]);
 
   const currentSearchSignature = `${localQuery.trim().toLowerCase()}|${previewTopic}|${datePeriod}|${exactDate}|${sortOrder}`;
 
@@ -231,17 +259,20 @@ export function NewsPortalDrawer({
     filtered = filterArticlesByDate(filtered, datePeriod, exactDate);
 
     if (sortOrder === "recentes" || previewTopic === "ultimas" || datePeriod === "hoje" || exactDate) {
-      return [...filtered]
-        .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
-        .slice(0, 6);
+      const sortedByDate = [...filtered].sort(
+        (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+      );
+      const withPhotos = sortedByDate.filter((a) => a.image && imageStage[a.image] !== "failed");
+      const rest = sortedByDate.filter((a) => !a.image || imageStage[a.image] === "failed");
+      return [...withPhotos, ...rest].slice(0, 6);
     }
 
     if (previewTopic === "inicio") {
       const sorted = [...filtered].sort(
         (a, b) => (b.editorialScore || 0) - (a.editorialScore || 0)
       );
-      const withPhotos = sorted.filter((a) => a.image && !failedImages[a.id]);
-      const rest = sorted.filter((a) => !a.image || failedImages[a.id]);
+      const withPhotos = sorted.filter((a) => a.image && imageStage[a.image] !== "failed");
+      const rest = sorted.filter((a) => !a.image || imageStage[a.image] === "failed");
       return [...withPhotos, ...rest].slice(0, 6);
     }
 
@@ -256,7 +287,7 @@ export function NewsPortalDrawer({
     liveMatches,
     liveMatchQueryKey,
     currentSearchSignature,
-    failedImages,
+    imageStage,
   ]);
 
   const currentDesk = NEWS_TOPIC_MAP[previewTopic] || NEWS_TOPICS[0];
@@ -671,13 +702,12 @@ export function NewsPortalDrawer({
                 ) : displayedArticles.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
                     {displayedArticles.map((article) => {
-                      const hasImg = Boolean(article.image && !failedImages[article.id]);
+                      const hasImg = Boolean(article.image && imageStage[article.image] !== "failed");
                       const tierLabel = getSourceTierLabel(article);
                       return (
                         <article
                           key={`${article.id}-${article.url}`}
                           onClick={() => {
-                            onClose();
                             onOpenArticle(article);
                           }}
                           className="group flex flex-col justify-between gap-3 p-4 rounded-xl border border-border bg-surface/35 hover:border-accent/50 transition-colors cursor-pointer"
@@ -686,13 +716,11 @@ export function NewsPortalDrawer({
                             {hasImg && article.image ? (
                               <div className="aspect-[16/9] rounded-lg overflow-hidden bg-surface border border-border">
                                 <img
-                                  src={article.image}
+                                  src={getImgSrc(article.image)}
                                   alt={article.title}
                                   referrerPolicy="no-referrer"
                                   loading="lazy"
-                                  onError={() =>
-                                    setFailedImages((prev) => ({ ...prev, [article.id]: true }))
-                                  }
+                                  onError={() => handleImgError(article.image!)}
                                   className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
                                 />
                               </div>

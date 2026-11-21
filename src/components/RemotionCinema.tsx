@@ -58,12 +58,14 @@ const MOBILE_STORYBOARD_SCENES = [
 export function RemotionCinema() {
   const sectionRef = useRef<HTMLElement>(null);
   const playerRef = useRef<PlayerRef>(null);
-  const isInView = useInView(sectionRef, { amount: 0.2 });
+  const isInView = useInView(sectionRef, { amount: 0.08 });
   const [isDesktop, setIsDesktop] = useState<boolean>(() =>
     typeof window !== "undefined" ? window.innerWidth >= 768 : false
   );
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [userPaused, setUserPaused] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  const isPlaying = !userPaused;
 
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 768px)");
@@ -73,7 +75,7 @@ export function RemotionCinema() {
     return () => mq.removeEventListener("change", update);
   }, []);
 
-  // Desktop: sync Remotion player frame updates & auto-pause off-screen
+  // Desktop: sync Remotion player frame updates to chapter indicator
   useEffect(() => {
     if (!isDesktop) return;
     const player = playerRef.current;
@@ -87,41 +89,48 @@ export function RemotionCinema() {
       else setActiveIndex(0);
     };
 
-    const onPlay = () => setIsPlaying(true);
-    const onPause = () => setIsPlaying(false);
-
     player.addEventListener("frameupdate", onFrame);
-    player.addEventListener("play", onPlay);
-    player.addEventListener("pause", onPause);
-
     return () => {
       player.removeEventListener("frameupdate", onFrame);
-      player.removeEventListener("play", onPlay);
-      player.removeEventListener("pause", onPause);
     };
   }, [isDesktop]);
 
+  // Desktop: auto-play automatically whenever visible and not manually paused by the user
   useEffect(() => {
-    if (!isDesktop || !playerRef.current) return;
-    if (isInView && isPlaying) {
-      playerRef.current.play();
-    } else {
-      playerRef.current.pause();
-    }
-  }, [isDesktop, isInView, isPlaying]);
+    if (!isDesktop) return;
+    const syncPlayback = () => {
+      const player = playerRef.current;
+      if (!player) return;
+      if (isInView && !userPaused) {
+        if (!player.isPlaying()) {
+          player.play();
+        }
+      } else if (player.isPlaying()) {
+        player.pause();
+      }
+    };
 
-  // Mobile: silky 60fps GPU-composited chapter auto-advance (zero 30fps Remotion CPU freeze)
+    syncPlayback();
+    const raf = window.requestAnimationFrame(syncPlayback);
+    const timer = window.setTimeout(syncPlayback, 150);
+    return () => {
+      window.cancelAnimationFrame(raf);
+      window.clearTimeout(timer);
+    };
+  }, [isDesktop, isInView, userPaused]);
+
+  // Mobile: silky 60fps GPU-composited chapter auto-advance
   useEffect(() => {
-    if (isDesktop || !isInView || !isPlaying) return;
+    if (isDesktop || !isInView || userPaused) return;
     const timer = window.setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % MOBILE_STORYBOARD_SCENES.length);
     }, 4500);
     return () => window.clearInterval(timer);
-  }, [isDesktop, isInView, isPlaying]);
+  }, [isDesktop, isInView, userPaused]);
 
   const seekToChapter = (index: number, frame: number) => {
     setActiveIndex(index);
-    setIsPlaying(true);
+    setUserPaused(false);
     if (isDesktop && playerRef.current) {
       playerRef.current.seekTo(frame);
       playerRef.current.play();
@@ -129,12 +138,14 @@ export function RemotionCinema() {
   };
 
   const togglePlayback = () => {
-    const next = !isPlaying;
-    setIsPlaying(next);
-    if (isDesktop && playerRef.current) {
-      if (next) playerRef.current.play();
-      else playerRef.current.pause();
-    }
+    setUserPaused((prev) => {
+      const nextPaused = !prev;
+      if (isDesktop && playerRef.current) {
+        if (nextPaused) playerRef.current.pause();
+        else playerRef.current.play();
+      }
+      return nextPaused;
+    });
   };
 
   const activeMobileScene =
@@ -157,7 +168,8 @@ export function RemotionCinema() {
                 compositionWidth={1280}
                 compositionHeight={720}
                 fps={BRAND_FILM_FPS}
-                autoPlay={isInView}
+                autoPlay
+                initiallyMuted
                 loop
                 controls={false}
                 acknowledgeRemotionLicense

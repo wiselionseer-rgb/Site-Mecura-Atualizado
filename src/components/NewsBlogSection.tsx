@@ -46,6 +46,7 @@ interface NewsBlogSectionProps {
   todayRefreshTrigger: number;
   externalSelectedArticle: NewsArticle | null;
   onClearExternalArticle: () => void;
+  onArticleReaderChange?: (open: boolean) => void;
   onFeedSynced?: (
     articles: NewsArticle[],
     topicCounts: Record<string, number>,
@@ -175,6 +176,7 @@ export function NewsBlogSection({
   todayRefreshTrigger,
   externalSelectedArticle,
   onClearExternalArticle,
+  onArticleReaderChange,
   onFeedSynced,
 }: NewsBlogSectionProps) {
   const [baseArticles, setBaseArticles] = useState<NewsArticle[]>([]);
@@ -198,11 +200,23 @@ export function NewsBlogSection({
   const [error, setError] = useState<string | null>(null);
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
   const [loadingDeepArticle, setLoadingDeepArticle] = useState(false);
-  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
+  const [imageStage, setImageStage] = useState<Record<string, "proxy" | "failed">>({});
   const deepAbortRef = useRef<AbortController | null>(null);
 
-  const markImageFailed = useCallback((id: string) => {
-    setFailedImages((prev) => (prev[id] ? prev : { ...prev, [id]: true }));
+  const getImgSrc = useCallback(
+    (imgUrl: string) =>
+      imageStage[imgUrl] === "proxy"
+        ? `/api/news/image?url=${encodeURIComponent(imgUrl)}`
+        : imgUrl,
+    [imageStage]
+  );
+
+  const handleImageError = useCallback((imgUrl: string) => {
+    setImageStage((prev) => {
+      if (!prev[imgUrl]) return { ...prev, [imgUrl]: "proxy" };
+      if (prev[imgUrl] === "proxy") return { ...prev, [imgUrl]: "failed" };
+      return prev;
+    });
   }, []);
 
   // Sync externally clicked article (e.g. from top portal menu)
@@ -446,6 +460,7 @@ export function NewsBlogSection({
   }, [searchQuery, activeTopic, datePeriod, exactDate, sortOrder, searchTrigger, runDeepSearch]);
 
   useEffect(() => {
+    onArticleReaderChange?.(Boolean(selectedArticle));
     if (!selectedArticle) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -457,7 +472,7 @@ export function NewsBlogSection({
       document.body.style.overflow = prev;
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [selectedArticle]);
+  }, [selectedArticle, onArticleReaderChange]);
 
   const activeSourceMeta = useMemo(
     () => (activeSourceId ? sourcesMeta.find((s) => s.id === activeSourceId) || null : null),
@@ -540,9 +555,11 @@ export function NewsBlogSection({
   ]);
 
   const leadArticle = useMemo(() => {
-    const withRealPhoto = filteredArticles.find((a) => a.image && !failedImages[a.id]);
+    const withRealPhoto = filteredArticles.find(
+      (a) => a.image && imageStage[a.image] !== "failed"
+    );
     return withRealPhoto ?? filteredArticles[0] ?? null;
-  }, [filteredArticles, failedImages]);
+  }, [filteredArticles, imageStage]);
 
   const breakingRailArticles = useMemo(() => {
     if (!leadArticle) return [];
@@ -1131,14 +1148,14 @@ export function NewsBlogSection({
                 onClick={() => setSelectedArticle(leadArticle)}
                 className="lg:col-span-7 group space-y-5 cursor-pointer"
               >
-                {leadArticle.image && !failedImages[leadArticle.id] ? (
+                {leadArticle.image && imageStage[leadArticle.image] !== "failed" ? (
                   <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-surface border border-border">
                     <img
-                      src={leadArticle.image}
+                      src={getImgSrc(leadArticle.image)}
                       alt={leadArticle.title}
                       referrerPolicy="no-referrer"
                       loading="lazy"
-                      onError={() => markImageFailed(leadArticle.id)}
+                      onError={() => handleImageError(leadArticle.image!)}
                       className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-background/85 via-background/15 to-transparent" />
@@ -1270,14 +1287,14 @@ export function NewsBlogSection({
                           onClick={() => setSelectedArticle(article)}
                           className="group py-4 flex items-start gap-4 cursor-pointer"
                         >
-                          {article.image && !failedImages[article.id] && (
+                          {article.image && imageStage[article.image] !== "failed" && (
                             <div className="w-20 h-16 rounded-lg overflow-hidden bg-surface border border-border shrink-0 mt-0.5">
                               <img
-                                src={article.image}
+                                src={getImgSrc(article.image)}
                                 alt={article.title}
                                 referrerPolicy="no-referrer"
                                 loading="lazy"
-                                onError={() => markImageFailed(article.id)}
+                                onError={() => handleImageError(article.image!)}
                                 className="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-500"
                               />
                             </div>
@@ -1315,7 +1332,9 @@ export function NewsBlogSection({
             {gridFeedArticles.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-2 border-t border-border pt-8">
                 {gridFeedArticles.map((article) => {
-                  const hasRealImg = Boolean(article.image && !failedImages[article.id]);
+                  const hasRealImg = Boolean(
+                    article.image && imageStage[article.image] !== "failed"
+                  );
                   const tierLabel = getSourceTierLabel(article.sourceTier);
                   return (
                     <article
@@ -1327,11 +1346,11 @@ export function NewsBlogSection({
                         {hasRealImg && article.image && (
                           <div className="w-full sm:w-40 aspect-[16/10] sm:aspect-[4/3] rounded-xl overflow-hidden bg-surface border border-border shrink-0">
                             <img
-                              src={article.image}
+                              src={getImgSrc(article.image)}
                               alt={article.title}
                               referrerPolicy="no-referrer"
                               loading="lazy"
-                              onError={() => markImageFailed(article.id)}
+                              onError={() => handleImageError(article.image!)}
                               className="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-500"
                             />
                           </div>
@@ -1420,7 +1439,7 @@ export function NewsBlogSection({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.22 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+            className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6"
             role="dialog"
             aria-modal="true"
             aria-label={selectedArticle.title}
@@ -1478,13 +1497,13 @@ export function NewsBlogSection({
                 data-lenis-prevent
                 className="p-6 overflow-y-auto overscroll-contain space-y-5 text-sm sm:text-base text-text-secondary leading-relaxed"
               >
-                {selectedArticle.image && !failedImages[selectedArticle.id] && (
+                {selectedArticle.image && imageStage[selectedArticle.image] !== "failed" && (
                   <div className="aspect-[16/9] rounded-xl overflow-hidden bg-background border border-border">
                     <img
-                      src={selectedArticle.image}
+                      src={getImgSrc(selectedArticle.image)}
                       alt={selectedArticle.title}
                       referrerPolicy="no-referrer"
-                      onError={() => markImageFailed(selectedArticle.id)}
+                      onError={() => handleImageError(selectedArticle.image!)}
                       className="w-full h-full object-cover"
                     />
                   </div>

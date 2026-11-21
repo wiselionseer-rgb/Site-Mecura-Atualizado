@@ -1559,6 +1559,7 @@ export default function App() {
   const [sharedSourcesMeta, setSharedSourcesMeta] = useState<MonitoredSourceMeta[]>([]);
   const [sharedTodayCount, setSharedTodayCount] = useState<number>(0);
   const [externalArticle, setExternalArticle] = useState<NewsArticle | null>(null);
+  const [articleReaderOpen, setArticleReaderOpen] = useState(false);
 
   useEffect(() => {
     if (showEntryPortal) {
@@ -1661,6 +1662,7 @@ export default function App() {
           sourcesMeta={sharedSourcesMeta}
           todayCount={sharedTodayCount}
           activeTopic={activeNewsTopic}
+          articleReaderOpen={articleReaderOpen}
           onSelectTopicAndJump={handleSelectTopicAndJump}
           onSelectSourceAndJump={handleSelectSourceAndJump}
           onRefreshToday={handleDrawerRefreshToday}
@@ -1699,6 +1701,7 @@ export default function App() {
             todayRefreshTrigger={todayRefreshTrigger}
             externalSelectedArticle={externalArticle}
             onClearExternalArticle={() => setExternalArticle(null)}
+            onArticleReaderChange={setArticleReaderOpen}
             onFeedSynced={handleFeedSynced}
           />
           <LegalTransparencyBand onOpenLegal={setActiveModal} />

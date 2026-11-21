@@ -1166,51 +1166,396 @@ async function fetchWpSource(meta, customUrl = null, isDeepResult = false) {
 }
 
 const rssOgImageCache = new Map();
+const gnewsUrlCache = new Map();
 
-async function hydrateDirectRssImages(items) {
-  const missing = items.filter((item) => !item.image && item.url && !/news\.google\.com/i.test(item.url));
+function isSafeExternalHttpUrl(rawUrl) {
+  try {
+    const parsed = new URL(rawUrl);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return false;
+    const host = parsed.hostname.toLowerCase();
+    if (
+      host === "localhost" ||
+      host === "127.0.0.1" ||
+      host === "0.0.0.0" ||
+      host === "::1" ||
+      host === "[::1]" ||
+      host.endsWith(".local") ||
+      host.endsWith(".internal") ||
+      /^10\./.test(host) ||
+      /^192\.168\./.test(host) ||
+      /^169\.254\./.test(host) ||
+      /^172\.(1[6-9]|2\d|3[01])\./.test(host) ||
+      /^fc|^fd|^fe80:/i.test(host)
+    ) {
+      return false;
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function normalizeExtractedImageUrl(rawCandidate, basePageUrl) {
+  if (!rawCandidate || typeof rawCandidate !== "string") return null;
+  const decoded = decodeHtmlEntities(rawCandidate).trim();
+  if (!decoded || decoded.startsWith("data:")) return null;
+  try {
+    const resolved = new URL(decoded, basePageUrl).href;
+    if (!isSafeExternalHttpUrl(resolved)) return null;
+    if (isBlockedPlaceholderImage(resolved)) return null;
+    return resolved;
+  } catch {
+    return null;
+  }
+}
+
+function extractMetaContent(html, attrName, attrValue) {
+  const escaped = attrValue.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re1 = new RegExp(
+    `<meta[^>]+${attrName}=["']${escaped}["'][^>]+content=["']([^"']+)["']`,
+    "i"
+  );
+  const re2 = new RegExp(
+    `<meta[^>]+content=["']([^"']+)["'][^>]+${attrName}=["']${escaped}["']`,
+    "i"
+  );
+  return html.match(re1)?.[1] || html.match(re2)?.[1] || "";
+}
+
+function extractArticleMetaFromHtml(html, pageUrl) {
+  const imageCandidates = [
+    extractMetaContent(html, "property", "og:image:secure_url"),
+    extractMetaContent(html, "property", "og:image"),
+    extractMetaContent(html, "name", "og:image"),
+    extractMetaContent(html, "name", "twitter:image"),
+    extractMetaContent(html, "name", "twitter:image:src"),
+    extractMetaContent(html, "property", "twitter:image"),
+    html.match(/<link[^>]+rel=["']image_src["'][^>]+href=["']([^"']+)["']/i)?.[1] || "",
+  ];
+
+  // Also check JSON-LD Article / NewsArticle image
+  const ld = extractSechatJsonLd(html);
+  if (ld?.image) {
+    if (typeof ld.image === "string") {
+      imageCandidates.push(ld.image);
+    } else if (Array.isArray(ld.image)) {
+      for (const entry of ld.image.slice(0, 3)) {
+        imageCandidates.push(typeof entry === "string" ? entry : entry?.url || "");
+      }
+    } else if (typeof ld.image?.url === "string") {
+      imageCandidates.push(ld.image.url);
+    }
+  }
+
+  // Fallback: first substantive <img> inside <article> or <main>
+  const articleScope =
+    html.match(/<article[^>]*>([\s\S]*?)<\/article>/i)?.[1] ||
+    html.match(/<main[^>]*>([\s\S]*?)<\/main>/i)?.[1] ||
+    "";
+  if (articleScope) {
+    const imgMatches = articleScope.matchAll(
+      /<img[^>]+(?:data-src|data-lazy-src|src)=["']([^"']+)["'][^>]*>/gi
+    );
+    let count = 0;
+    for (const m of imgMatches) {
+      imageCandidates.push(m[1]);
+      count += 1;
+      if (count >= 4) break;
+    }
+  }
+
+  let resolvedImage = null;
+  for (const cand of imageCandidates) {
+    const norm = normalizeExtractedImageUrl(cand, pageUrl);
+    if (norm) {
+      resolvedImage = norm;
+      break;
+    }
+  }
+
+  const rawDesc =
+    extractMetaContent(html, "property", "og:description") ||
+    extractMetaContent(html, "name", "description") ||
+    extractMetaContent(html, "name", "twitter:description") ||
+    (typeof ld?.description === "string" ? ld.description : "");
+  const cleanDesc = decodeHtmlEntities(rawDesc).replace(/\s+/g, " ").trim();
+  const safeDesc =
+    cleanDesc.length >= 40 && !isGoogleNewsBoilerplate(cleanDesc) ? cleanDesc : "";
+
+  const paragraphs = articleScope
+    ? extractParagraphsFromHtml(articleScope, 6).filter((p) => !isGoogleNewsBoilerplate(p))
+    : [];
+
+  return {
+    image: resolvedImage,
+    description: safeDesc,
+    paragraphs,
+  };
+}
+
+async function resolveGoogleNewsUrl(rawUrl) {
+  if (!rawUrl || !/news\.google\.com/i.test(rawUrl)) return rawUrl;
+
+  const cached = gnewsUrlCache.get(rawUrl);
+  if (cached && Date.now() - cached.ts < 24 * 60 * 60 * 1000) {
+    return cached.url;
+  }
+
+  // 1) Fast path: legacy base64-encoded Google News article token
+  const legacyDecoded = tryDecodeGoogleNewsUrl(rawUrl);
+  if (legacyDecoded && isSafeExternalHttpUrl(legacyDecoded)) {
+    gnewsUrlCache.set(rawUrl, { ts: Date.now(), url: legacyDecoded });
+    return legacyDecoded;
+  }
+
+  // 2) Modern Google News batchexecute RPC resolver (Fbv4je)
+  try {
+    const idMatch = rawUrl.match(/\/(?:rss\/)?articles\/([^/?]+)/i);
+    if (!idMatch) {
+      gnewsUrlCache.set(rawUrl, { ts: Date.now(), url: null });
+      return null;
+    }
+    const articleToken = idMatch[1];
+    const pageRes = await fetch(`https://news.google.com/rss/articles/${articleToken}`, {
+      redirect: "follow",
+      signal: AbortSignal.timeout(3500),
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+        Accept: "text/html,application/xhtml+xml",
+      },
+    });
+    if (!pageRes.ok) return null;
+
+    if (pageRes.url && !/news\.google\.com|consent\.google\.com|accounts\.google\.com/i.test(pageRes.url)) {
+      const safeDirect = isSafeExternalHttpUrl(pageRes.url) ? pageRes.url : null;
+      gnewsUrlCache.set(rawUrl, { ts: Date.now(), url: safeDirect });
+      return safeDirect;
+    }
+
+    const html = await pageRes.text();
+    const sg = html.match(/data-n-a-sg=["']([^"']+)["']/i)?.[1];
+    const ts = html.match(/data-n-a-ts=["']([^"']+)["']/i)?.[1];
+    if (!sg || !ts) {
+      gnewsUrlCache.set(rawUrl, { ts: Date.now(), url: null });
+      return null;
+    }
+
+    const payload = JSON.stringify([
+      [
+        [
+          "Fbv4je",
+          JSON.stringify([
+            "garturlreq",
+            [
+              ["X", "X", ["X", "X"], null, null, 1, 1, "US:en", null, 1, null, null, null, null, null, 0, 1],
+              "X",
+              "X",
+              1,
+              [1, 1, 1],
+              1,
+              1,
+              null,
+              0,
+              0,
+              null,
+              0,
+            ],
+            articleToken,
+            Number(ts),
+            sg,
+          ]),
+          null,
+          "generic",
+        ],
+      ],
+    ]);
+
+    const rpcRes = await fetch("https://news.google.com/_/DotsSplashUi/data/batchexecute", {
+      method: "POST",
+      signal: AbortSignal.timeout(3500),
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+      },
+      body: `f.req=${encodeURIComponent(payload)}`,
+    });
+    if (!rpcRes.ok) return null;
+
+    const rpcText = await rpcRes.text();
+    const urlMatch = rpcText.match(/garturlres\\",\\"([^\\"]+)/);
+    const decodedUrl = urlMatch
+      ? urlMatch[1]
+          .replace(/\\u003d/gi, "=")
+          .replace(/\\u0026/gi, "&")
+          .replace(/\\\//g, "/")
+      : null;
+
+    const safeResolved =
+      decodedUrl &&
+      isSafeExternalHttpUrl(decodedUrl) &&
+      !/news\.google\.com|google\.com\/|gstatic\.com/i.test(decodedUrl)
+        ? decodedUrl
+        : null;
+
+    gnewsUrlCache.set(rawUrl, { ts: Date.now(), url: safeResolved });
+    if (gnewsUrlCache.size > 600) {
+      const oldest = gnewsUrlCache.keys().next().value;
+      if (oldest) gnewsUrlCache.delete(oldest);
+    }
+    return safeResolved;
+  } catch {
+    return null;
+  }
+}
+
+async function fetchPageVisualMeta(originalUrl) {
+  const cached = rssOgImageCache.get(originalUrl);
+  if (cached && Date.now() - cached.ts < 6 * 60 * 60 * 1000) {
+    return cached;
+  }
+
+  let targetUrl = originalUrl;
+  if (/news\.google\.com/i.test(originalUrl)) {
+    const resolved = await resolveGoogleNewsUrl(originalUrl);
+    if (!resolved) {
+      const miss = { ts: Date.now(), image: null, resolvedUrl: null, description: "", paragraphs: [] };
+      rssOgImageCache.set(originalUrl, miss);
+      return miss;
+    }
+    targetUrl = resolved;
+  }
+
+  if (!isSafeExternalHttpUrl(targetUrl)) {
+    const miss = { ts: Date.now(), image: null, resolvedUrl: null, description: "", paragraphs: [] };
+    rssOgImageCache.set(originalUrl, miss);
+    return miss;
+  }
+
+  try {
+    const res = await fetch(targetUrl, {
+      redirect: "follow",
+      signal: AbortSignal.timeout(4500),
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
+      },
+    });
+    if (!res.ok) {
+      const miss = {
+        ts: Date.now(),
+        image: null,
+        resolvedUrl: targetUrl !== originalUrl ? targetUrl : null,
+        description: "",
+        paragraphs: [],
+      };
+      rssOgImageCache.set(originalUrl, miss);
+      return miss;
+    }
+
+    const finalUrl = res.url || targetUrl;
+    if (/news\.google\.com|consent\.google\.com|accounts\.google\.com/i.test(finalUrl)) {
+      const miss = { ts: Date.now(), image: null, resolvedUrl: null, description: "", paragraphs: [] };
+      rssOgImageCache.set(originalUrl, miss);
+      return miss;
+    }
+
+    const html = await res.text();
+    const meta = extractArticleMetaFromHtml(html, finalUrl);
+    const result = {
+      ts: Date.now(),
+      image: meta.image,
+      resolvedUrl: finalUrl !== originalUrl && isSafeExternalHttpUrl(finalUrl) ? finalUrl : null,
+      description: meta.description,
+      paragraphs: meta.paragraphs,
+    };
+    rssOgImageCache.set(originalUrl, result);
+    if (rssOgImageCache.size > 600) {
+      const oldest = rssOgImageCache.keys().next().value;
+      if (oldest) rssOgImageCache.delete(oldest);
+    }
+    return result;
+  } catch {
+    const miss = {
+      ts: Date.now(),
+      image: null,
+      resolvedUrl: targetUrl !== originalUrl ? targetUrl : null,
+      description: "",
+      paragraphs: [],
+    };
+    rssOgImageCache.set(originalUrl, miss);
+    return miss;
+  }
+}
+
+function isPlaceholderSummary(summary = "") {
+  return /Reportagem publicada por .*Abra o resumo para carregar/i.test(summary);
+}
+
+async function hydrateMissingArticleImages(items, maxToHydrate = 32, concurrency = 8) {
+  if (!Array.isArray(items) || items.length === 0) return items;
+
+  const missing = items.filter((item) => !item.image && item.url && item.sourceTier !== "cientifico");
   if (missing.length === 0) return items;
 
-  await Promise.allSettled(
-    missing.slice(0, 10).map(async (item) => {
-      const cached = rssOgImageCache.get(item.url);
-      if (cached && Date.now() - cached.ts < 6 * 60 * 60 * 1000) {
-        if (cached.image) item.image = cached.image;
-        return;
+  // Prioritize today's articles first (newest -> oldest), then other recent articles
+  const prioritized = [...missing].sort((a, b) => {
+    const aToday = isArticleFromToday(a) ? 1 : 0;
+    const bToday = isArticleFromToday(b) ? 1 : 0;
+    if (aToday !== bToday) return bToday - aToday;
+    return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+  });
+
+  // Apply cached results instantly to ALL missing items first
+  const uncachedQueue = [];
+  for (const item of prioritized) {
+    const cached = rssOgImageCache.get(item.url);
+    if (cached && Date.now() - cached.ts < 6 * 60 * 60 * 1000) {
+      if (cached.image) item.image = cached.image;
+      if (cached.resolvedUrl) item.url = cached.resolvedUrl;
+      if (isPlaceholderSummary(item.summary) && (cached.description || cached.paragraphs?.[0])) {
+        const better = (cached.description || cached.paragraphs[0]).slice(0, 290);
+        item.summary = better;
+        item.excerptParagraphs =
+          cached.paragraphs && cached.paragraphs.length > 0 ? cached.paragraphs : [better];
       }
-      try {
-        const res = await fetch(item.url, {
-          redirect: "follow",
-          signal: AbortSignal.timeout(4500),
-          headers: {
-            "User-Agent":
-              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-            Accept: "text/html,application/xhtml+xml",
-          },
-        });
-        if (!res.ok) {
-          rssOgImageCache.set(item.url, { ts: Date.now(), image: null });
-          return;
+    } else if (uncachedQueue.length < maxToHydrate) {
+      uncachedQueue.push(item);
+    }
+  }
+
+  if (uncachedQueue.length === 0) return items;
+
+  let cursor = 0;
+  const workerCount = Math.min(concurrency, uncachedQueue.length);
+  await Promise.all(
+    Array.from({ length: workerCount }, async () => {
+      while (cursor < uncachedQueue.length) {
+        const idx = cursor;
+        cursor += 1;
+        const item = uncachedQueue[idx];
+        const meta = await fetchPageVisualMeta(item.url);
+        if (!meta) continue;
+        if (meta.image) item.image = meta.image;
+        if (meta.resolvedUrl) item.url = meta.resolvedUrl;
+        if (isPlaceholderSummary(item.summary) && (meta.description || meta.paragraphs?.[0])) {
+          const better = (meta.description || meta.paragraphs[0]).slice(0, 290);
+          item.summary = better;
+          item.excerptParagraphs =
+            meta.paragraphs && meta.paragraphs.length > 0 ? meta.paragraphs : [better];
         }
-        const html = await res.text();
-        const ogImg =
-          html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["'](https?:\/\/[^"']+)["']/i)?.[1] ||
-          html.match(/<meta[^>]+content=["'](https?:\/\/[^"']+)["'][^>]+property=["']og:image["']/i)?.[1] ||
-          null;
-        const safeImg = ogImg && !isBlockedPlaceholderImage(ogImg) ? ogImg : null;
-        rssOgImageCache.set(item.url, { ts: Date.now(), image: safeImg });
-        if (safeImg) item.image = safeImg;
-      } catch {
-        // leave image null on timeout/403
       }
     })
   );
 
-  if (rssOgImageCache.size > 200) {
-    const oldest = rssOgImageCache.keys().next().value;
-    if (oldest) rssOgImageCache.delete(oldest);
-  }
   return items;
+}
+
+async function hydrateDirectRssImages(items) {
+  return hydrateMissingArticleImages(items, 10, 6);
 }
 
 async function fetchRssSource(meta, maxItems = 10, isDeepResult = false) {
@@ -1744,6 +2089,7 @@ async function runLiveDeepSearch(rawQuery, period = "todos") {
   }
 
   const deduped = deduplicateArticles(results);
+  await hydrateMissingArticleImages(deduped, 10, 6);
   const enriched = await localizeAndEnrichArticles(deduped);
   deepSearchCache.set(cacheKey, { ts: Date.now(), articles: enriched });
 
@@ -1761,7 +2107,9 @@ const sechatArticleCache = new Map();
 
 function isBlockedPlaceholderImage(url) {
   if (!url) return true;
-  return /google\.com|gstatic\.com|googleusercontent\.com|ggpht\.com/i.test(url);
+  return /google\.com|gstatic\.com|googleusercontent\.com|ggpht\.com|favicon|sprite|pixel\.gif|1x1|blank\.gif|spacer\.gif|doubleclick\.net|googlesyndication\.com|scorecardresearch\.com/i.test(
+    url
+  );
 }
 
 function isGoogleNewsBoilerplate(text) {
@@ -2009,13 +2357,14 @@ async function fetchDeepArticleContent(targetUrl, fallbackLanguage = "pt") {
 
   let fetchUrl = targetUrl;
   if (/news\.google\.com/i.test(targetUrl)) {
-    const decoded = tryDecodeGoogleNewsUrl(targetUrl);
+    const decoded = await resolveGoogleNewsUrl(targetUrl);
     if (!decoded) {
-      // Modern opaque Google News token requires JS redirect; never scrape Google News shell/logo
       return null;
     }
     fetchUrl = decoded;
   }
+
+  if (!isSafeExternalHttpUrl(fetchUrl)) return null;
 
   try {
     const response = await fetch(fetchUrl, {
@@ -2030,27 +2379,20 @@ async function fetchDeepArticleContent(targetUrl, fallbackLanguage = "pt") {
     });
     if (!response.ok) return null;
 
-    if (/news\.google\.com|consent\.google\.com|accounts\.google\.com/i.test(response.url || "")) {
+    const finalUrl = response.url || fetchUrl;
+    if (/news\.google\.com|consent\.google\.com|accounts\.google\.com/i.test(finalUrl)) {
       return null;
     }
 
     const html = await response.text();
-    const ogImg =
-      html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["'](https?:\/\/[^"']+)["']/i)?.[1] ||
-      html.match(/<meta[^>]+content=["'](https?:\/\/[^"']+)["'][^>]+property=["']og:image["']/i)?.[1] ||
-      null;
-    const ogDesc =
-      html.match(/<meta[^>]+property=["']og:description["'][^>]+content=["']([^"']+)["']/i)?.[1] ||
-      html.match(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']+)["']/i)?.[1] ||
-      "";
-
+    const extracted = extractArticleMetaFromHtml(html, finalUrl);
     const articleBlock = html.match(/<article[^>]*>([\s\S]*?)<\/article>/i)?.[1] || html;
-    let paragraphs = extractParagraphsFromHtml(articleBlock, 8).filter(
-      (p) => !isGoogleNewsBoilerplate(p)
-    );
+    let paragraphs =
+      extracted.paragraphs.length > 0
+        ? extracted.paragraphs
+        : extractParagraphsFromHtml(articleBlock, 8).filter((p) => !isGoogleNewsBoilerplate(p));
 
-    const rawCleanOgDesc = decodeHtmlEntities(ogDesc).trim();
-    const cleanOgDesc = isGoogleNewsBoilerplate(rawCleanOgDesc) ? "" : rawCleanOgDesc;
+    const cleanOgDesc = extracted.description;
     if (paragraphs.length === 0 && cleanOgDesc.length > 45) {
       paragraphs = [cleanOgDesc];
     }
@@ -2062,7 +2404,7 @@ async function fetchDeepArticleContent(targetUrl, fallbackLanguage = "pt") {
       paragraphs = paragraphs.map((p) => polishPtTerminology(p));
     }
 
-    const safeImage = ogImg && !isBlockedPlaceholderImage(ogImg) ? ogImg : null;
+    const safeImage = extracted.image;
     if (!safeImage && paragraphs.length === 0) {
       return null;
     }
@@ -2159,6 +2501,8 @@ async function fetchAllNews() {
   }
 
   const deduped = deduplicateArticles(combined).slice(0, 340);
+  // Resolve Google News links & hydrate real publisher OG images + lead descriptions (today's news prioritized first)
+  await hydrateMissingArticleImages(deduped, 34, 8);
   const localizedAndStrategic = await localizeAndEnrichArticles(deduped);
 
   if (localizedAndStrategic.length > 0) {
@@ -2499,7 +2843,7 @@ async function startServer() {
     try {
       const targetUrl = typeof req.query.url === "string" ? req.query.url.trim() : "";
       const lang = typeof req.query.lang === "string" ? req.query.lang : "pt";
-      if (!targetUrl || !/^https?:\/\//i.test(targetUrl)) {
+      if (!targetUrl || !isSafeExternalHttpUrl(targetUrl)) {
         return res.status(400).json({ error: "URL inválida." });
       }
       const enriched = await fetchDeepArticleContent(targetUrl, lang);
@@ -2507,6 +2851,42 @@ async function startServer() {
       return res.json(enriched || { paragraphs: [], keyPoints: [], image: null });
     } catch {
       return res.json({ paragraphs: [], keyPoints: [], image: null });
+    }
+  });
+
+  // SSRF-safe Image Proxy Fallback (used automatically by <img> onError when a publisher blocks hotlinking)
+  app.get("/api/news/image", async (req, res) => {
+    try {
+      const rawUrl = typeof req.query.url === "string" ? req.query.url.trim() : "";
+      if (!rawUrl || !isSafeExternalHttpUrl(rawUrl) || isBlockedPlaceholderImage(rawUrl)) {
+        return res.status(400).end();
+      }
+      const upstream = await fetch(rawUrl, {
+        redirect: "follow",
+        signal: AbortSignal.timeout(5500),
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+          Accept: "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+        },
+      });
+      if (!upstream.ok) return res.status(404).end();
+      if (upstream.url && !isSafeExternalHttpUrl(upstream.url)) {
+        return res.status(403).end();
+      }
+      const contentType = upstream.headers.get("content-type") || "";
+      if (!contentType.toLowerCase().startsWith("image/")) {
+        return res.status(415).end();
+      }
+      const buffer = Buffer.from(await upstream.arrayBuffer());
+      if (buffer.length === 0 || buffer.length > 5 * 1024 * 1024) {
+        return res.status(413).end();
+      }
+      res.setHeader("Content-Type", contentType);
+      res.setHeader("Cache-Control", "public, max-age=21600");
+      return res.send(buffer);
+    } catch {
+      return res.status(502).end();
     }
   });
 
