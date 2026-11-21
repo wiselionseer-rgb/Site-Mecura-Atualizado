@@ -134,7 +134,10 @@ export function NewsPortalDrawer({
   const [searchingLive, setSearchingLive] = useState(false);
   const [refreshingToday, setRefreshingToday] = useState(false);
   const [imageStage, setImageStage] = useState<Record<string, "proxy" | "failed">>({});
+  const [visibleCount, setVisibleCount] = useState(18);
   const inputRef = useRef<HTMLInputElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
   const getImgSrc = (imgUrl: string) =>
     imageStage[imgUrl] === "proxy"
@@ -238,12 +241,12 @@ export function NewsPortalDrawer({
     };
   }, [localQuery, previewTopic, datePeriod, exactDate, sortOrder, open, currentSearchSignature]);
 
-  const displayedArticles = useMemo(() => {
+  const allFilteredArticles = useMemo(() => {
     const trimmed = localQuery.trim();
     if (trimmed.length >= 2) {
       // Only show fresh liveMatches belonging to THIS exact query
       if (liveMatches && liveMatchQueryKey === currentSearchSignature) {
-        return liveMatches.slice(0, 6);
+        return liveMatches;
       }
       return [];
     }
@@ -259,12 +262,15 @@ export function NewsPortalDrawer({
     filtered = filterArticlesByDate(filtered, datePeriod, exactDate);
 
     if (sortOrder === "recentes" || previewTopic === "ultimas" || datePeriod === "hoje" || exactDate) {
-      const sortedByDate = [...filtered].sort(
-        (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-      );
-      const withPhotos = sortedByDate.filter((a) => a.image && imageStage[a.image] !== "failed");
-      const rest = sortedByDate.filter((a) => !a.image || imageStage[a.image] === "failed");
-      return [...withPhotos, ...rest].slice(0, 6);
+      // True chronological newest-first order so Brazil & World news from today appear together naturally
+      return [...filtered].sort((a, b) => {
+        const diff = new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+        if (Math.abs(diff) > 15 * 60 * 1000) return diff;
+        const aHasImg = a.image && imageStage[a.image] !== "failed" ? 1 : 0;
+        const bHasImg = b.image && imageStage[b.image] !== "failed" ? 1 : 0;
+        if (aHasImg !== bHasImg) return bHasImg - aHasImg;
+        return diff;
+      });
     }
 
     if (previewTopic === "inicio") {
@@ -273,10 +279,12 @@ export function NewsPortalDrawer({
       );
       const withPhotos = sorted.filter((a) => a.image && imageStage[a.image] !== "failed");
       const rest = sorted.filter((a) => !a.image || imageStage[a.image] === "failed");
-      return [...withPhotos, ...rest].slice(0, 6);
+      return [...withPhotos, ...rest];
     }
 
-    return filtered.slice(0, 6);
+    return [...filtered].sort(
+      (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+    );
   }, [
     articles,
     previewTopic,
@@ -289,6 +297,40 @@ export function NewsPortalDrawer({
     currentSearchSignature,
     imageStage,
   ]);
+
+  // Reset pagination & scroll to top when filter or search changes
+  useEffect(() => {
+    setVisibleCount(18);
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = 0;
+    }
+  }, [previewTopic, datePeriod, exactDate, sortOrder, localQuery]);
+
+  const displayedArticles = useMemo(
+    () => allFilteredArticles.slice(0, visibleCount),
+    [allFilteredArticles, visibleCount]
+  );
+
+  const hasMoreArticles = visibleCount < allFilteredArticles.length;
+
+  // Automatic infinite scroll inside the drawer as the user scrolls down
+  useEffect(() => {
+    if (!open || !hasMoreArticles) return;
+    const sentinel = loadMoreRef.current;
+    const root = scrollContainerRef.current;
+    if (!sentinel || !root) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setVisibleCount((prev) => Math.min(prev + 18, allFilteredArticles.length));
+        }
+      },
+      { root, rootMargin: "260px" }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [open, hasMoreArticles, allFilteredArticles.length]);
 
   const currentDesk = NEWS_TOPIC_MAP[previewTopic] || NEWS_TOPICS[0];
 
@@ -568,6 +610,7 @@ export function NewsPortalDrawer({
 
             {/* Row 4: Scrollable Editorial Content */}
             <div
+              ref={scrollContainerRef}
               data-lenis-prevent
               className="overflow-y-auto overscroll-contain flex-1"
             >
@@ -700,6 +743,7 @@ export function NewsPortalDrawer({
                     ))}
                   </div>
                 ) : displayedArticles.length > 0 ? (
+                <>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
                     {displayedArticles.map((article) => {
                       const hasImg = Boolean(article.image && imageStage[article.image] !== "failed");
@@ -796,6 +840,32 @@ export function NewsPortalDrawer({
                       );
                     })}
                   </div>
+                  <div
+                    ref={loadMoreRef}
+                    className="pt-4 pb-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-border/60"
+                  >
+                    <span className="font-mono text-[11px] text-text-muted tabular-nums">
+                      Exibindo {displayedArticles.length} de {allFilteredArticles.length} matérias
+                    </span>
+                    {hasMoreArticles ? (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setVisibleCount((prev) => Math.min(prev + 18, allFilteredArticles.length))
+                        }
+                        className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-accent/60 bg-accent/10 text-accent text-xs font-semibold hover:bg-accent hover:text-accent-ink transition-colors cursor-pointer"
+                      >
+                        <span>
+                          Carregar mais ({allFilteredArticles.length - displayedArticles.length} restantes)
+                        </span>
+                      </button>
+                    ) : (
+                      <span className="font-mono text-[11px] text-text-muted">
+                        Todas as matérias deste recorte exibidas
+                      </span>
+                    )}
+                  </div>
+                </>
                 ) : (
                   <div className="py-10 text-center border border-border rounded-xl bg-surface/50 space-y-3 px-6">
                     <p className="text-sm text-text-primary">

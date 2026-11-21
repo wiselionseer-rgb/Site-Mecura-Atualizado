@@ -1,6 +1,7 @@
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import crypto from "crypto";
+import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -530,7 +531,47 @@ function broadcastNewsEvent(eventName, payload) {
 }
 
 const deepSearchCache = new Map();
+const TRANSLATION_CACHE_PATH = "/tmp/mecura-translation-cache.json";
 const translationCache = new Map();
+let translationCacheSaveTimer = null;
+
+try {
+  if (fs.existsSync(TRANSLATION_CACHE_PATH)) {
+    const raw = JSON.parse(fs.readFileSync(TRANSLATION_CACHE_PATH, "utf8"));
+    if (Array.isArray(raw)) {
+      for (const [k, v] of raw) {
+        if (typeof k === "string" && typeof v === "string") {
+          translationCache.set(k, v);
+        }
+      }
+    }
+  }
+} catch {
+  // Ignore corrupt/missing cache file
+}
+
+function saveTranslationCacheSoon() {
+  if (translationCacheSaveTimer) return;
+  translationCacheSaveTimer = setTimeout(() => {
+    translationCacheSaveTimer = null;
+    try {
+      const entries = Array.from(translationCache.entries()).slice(-2400);
+      fs.writeFile(TRANSLATION_CACHE_PATH, JSON.stringify(entries), () => {});
+    } catch {
+      // Ignore write error
+    }
+  }, 1500);
+}
+
+function setCachedTranslation(key, val) {
+  if (!key || !val) return;
+  translationCache.set(key, val);
+  if (translationCache.size > 2600) {
+    const firstKey = translationCache.keys().next().value;
+    if (firstKey) translationCache.delete(firstKey);
+  }
+  saveTranslationCacheSoon();
+}
 
 function normalizeText(value = "") {
   return String(value)
@@ -641,7 +682,11 @@ async function readResponseTextSafe(response) {
 function extractTag(block, tagName) {
   const regex = new RegExp(`<${tagName}[^>]*>([\\s\\S]*?)<\\/${tagName}>`, "i");
   const match = block.match(regex);
-  return match ? match[1].trim() : "";
+  if (!match) return "";
+  return match[1]
+    .replace(/^<!\[CDATA\[([\s\S]*?)\]\]>$/i, "$1")
+    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/gi, "$1")
+    .trim();
 }
 
 /* --- Automatic Multi-Language (EN / ES / FR / DE / IT / Auto) -> PT-BR Translation Engine --- */
@@ -767,64 +812,137 @@ function truncateCleanly(text = "", maxLen = 290) {
   return `${cut.replace(/[,;:\-(]+$/, "").trim()}…`;
 }
 
-async function translateSingleChunkEnToPt(text, attempt = 0, sourceLang = "auto") {
+// Instant 429 circuit breakers per translation provider (prevents retry storms!)
+let gtxCooldownUntil = 0;
+let clients5CooldownUntil = 0;
+let myMemoryCooldownUntil = 0;
+
+function allTranslatorsCoolingDown() {
+  const now = Date.now();
+  return now < gtxCooldownUntil && now < clients5CooldownUntil && now < myMemoryCooldownUntil;
+}
+
+async function tryGoogleGtxTranslate(clean, sl) {
+  if (Date.now() < gtxCooldownUntil) return null;
+  try {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${encodeURIComponent(sl)}&tl=pt&dt=t&q=${encodeURIComponent(clean)}`;
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(4000),
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+      },
+    });
+    if (response.status === 429 || response.status === 403) {
+      gtxCooldownUntil = Date.now() + 90 * 1000;
+      return null;
+    }
+    if (!response.ok) return null;
+    const data = await response.json();
+    const out = Array.isArray(data?.[0])
+      ? data[0].map((part) => (Array.isArray(part) ? part[0] : "")).join("").trim()
+      : "";
+    return out || null;
+  } catch {
+    return null;
+  }
+}
+
+async function tryGoogleClients5Translate(clean, sl) {
+  if (Date.now() < clients5CooldownUntil) return null;
+  try {
+    const url = `https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=${encodeURIComponent(sl)}&tl=pt&q=${encodeURIComponent(clean)}`;
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(4000),
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+      },
+    });
+    if (response.status === 429 || response.status === 403) {
+      clients5CooldownUntil = Date.now() + 90 * 1000;
+      return null;
+    }
+    if (!response.ok) return null;
+    const data = await response.json();
+    let out = "";
+    if (Array.isArray(data)) {
+      if (typeof data[0] === "string") {
+        out = data[0].trim();
+      } else if (Array.isArray(data[0]) && typeof data[0][0] === "string") {
+        out = data[0][0].trim();
+      }
+    }
+    return out || null;
+  } catch {
+    return null;
+  }
+}
+
+async function tryMyMemoryTranslate(clean, sl) {
+  if (Date.now() < myMemoryCooldownUntil || clean.length > 460) return null;
+  const pairSl = sl && sl !== "auto" ? sl : guessSourceLang(clean);
+  if (!pairSl || pairSl === "auto") return null;
+  try {
+    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(clean)}&langpair=${encodeURIComponent(pairSl)}|pt-BR`;
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(3500),
+      headers: { "User-Agent": "Mozilla/5.0" },
+    });
+    if (response.status === 429) {
+      myMemoryCooldownUntil = Date.now() + 120 * 1000;
+      return null;
+    }
+    if (!response.ok) return null;
+    const data = await response.json();
+    if (data?.quotaFinished) {
+      myMemoryCooldownUntil = Date.now() + 300 * 1000;
+      return null;
+    }
+    const out = String(data?.responseData?.translatedText || "").trim();
+    if (!out || /MYMEMORY WARNING/i.test(out)) return null;
+    return out;
+  } catch {
+    return null;
+  }
+}
+
+async function translateSingleChunkEnToPt(text, _attempt = 0, sourceLang = "auto") {
   const clean = String(text || "").trim();
   if (!clean) return clean;
   const cached = translationCache.get(clean);
   if (cached && !(cached === clean && looksLikeForeignLanguage(clean))) {
     return cached;
   }
+  if (allTranslatorsCoolingDown()) return clean;
 
   const sl = sourceLang || "auto";
-  try {
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${encodeURIComponent(sl)}&tl=pt&dt=t&q=${encodeURIComponent(clean)}`;
-    const response = await fetch(url, {
-      signal: AbortSignal.timeout(7000),
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-      },
-    });
-    if (!response.ok) {
-      if (attempt < 2 && (response.status === 429 || response.status >= 500)) {
-        await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
-        return translateSingleChunkEnToPt(clean, attempt + 1, sl);
-      }
-      return clean;
-    }
-    const data = await response.json();
-    const translated = Array.isArray(data?.[0])
-      ? data[0].map((part) => (Array.isArray(part) ? part[0] : "")).join("").trim()
-      : clean;
+  let translated =
+    (await tryGoogleGtxTranslate(clean, sl)) ||
+    (await tryGoogleClients5Translate(clean, sl)) ||
+    (await tryMyMemoryTranslate(clean, sl));
 
-    if (translated) {
-      // If sl=auto misdetected language and returned foreign text unchanged, retry explicitly with guessed lang (e.g. en/fr/es/de)
-      if (translated === clean && sl === "auto" && looksLikeForeignLanguage(clean)) {
-        const guessed = guessSourceLang(clean);
-        if (guessed !== "auto") {
-          return translateSingleChunkEnToPt(clean, attempt + 1, guessed);
-        }
-      }
-      if (!(translated === clean && looksLikeForeignLanguage(clean))) {
-        translationCache.set(clean, translated);
-        if (translationCache.size > 2400) {
-          const firstKey = translationCache.keys().next().value;
-          if (firstKey) translationCache.delete(firstKey);
-        }
-      }
-      return translated;
+  if (translated && translated === clean && sl === "auto" && looksLikeForeignLanguage(clean)) {
+    const guessed = guessSourceLang(clean);
+    if (guessed !== "auto") {
+      translated =
+        (await tryGoogleGtxTranslate(clean, guessed)) ||
+        (await tryGoogleClients5Translate(clean, guessed)) ||
+        (await tryMyMemoryTranslate(clean, guessed)) ||
+        translated;
     }
-    return clean;
-  } catch {
-    if (attempt < 2) {
-      await new Promise((r) => setTimeout(r, 300 * (attempt + 1)));
-      return translateSingleChunkEnToPt(clean, attempt + 1, sl);
-    }
-    return clean;
   }
+
+  if (translated) {
+    if (!(translated === clean && looksLikeForeignLanguage(clean))) {
+      setCachedTranslation(clean, translated);
+    }
+    return translated;
+  }
+  return clean;
 }
 
-async function translateBatchEnToPt(texts, concurrency = 4, explicitLangs = []) {
+async function translateBatchEnToPt(texts, concurrency = 2, explicitLangs = [], deadlineMs = 0) {
   if (!Array.isArray(texts) || texts.length === 0) return [];
   const results = new Array(texts.length);
   const pendingIndices = [];
@@ -849,8 +967,12 @@ async function translateBatchEnToPt(texts, concurrency = 4, explicitLangs = []) 
   }
 
   if (pendingIndices.length === 0) return results;
+  if (allTranslatorsCoolingDown() || (deadlineMs && Date.now() > deadlineMs)) {
+    for (const idx of pendingIndices) results[idx] = String(texts[idx]).trim();
+    return results;
+  }
 
-  // Group pending strings into homogeneous language batches <= 1200 chars separated by a unique token
+  // Group pending strings into larger homogeneous language batches (<= 1750 chars, max 10 items) to minimize API calls
   const SEP = "\n§§§\n";
   const batches = [];
   let currentBatch = [];
@@ -862,7 +984,7 @@ async function translateBatchEnToPt(texts, concurrency = 4, explicitLangs = []) 
     const itemLang = guessSourceLang(txt, explicitLangs[idx] || "");
     if (
       currentBatch.length > 0 &&
-      (currentLen + txt.length > 1200 || currentBatch.length >= 6 || itemLang !== currentLang)
+      (currentLen + txt.length > 1750 || currentBatch.length >= 10 || itemLang !== currentLang)
     ) {
       batches.push({ lang: currentLang || "auto", items: currentBatch });
       currentBatch = [];
@@ -885,23 +1007,44 @@ async function translateBatchEnToPt(texts, concurrency = 4, explicitLangs = []) 
         cursor += 1;
         const batchObj = batches[bIdx];
         const batch = batchObj.items;
+
+        if (allTranslatorsCoolingDown() || (deadlineMs && Date.now() > deadlineMs)) {
+          for (const item of batch) results[item.idx] = item.txt;
+          continue;
+        }
+
         const joined = batch.map((b) => b.txt).join(SEP);
         const translatedJoined = await translateSingleChunkEnToPt(joined, 0, batchObj.lang);
-        const parts = translatedJoined.split(/\s*§§§\s*/);
 
+        // If provider returned joined text untouched (cooldown/timeout), avoid hammering per-item retries
+        if (translatedJoined === joined) {
+          for (const item of batch) results[item.idx] = item.txt;
+          continue;
+        }
+
+        const parts = translatedJoined.split(/\s*§§§\s*/);
         if (parts.length === batch.length) {
           for (let k = 0; k < batch.length; k += 1) {
             let out = parts[k].trim() || batch[k].txt;
-            if ((out === batch[k].txt || looksLikeForeignLanguage(out)) && (batch[k].lang !== "auto" || looksLikeForeignLanguage(batch[k].txt))) {
+            if (
+              (out === batch[k].txt || looksLikeForeignLanguage(out)) &&
+              !allTranslatorsCoolingDown() &&
+              (!deadlineMs || Date.now() < deadlineMs) &&
+              (batch[k].lang !== "auto" || looksLikeForeignLanguage(batch[k].txt))
+            ) {
               out = await translateSingleChunkEnToPt(batch[k].txt, 0, batch[k].lang);
             }
             if (!(out === batch[k].txt && looksLikeForeignLanguage(batch[k].txt))) {
-              translationCache.set(batch[k].txt, out);
+              setCachedTranslation(batch[k].txt, out);
             }
             results[batch[k].idx] = out;
           }
         } else {
           for (const item of batch) {
+            if (allTranslatorsCoolingDown() || (deadlineMs && Date.now() > deadlineMs)) {
+              results[item.idx] = item.txt;
+              continue;
+            }
             const out = await translateSingleChunkEnToPt(item.txt, 0, item.lang);
             results[item.idx] = out;
           }
@@ -1292,8 +1435,9 @@ async function localizeAndEnrichArticles(rawArticles) {
     }
   }
 
-  // Translate titles, summaries, and lead body paragraphs in parallel with explicit language tags
+  // Translate titles first (highest priority), then summaries & lead paragraphs within a strict time budget
   if (itemsNeedingTranslation.length > 0) {
+    const deadlineMs = Date.now() + 10000;
     const explicitLangs = itemsNeedingTranslation.map((item) => rawArticles[item.index].language || "");
     const titlesToTranslate = itemsNeedingTranslation.map((item) => item.cleanTitle);
     const summariesToTranslate = itemsNeedingTranslation.map((item) =>
@@ -1302,16 +1446,13 @@ async function localizeAndEnrichArticles(rawArticles) {
     const p1ToTranslate = itemsNeedingTranslation.map((item) =>
       sanitizeEditorialText(rawArticles[item.index].excerptParagraphs?.[0] || "")
     );
-    const p2ToTranslate = itemsNeedingTranslation.map((item) =>
-      sanitizeEditorialText(rawArticles[item.index].excerptParagraphs?.[1] || "")
-    );
 
-    const [trTitles, trSummaries, trP1, trP2] = await Promise.all([
-      translateBatchEnToPt(titlesToTranslate, 5, explicitLangs),
-      translateBatchEnToPt(summariesToTranslate, 4, explicitLangs),
-      translateBatchEnToPt(p1ToTranslate, 3, explicitLangs),
-      translateBatchEnToPt(p2ToTranslate, 3, explicitLangs),
-    ]);
+    const trTitles = await translateBatchEnToPt(titlesToTranslate, 2, explicitLangs, deadlineMs);
+    const trSummaries = await translateBatchEnToPt(summariesToTranslate, 2, explicitLangs, deadlineMs);
+    const trP1 =
+      Date.now() < deadlineMs
+        ? await translateBatchEnToPt(p1ToTranslate, 2, explicitLangs, deadlineMs)
+        : p1ToTranslate;
 
     for (let k = 0; k < itemsNeedingTranslation.length; k += 1) {
       const idx = itemsNeedingTranslation[k].index;
@@ -1320,7 +1461,6 @@ async function localizeAndEnrichArticles(rawArticles) {
       const translatedSummary = polishPtTerminology(trSummaries[k] || art.summary || "");
       const translatedParagraphs = [
         polishPtTerminology(trP1[k] || ""),
-        polishPtTerminology(trP2[k] || ""),
       ].filter((p) => p.length > 25 && !hasMojibakeOrMarkupJunk(p));
 
       rawArticles[idx] = {
@@ -1340,24 +1480,27 @@ async function localizeAndEnrichArticles(rawArticles) {
     }
   }
 
-  // Final safety sweep (parallelized): catch any single title or summary that slipped through in a foreign language
+  // Final safety sweep (bounded by deadline & circuit breaker): catch any title or summary that slipped through
+  const sweepDeadline = Date.now() + 4000;
   const residualIndices = [];
-  for (let i = 0; i < rawArticles.length; i += 1) {
-    const a = rawArticles[i];
-    const t = cleanRawHeadline(a.title);
-    const s = sanitizeEditorialText(a.summary || "");
-    const titleForeign = looksLikeForeignLanguage(t);
-    const summaryForeign = !/^Reportagem publicada por\b/i.test(s) && looksLikeForeignLanguage(s);
-    if (titleForeign || summaryForeign) {
-      residualIndices.push({ i, t, s, titleForeign, summaryForeign });
+  if (!allTranslatorsCoolingDown()) {
+    for (let i = 0; i < rawArticles.length; i += 1) {
+      const a = rawArticles[i];
+      const t = cleanRawHeadline(a.title);
+      const s = sanitizeEditorialText(a.summary || "");
+      const titleForeign = looksLikeForeignLanguage(t);
+      const summaryForeign = !/^Reportagem publicada por\b/i.test(s) && looksLikeForeignLanguage(s);
+      if (titleForeign || summaryForeign) {
+        residualIndices.push({ i, t, s, titleForeign, summaryForeign });
+      }
     }
   }
-  if (residualIndices.length > 0) {
+  if (residualIndices.length > 0 && !allTranslatorsCoolingDown()) {
     let rCursor = 0;
-    const workers = Math.min(4, residualIndices.length);
+    const workers = Math.min(2, residualIndices.length);
     await Promise.all(
       Array.from({ length: workers }, async () => {
-        while (rCursor < residualIndices.length) {
+        while (rCursor < residualIndices.length && Date.now() < sweepDeadline && !allTranslatorsCoolingDown()) {
           const item = residualIndices[rCursor];
           rCursor += 1;
           const a = rawArticles[item.i];
@@ -2072,10 +2215,18 @@ async function fetchRssSource(meta, maxItems = 10, isDeepResult = false) {
       continue;
     }
 
-    const publishedDate = pubDateStr ? new Date(pubDateStr) : new Date();
-    const publishedAt = Number.isNaN(publishedDate.getTime())
-      ? new Date().toISOString()
-      : publishedDate.toISOString();
+    // Filter out non-news donation/sponsor callouts (e.g. "Sponsor werden" / membership promos)
+    if (/\b(sponsor werden|privatsponsor|become a sponsor|torne-se um patrocinador|du musst die pflanze gießen)\b/i.test(`${title} ${rawDesc}`)) {
+      continue;
+    }
+
+    const fallbackDateIso = new Date(Date.now() - 72 * 3600 * 1000).toISOString();
+    const publishedDate = pubDateStr ? new Date(pubDateStr) : null;
+    const nowMs = Date.now();
+    const publishedAt =
+      publishedDate && !Number.isNaN(publishedDate.getTime())
+        ? new Date(Math.min(publishedDate.getTime(), nowMs)).toISOString()
+        : fallbackDateIso;
 
     const richParagraphs = extractParagraphsFromHtml(rawContentEncoded || rawDescHtml, 6);
     const meaningfulDesc =
